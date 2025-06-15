@@ -85,9 +85,21 @@ export function AddBudgetDialog({ children }: AddBudgetDialogProps) {
       setOpen(false);
     },
     onError: (error) => {
-      toast.error("Erro ao criar orçamento.", {
-        description: error.message,
-      });
+      if (error.message.includes('recurso exclusivo do plano Premium')) {
+        toast.error("Funcionalidade Premium", {
+          description: "A criação de orçamentos está disponível apenas no plano Premium. Faça o upgrade para ter acesso!",
+          action: { label: "Fazer Upgrade", onClick: () => console.log('Navigate to pricing') }
+        });
+      } else if (error.message.includes('Você já tem um orçamento')) {
+        toast.error("Erro ao criar orçamento", {
+          description: error.message,
+        });
+      }
+      else {
+        toast.error("Erro ao criar orçamento.", {
+          description: "Ocorreu um erro inesperado. Por favor, tente novamente.",
+        });
+      }
     },
   });
 

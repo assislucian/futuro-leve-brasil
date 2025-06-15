@@ -36,6 +36,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { ptBR } from "date-fns/locale";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 const goalSchema = z.object({
   name: z.string().min(3, { message: "O nome da meta precisa ter no mínimo 3 caracteres." }),
@@ -45,7 +46,7 @@ const goalSchema = z.object({
 
 type GoalFormValues = z.infer<typeof goalSchema>;
 
-export function AddGoalDialog() {
+export function AddGoalDialog({ disabled = false }: { disabled?: boolean }) {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -79,9 +80,16 @@ export function AddGoalDialog() {
       setOpen(false);
     },
     onError: (error) => {
-      toast.error("Houve um erro ao criar sua meta.", {
-        description: error.message,
-      });
+      if (error.message.includes('Limite de 2 metas atingido')) {
+        toast.error("Limite de metas atingido", {
+          description: "Você atingiu o limite de 2 metas do plano gratuito. Faça o upgrade para criar metas ilimitadas!",
+          action: { label: "Fazer Upgrade", onClick: () => console.log('Navigate to pricing') }
+        });
+      } else {
+        toast.error("Houve um erro ao criar sua meta.", {
+          description: error.message,
+        });
+      }
     },
   });
 
@@ -89,14 +97,32 @@ export function AddGoalDialog() {
     mutate(data);
   };
 
+  const triggerButton = (
+    <Button disabled={disabled}>
+      <PlusCircle className="mr-2 h-4 w-4" />
+      Criar Nova Meta
+    </Button>
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Criar Nova Meta
-        </Button>
-      </DialogTrigger>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span tabIndex={disabled ? 0 : -1}>
+              <DialogTrigger asChild disabled={disabled}>
+                {triggerButton}
+              </DialogTrigger>
+            </span>
+          </TooltipTrigger>
+          {disabled && (
+            <TooltipContent>
+              <p>Você atingiu o limite de 2 metas do plano gratuito.</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Qual sonho vamos conquistar?</DialogTitle>

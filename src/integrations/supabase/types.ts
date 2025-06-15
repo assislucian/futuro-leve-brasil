@@ -113,18 +113,21 @@ export type Database = {
           avatar_url: string | null
           full_name: string | null
           id: string
+          plan: Database["public"]["Enums"]["app_plan"]
         }
         Insert: {
           avatar_path?: string | null
           avatar_url?: string | null
           full_name?: string | null
           id: string
+          plan?: Database["public"]["Enums"]["app_plan"]
         }
         Update: {
           avatar_path?: string | null
           avatar_url?: string | null
           full_name?: string | null
           id?: string
+          plan?: Database["public"]["Enums"]["app_plan"]
         }
         Relationships: []
       }
@@ -169,6 +172,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      app_plan: "free" | "premium"
       transaction_type: "income" | "expense"
     }
     CompositeTypes: {
@@ -285,6 +289,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_plan: ["free", "premium"],
       transaction_type: ["income", "expense"],
     },
   },
