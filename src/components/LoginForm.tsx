@@ -32,7 +32,12 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { error } = await supabase.auth.signInWithPassword(values);
+    // We are explicitly creating an object with email and password to match what Supabase expects.
+    // This resolves the TypeScript error, as form validation already ensures these values are present.
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
     if (error) {
       toast.error(error.message);
     } else {
