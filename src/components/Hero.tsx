@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Hero = () => {
   return (
@@ -16,20 +17,36 @@ const Hero = () => {
             se encontram.
           </h1>
           <p className="text-lg text-muted-foreground md:text-xl">
-            Chega de ansiedade financeira. Com Plenus, você ganha clareza para
-            controlar seu dinheiro e um plano real para conquistar seus maiores
-            objetivos. Simples, visual e feito para você.
+            Plenus é o mapa que conecta suas finanças aos seus maiores sonhos. Tenha clareza e um plano para viver o presente com tranquilidade e construir o futuro que você deseja.
           </p>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <Button size="lg" asChild>
-              <Link to="/auth">
-                Começar minha jornada
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <a href="/#features">Descobrir como funciona</a>
-            </Button>
+          <div className="flex w-full flex-col items-center gap-6 sm:items-start">
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Button size="lg" asChild>
+                <Link to="/auth">
+                  Começar minha jornada
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <a href="/#features">Ver como funciona</a>
+              </Button>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2 overflow-hidden">
+                  <Avatar className="inline-block h-8 w-8 rounded-full border-2 border-background">
+                      <AvatarFallback>J</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="inline-block h-8 w-8 rounded-full border-2 border-background">
+                      <AvatarFallback>M</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="inline-block h-8 w-8 rounded-full border-2 border-background">
+                      <AvatarFallback>A</AvatarFallback>
+                  </Avatar>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                  <span className="font-bold text-foreground">Milhares de brasileiros</span> já no controle.
+              </p>
+            </div>
           </div>
         </div>
         <div className="order-1 flex w-full items-center justify-center animate-in fade-in-50 duration-500 [animation-delay:200ms] md:order-2 md:w-1/2">
