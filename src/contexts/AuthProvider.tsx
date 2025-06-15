@@ -4,7 +4,10 @@ import { Session, User } from "@supabase/supabase-js";
 import React, { createContext, useEffect, useState } from "react";
 import { Database } from "@/integrations/supabase/types";
 
-type Profile = Database['public']['Tables']['profiles']['Row'];
+// Extendemos o tipo Profile para incluir trial_ends_at que foi adicionado na migração
+type Profile = Database['public']['Tables']['profiles']['Row'] & {
+  trial_ends_at: string | null;
+};
 
 interface AuthContextType {
   user: User | null;
@@ -39,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .select('*')
           .eq('id', currentUser.id)
           .single();
-        setProfile(profileData);
+        setProfile(profileData as Profile);
       } else {
         setProfile(null);
       }
@@ -57,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .select('*')
           .eq('id', session.user.id)
           .single();
-        setProfile(profileData);
+        setProfile(profileData as Profile);
       }
       // Set loading to false only if the listener hasn't already done it.
       // This avoids a flicker on authenticated page loads.

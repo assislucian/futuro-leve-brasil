@@ -114,6 +114,7 @@ export type Database = {
           full_name: string | null
           id: string
           plan: Database["public"]["Enums"]["app_plan"]
+          trial_ends_at: string | null
         }
         Insert: {
           avatar_path?: string | null
@@ -121,6 +122,7 @@ export type Database = {
           full_name?: string | null
           id: string
           plan?: Database["public"]["Enums"]["app_plan"]
+          trial_ends_at?: string | null
         }
         Update: {
           avatar_path?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           plan?: Database["public"]["Enums"]["app_plan"]
+          trial_ends_at?: string | null
         }
         Relationships: []
       }
