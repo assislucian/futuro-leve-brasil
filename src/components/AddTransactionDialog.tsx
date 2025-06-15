@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -128,9 +127,28 @@ export function AddTransactionDialog() {
               
               const formatCurrency = (amount: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
               
-              const description = remaining >= 0
-                ? `Você gastou ${formatCurrency(totalSpent)} de ${formatCurrency(budgetAmount)}. Restam ${formatCurrency(remaining)}.`
-                : `Você ultrapassou o orçamento em ${formatCurrency(Math.abs(remaining))}. Total gasto: ${formatCurrency(totalSpent)}.`;
+              let description = "";
+              if (remaining >= 0) {
+                 description = `Você gastou ${formatCurrency(totalSpent)} de ${formatCurrency(budgetAmount)}. Restam ${formatCurrency(remaining)}.`;
+              } else {
+                const { data: goals, error: goalsError } = await supabase
+                  .from('goals')
+                  .select('name, current_amount, target_amount')
+                  .eq('user_id', user.id);
+
+                if (goalsError) throw goalsError;
+                
+                const activeGoal = goals.find(g => g.current_amount < g.target_amount);
+                
+                const overspentAmount = Math.abs(remaining);
+                const baseMessage = `Você ultrapassou o orçamento em ${formatCurrency(overspentAmount)}. Total gasto: ${formatCurrency(totalSpent)}.`;
+
+                if (activeGoal) {
+                  description = `${baseMessage} Lembre-se, cada real conta para alcançar seu sonho: '${activeGoal.name}'.`;
+                } else {
+                  description = `${baseMessage} Fique atento aos seus gastos para manter a saúde financeira.`;
+                }
+              }
 
               toast.info(`Impacto no orçamento de "${values.category}"`, {
                 description: description,
