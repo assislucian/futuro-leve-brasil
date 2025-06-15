@@ -3,9 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, FileText } from "lucide-react";
+import { AlertCircle, FileText, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useRecentTransactions } from "@/hooks/useRecentTransactions";
+import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { EditTransactionDialog } from "./EditTransactionDialog";
+import { DeleteTransactionAlert } from "./DeleteTransactionAlert";
 
 const TransactionList = () => {
   const { data: transactions, isLoading, error } = useRecentTransactions();
@@ -68,6 +72,7 @@ const TransactionList = () => {
                 <TableHead>Descrição</TableHead>
                 <TableHead className="hidden sm:table-cell">Categoria</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -84,6 +89,31 @@ const TransactionList = () => {
                   </TableCell>
                   <TableCell className={`text-right font-medium ${transaction.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
                     {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                         <EditTransactionDialog transaction={transaction}>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              <span>Editar</span>
+                            </DropdownMenuItem>
+                         </EditTransactionDialog>
+                        <DropdownMenuSeparator />
+                        <DeleteTransactionAlert transactionId={transaction.id}>
+                          <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Excluir</span>
+                          </DropdownMenuItem>
+                        </DeleteTransactionAlert>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

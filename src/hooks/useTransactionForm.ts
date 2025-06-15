@@ -6,20 +6,31 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { transactionFormSchema, TransactionFormValues } from "@/lib/validators/transaction";
+import { Database } from "@/integrations/supabase/types";
 
-export function useTransactionForm({ setOpen }: { setOpen: (open: boolean) => void }) {
+type Transaction = Database['public']['Tables']['transactions']['Row'];
+
+export function useTransactionForm({ setOpen, transaction }: { setOpen: (open: boolean) => void; transaction?: Transaction; }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
-    defaultValues: {
-      description: "",
-      amount: undefined,
-      type: "expense",
-      category: "",
-      transaction_date: new Date().toISOString().split("T")[0],
-    },
+    defaultValues: transaction
+      ? {
+          description: transaction.description || "",
+          amount: transaction.amount,
+          type: transaction.type,
+          category: transaction.category,
+          transaction_date: transaction.transaction_date,
+        }
+      : {
+          description: "",
+          amount: undefined,
+          type: "expense",
+          category: "",
+          transaction_date: new Date().toISOString().split("T")[0],
+        },
   });
 
   const checkBudgetImpact = async (values: TransactionFormValues) => {
@@ -102,19 +113,24 @@ export function useTransactionForm({ setOpen }: { setOpen: (open: boolean) => vo
       return;
     }
 
-    const { error } = await supabase.from("transactions").insert({
-      description: values.description,
-      amount: values.amount,
-      type: values.type,
-      category: values.category,
-      transaction_date: values.transaction_date,
-      user_id: user.id
-    });
+    const { error } = transaction?.id
+      ? await supabase
+          .from("transactions")
+          .update({ ...values, user_id: user.id })
+          .eq("id", transaction.id)
+      : await supabase.from("transactions").insert({
+          description: values.description,
+          amount: values.amount,
+          type: values.type,
+          category: values.category,
+          transaction_date: values.transaction_date,
+          user_id: user.id
+        });
 
     if (error) {
-      toast.error("Ocorreu um erro ao salvar a transação: " + error.message);
+      toast.error(`Ocorreu um erro ao ${transaction?.id ? 'atualizar' : 'salvar'} a transação: ${error.message}`);
     } else {
-      toast.success("Transação adicionada com sucesso!");
+      toast.success(`Transação ${transaction?.id ? 'atualizada' : 'adicionada'} com sucesso!`);
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
       queryClient.invalidateQueries({ queryKey: ["budgets"] });
@@ -122,16 +138,20 @@ export function useTransactionForm({ setOpen }: { setOpen: (open: boolean) => vo
       queryClient.invalidateQueries({ queryKey: ["nextAction"] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
 
-      await checkBudgetImpact(values);
-
+      if (values.type === 'expense') {
+        await checkBudgetImpact(values);
+      }
+      
       setOpen(false);
-      form.reset({
-        description: "",
-        amount: undefined,
-        type: "expense",
-        category: "",
-        transaction_date: new Date().toISOString().split("T")[0],
-      });
+      if (!transaction?.id) {
+          form.reset({
+            description: "",
+            amount: undefined,
+            type: "expense",
+            category: "",
+            transaction_date: new Date().toISOString().split("T")[0],
+          });
+      }
     }
   }
 
