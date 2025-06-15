@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -15,11 +16,11 @@ const Hero = () => {
           Plenus é a plataforma de bem-estar financeiro que conecta suas finanças aos seus sonhos. Tenha clareza, propósito e alcance a plenitude.
         </p>
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            Comece sua jornada (Grátis)
+          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+            <Link to="/auth">Comece sua jornada (Grátis)</Link>
           </Button>
-          <Button size="lg" variant="outline">
-            Conheça os planos
+          <Button size="lg" variant="outline" asChild>
+             <a href="/#pricing">Conheça os planos</a>
           </Button>
         </div>
       </div>

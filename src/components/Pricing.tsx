@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Pricing = () => {
   return (
@@ -28,7 +29,9 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline">Começar Agora</Button>
+              <Button className="w-full" variant="outline" asChild>
+                <Link to="/auth">Começar Agora</Link>
+              </Button>
             </CardFooter>
           </Card>
           <Card className="border-primary shadow-2xl shadow-primary/20">
@@ -46,7 +49,9 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">Assinar Premium</Button>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                <Link to="/auth">Assinar Premium</Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>
