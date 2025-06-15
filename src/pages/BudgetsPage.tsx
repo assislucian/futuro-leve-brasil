@@ -98,7 +98,7 @@ const BudgetsPageContent = () => {
 }
 
 const BudgetsPage = () => {
-  const { profile, loading } = useAuth();
+  const { profile, loading, isTrialing } = useAuth();
   
   if (loading) {
     return (
@@ -122,12 +122,13 @@ const BudgetsPage = () => {
     );
   }
 
+  const hasAccess = profile?.plan === 'premium' || isTrialing;
+
   return (
     <div className="flex flex-col gap-8 h-full">
-      {profile?.plan === 'premium' ? <BudgetsPageContent /> : <PremiumFeatureLock />}
+      {hasAccess ? <BudgetsPageContent /> : <PremiumFeatureLock />}
     </div>
   );
 };
 
 export default BudgetsPage;
-

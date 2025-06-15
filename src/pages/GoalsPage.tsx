@@ -7,13 +7,14 @@ import { useGoalsSummary } from "@/hooks/useGoalsSummary";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const GoalsPage = () => {
-  const { profile, loading: authLoading } = useAuth();
+  const { profile, loading: authLoading, isTrialing } = useAuth();
   const { data: goalsSummary, isLoading: goalsLoading } = useGoalsSummary();
 
   const isLoading = authLoading || goalsLoading;
   const goalCount = goalsSummary?.count || 0;
   const isFreePlan = profile?.plan === 'free';
-  const limitReached = isFreePlan && goalCount >= 2;
+  const hasAccessToCreate = profile?.plan === 'premium' || isTrialing;
+  const limitReached = isFreePlan && !isTrialing && goalCount >= 2;
 
   return (
     <div className="flex flex-col gap-8">
@@ -27,7 +28,7 @@ const GoalsPage = () => {
         {isLoading ? (
           <Skeleton className="h-10 w-44" />
         ) : (
-          <AddGoalDialog disabled={limitReached} />
+          <AddGoalDialog disabled={!hasAccessToCreate && limitReached} />
         )}
       </div>
 

@@ -11,6 +11,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
+  isTrialing: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,7 +59,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .single();
         setProfile(profileData);
       }
-      setLoading(false);
+      // Set loading to false only if the listener hasn't already done it.
+      // This avoids a flicker on authenticated page loads.
+      setLoading(l => (l ? false : l));
     });
 
     return () => {
@@ -66,11 +69,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
+  const isTrialing = profile?.trial_ends_at ? new Date(profile.trial_ends_at) > new Date() : false;
+
   const value = {
     user,
     session,
     profile,
     loading,
+    isTrialing,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
