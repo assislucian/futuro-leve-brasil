@@ -81,6 +81,69 @@ export function AddTransactionDialog() {
       toast.success("Transação adicionada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
+      queryClient.invalidateQueries({ queryKey: ["budgetsSummary"] });
+      queryClient.invalidateQueries({ queryKey: ["nextAction"] });
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
+
+
+      // Lógica para notificar sobre o impacto no orçamento
+      if (values.type === 'expense') {
+        const checkBudgetImpact = async () => {
+          try {
+            const transactionDate = new Date(values.transaction_date + 'T00:00:00');
+            const year = transactionDate.getFullYear();
+            const month = transactionDate.getMonth() + 1;
+
+            const { data: budgetData, error: budgetError } = await supabase
+              .from('budgets')
+              .select('amount')
+              .eq('user_id', user.id)
+              .eq('category', values.category)
+              .eq('year', year)
+              .eq('month', month)
+              .maybeSingle();
+
+            if (budgetError) throw budgetError;
+
+            if (budgetData) {
+              const budgetAmount = budgetData.amount;
+              const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
+              const lastDayOfMonth = new Date(year, month, 0).getDate();
+              const lastDay = `${year}-${String(month).padStart(2, '0')}-${String(lastDayOfMonth).padStart(2, '0')}`;
+
+              const { data: spendingData, error: spendingError } = await supabase
+                .from('transactions')
+                .select('amount')
+                .eq('user_id', user.id)
+                .eq('category', values.category)
+                .eq('type', 'expense')
+                .gte('transaction_date', firstDay)
+                .lte('transaction_date', lastDay);
+
+              if (spendingError) throw spendingError;
+
+              const totalSpent = spendingData.reduce((sum, t) => sum + t.amount, 0);
+              const remaining = budgetAmount - totalSpent;
+              
+              const formatCurrency = (amount: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
+              
+              const description = remaining >= 0
+                ? `Você gastou ${formatCurrency(totalSpent)} de ${formatCurrency(budgetAmount)}. Restam ${formatCurrency(remaining)}.`
+                : `Você ultrapassou o orçamento em ${formatCurrency(Math.abs(remaining))}. Total gasto: ${formatCurrency(totalSpent)}.`;
+
+              toast.info(`Impacto no orçamento de "${values.category}"`, {
+                description: description,
+                duration: 8000,
+              });
+            }
+          } catch (e) {
+            console.error("Erro ao verificar impacto no orçamento:", e);
+          }
+        };
+        checkBudgetImpact();
+      }
+
       setOpen(false);
       form.reset({
         description: "",
