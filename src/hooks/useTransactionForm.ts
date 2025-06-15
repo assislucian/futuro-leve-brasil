@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -137,6 +136,7 @@ export function useTransactionForm({ setOpen, transaction }: { setOpen: (open: b
       queryClient.invalidateQueries({ queryKey: ["budgetsSummary"] });
       queryClient.invalidateQueries({ queryKey: ["nextAction"] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
+      queryClient.invalidateQueries({ queryKey: ["hasTransactions"] });
 
       if (values.type === 'expense') {
         await checkBudgetImpact(values);
