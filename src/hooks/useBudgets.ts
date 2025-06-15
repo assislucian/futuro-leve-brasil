@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -91,8 +90,24 @@ export function useBudgets(year: number, month: number) {
     });
   }, [budgets, spentByCategory]);
 
+  const summary = useMemo(() => {
+    if (!budgetsWithSpending) {
+      return { totalBudgeted: 0, totalSpent: 0, totalRemaining: 0, overallProgress: 0 };
+    }
+    const totalBudgeted = budgetsWithSpending.reduce((acc, b) => acc + b.amount, 0);
+    const totalSpent = budgetsWithSpending.reduce((acc, b) => acc + b.spent, 0);
+    const totalRemaining = totalBudgeted - totalSpent;
+    const overallProgress = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0;
+    return {
+      totalBudgeted,
+      totalSpent,
+      totalRemaining,
+      overallProgress,
+    };
+  }, [budgetsWithSpending]);
+
   const isLoading = isBudgetsPending || isExpensesPending;
   const error = budgetsError || expensesError;
 
-  return { budgetsWithSpending, isLoading, error, hasBudgets: !!budgets && budgets.length > 0 };
+  return { budgetsWithSpending, isLoading, error, hasBudgets: !!budgets && budgets.length > 0, summary };
 }

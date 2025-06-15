@@ -1,39 +1,32 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useBudgets } from "@/hooks/useBudgets";
 import { BudgetListLoading } from "./BudgetListLoading";
 import { BudgetListEmpty } from "./BudgetListEmpty";
 import { BudgetTable } from "./BudgetTable";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BudgetWithSpending } from "@/hooks/useBudgets";
 
-export function BudgetList() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface BudgetListProps {
+  budgetsWithSpending: BudgetWithSpending[];
+  isLoading: boolean;
+  error: Error | null;
+  hasBudgets: boolean;
+  monthName: string;
+  onPreviousMonth: () => void;
+  onNextMonth: () => void;
+}
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
-
-  const { budgetsWithSpending, isLoading, error, hasBudgets } = useBudgets(year, month);
-
-  const handlePreviousMonth = () => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      newDate.setMonth(newDate.getMonth() - 1);
-      return newDate;
-    });
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      newDate.setMonth(newDate.getMonth() + 1);
-      return newDate;
-    });
-  };
-
-  const monthName = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-  const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+export function BudgetList({ 
+  budgetsWithSpending, 
+  isLoading, 
+  error, 
+  hasBudgets, 
+  monthName,
+  onPreviousMonth,
+  onNextMonth,
+}: BudgetListProps) {
 
   if (isLoading) {
     return <BudgetListLoading />;
@@ -55,17 +48,17 @@ export function BudgetList() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <CardTitle>Visão Mensal</CardTitle>
+                <CardTitle>Visão Detalhada</CardTitle>
                 <CardDescription>
-                  Navegue pelos seus orçamentos mês a mês.
+                  Seus orçamentos para {monthName}.
                 </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={handlePreviousMonth} aria-label="Mês anterior">
+                <Button variant="outline" size="icon" onClick={onPreviousMonth} aria-label="Mês anterior">
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-base font-semibold w-40 text-center">{capitalizedMonthName}</span>
-                <Button variant="outline" size="icon" onClick={handleNextMonth} aria-label="Próximo mês">
+                <span className="text-base font-semibold w-40 text-center">{monthName}</span>
+                <Button variant="outline" size="icon" onClick={onNextMonth} aria-label="Próximo mês">
                     <ChevronRight className="h-4 w-4" />
                 </Button>
             </div>
@@ -75,7 +68,7 @@ export function BudgetList() {
         {hasBudgets ? (
             <BudgetTable budgets={budgetsWithSpending} />
         ) : (
-            <BudgetListEmpty monthName={capitalizedMonthName} />
+            <BudgetListEmpty monthName={monthName} />
         )}
       </CardContent>
     </Card>
