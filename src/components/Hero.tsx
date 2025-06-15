@@ -6,8 +6,8 @@ import { ArrowRight } from "lucide-react";
 const Hero = () => {
   return (
     <section className="container mx-auto flex min-h-[calc(100vh-4rem)] items-center px-4 md:px-6">
-      <div className="grid w-full items-center gap-12 md:grid-cols-2">
-        <div className="flex flex-col items-start text-left space-y-6 animate-fade-in">
+      <div className="flex w-full flex-col items-center gap-12 md:flex-row">
+        <div className="order-2 flex flex-col items-start space-y-6 text-left animate-in fade-in-50 duration-500 md:order-1 md:w-1/2">
           <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl lg:text-6xl">
             Onde seu dinheiro e seus{" "}
             <span className="bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
@@ -32,12 +32,12 @@ const Hero = () => {
             </Button>
           </div>
         </div>
-        <div className="flex justify-center items-center animate-fade-in [animation-delay:200ms] mt-8 md:mt-0">
-          <div className="relative w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/10">
+        <div className="order-1 flex w-full items-center justify-center animate-in fade-in-50 duration-500 [animation-delay:200ms] md:order-2 md:w-1/2">
+          <div className="relative w-full max-w-md aspect-video overflow-hidden rounded-2xl border border-border/50 shadow-2xl shadow-primary/10">
             <img 
               src="https://images.unsplash.com/photo-1560518883-ce09059ee353?q=80&w=1974&auto=format&fit=crop" 
               alt="Casal feliz planejando o futuro financeiro em sua nova casa"
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
           </div>
