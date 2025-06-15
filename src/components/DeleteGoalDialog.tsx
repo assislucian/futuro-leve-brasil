@@ -1,0 +1,72 @@
+
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+
+interface DeleteGoalDialogProps {
+  goalId: string;
+  children: React.ReactNode;
+}
+
+export function DeleteGoalDialog({ goalId, children }: DeleteGoalDialogProps) {
+  const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Usuário não autenticado.");
+
+      const { error } = await supabase.from("goals").delete().eq("id", goalId);
+
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Meta apagada.");
+      queryClient.invalidateQueries({ queryKey: ["goals", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["goalsSummary", user?.id] });
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast.error("Houve um erro ao apagar sua meta.", {
+        description: error.message,
+      });
+    },
+  });
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Esta ação não pode ser desfeita. Isso apagará permanentemente sua meta e todas as suas contribuições.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
+          <AlertDialogAction onClick={() => mutate()} disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Confirmar e Apagar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

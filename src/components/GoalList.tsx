@@ -1,14 +1,23 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Target, PlusCircle } from "lucide-react";
+import { AlertCircle, Target, PlusCircle, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { AddContributionDialog } from "./AddContributionDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EditGoalDialog } from "./EditGoalDialog";
+import { DeleteGoalDialog } from "./DeleteGoalDialog";
 
 const GoalList = () => {
   const { user } = useAuth();
@@ -86,14 +95,40 @@ const GoalList = () => {
         return (
           <Card key={goal.id} className="flex flex-col">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{goal.name}</CardTitle>
-                {isCompleted && <Badge variant="default" className="bg-emerald-500">Concluída!</Badge>}
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg pr-2">{goal.name}</CardTitle>
+                  <CardDescription>
+                    Alvo: {formatCurrency(goal.target_amount)}
+                    {goal.target_date && ` até ${new Date(goal.target_date + 'T00:00:00').toLocaleDateString('pt-BR')}`}
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isCompleted && <Badge variant="default" className="bg-emerald-500">Concluída!</Badge>}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                        <span className="sr-only">Abrir menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <EditGoalDialog goal={goal}>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                      </EditGoalDialog>
+                      <DeleteGoalDialog goalId={goal.id}>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Apagar</span>
+                        </DropdownMenuItem>
+                      </DeleteGoalDialog>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-              <CardDescription>
-                Alvo: {formatCurrency(goal.target_amount)}
-                {goal.target_date && ` até ${new Date(goal.target_date + 'T00:00:00').toLocaleDateString('pt-BR')}`}
-              </CardDescription>
             </CardHeader>
             <CardContent className="flex-grow space-y-4">
               <div className="space-y-2">
