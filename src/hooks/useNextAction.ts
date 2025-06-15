@@ -41,6 +41,7 @@ export function useNextAction() {
   const nextAction: NextAction | null = useMemo(() => {
     if (isLoading) return null;
 
+    // Prioridade 1: Criar orçamento se não existir
     if (!hasBudgets) {
       return {
         title: "Crie seu primeiro orçamento",
@@ -51,6 +52,7 @@ export function useNextAction() {
       };
     }
 
+    // Prioridade 2: Criar meta se não existir
     if (!goals || goals.length === 0) {
       return {
         title: "Defina seu primeiro sonho",
@@ -60,7 +62,26 @@ export function useNextAction() {
         icon: "Star",
       };
     }
+    
+    const goalToContribute = goals.find(g => g.current_amount < g.target_amount);
+    
+    // Prioridade 3: Insight Inteligente - Conectar sobra do orçamento com metas
+    const budgetsWithSignificantSurplus = budgetsWithSpending
+        .filter(b => b.remaining > 50) // Sugerir apenas para sobras significativas (> R$50)
+        .sort((a, b) => b.remaining - a.remaining);
 
+    if (goalToContribute && budgetsWithSignificantSurplus.length > 0) {
+        const biggestSurplus = budgetsWithSignificantSurplus[0];
+        return {
+            title: `Ótima economia em ${biggestSurplus.category}!`,
+            description: `Você economizou ${biggestSurplus.remaining.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}. Que tal usar esse valor para acelerar seu sonho "${goalToContribute.name}"?`,
+            link: "/goals",
+            cta: "Acelerar meu Sonho",
+            icon: "Rocket",
+        };
+    }
+
+    // Prioridade 4: Alerta de orçamento próximo do limite
     const budgetNearLimit = budgetsWithSpending.find(b => b.progress > 80 && b.progress < 100);
     if (budgetNearLimit) {
       return {
@@ -72,7 +93,7 @@ export function useNextAction() {
       };
     }
 
-    const goalToContribute = goals.find(g => g.current_amount < g.target_amount);
+    // Prioridade 5: Sugestão genérica de contribuição para meta
     if (goalToContribute) {
       return {
         title: `Rumo ao sonho: ${goalToContribute.name}`,
@@ -83,6 +104,7 @@ export function useNextAction() {
       };
     }
 
+    // Prioridade 6: Mensagem padrão
     return {
       title: "Continue no controle",
       description: "Você está no caminho certo! Continue acompanhando suas finanças.",
