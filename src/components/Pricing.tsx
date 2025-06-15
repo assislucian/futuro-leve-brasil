@@ -18,7 +18,7 @@ const Pricing = () => {
           <Card>
             <CardHeader>
               <CardTitle>Gratuito</CardTitle>
-              <CardDescription>Para organizar o presente e planejar o futuro.</CardDescription>
+              <CardDescription>O primeiro passo para sua tranquilidade financeira. Comece a organizar suas contas e planejar seus sonhos.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-4xl font-bold">R$0<span className="text-lg font-normal text-muted-foreground">/mês</span></div>
@@ -37,20 +37,20 @@ const Pricing = () => {
           <Card className="border-primary shadow-2xl shadow-primary/20">
             <CardHeader>
               <CardTitle>Plenus Premium</CardTitle>
-              <CardDescription>Para quem busca a maestria financeira e pessoal.</CardDescription>
+              <CardDescription>Para acelerar suas conquistas e ter a paz de espírito que você merece.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-4xl font-bold">R$19,90<span className="text-lg font-normal text-muted-foreground">/mês</span></div>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Tudo do plano Gratuito</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Metas e orçamentos ilimitados</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Insights e relatórios avançados</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Insights e relatórios com IA</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Suporte prioritário</li>
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
-                <Link to="/auth">Assinar Premium</Link>
+              <Button className="w-full" asChild>
+                <Link to="/auth">Quero o Premium</Link>
               </Button>
             </CardFooter>
           </Card>

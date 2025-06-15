@@ -5,18 +5,18 @@ import { DollarSign, Lightbulb, Target } from "lucide-react";
 const features = [
   {
     icon: <Target className="h-8 w-8 text-primary" />,
-    title: "Metas com Propósito",
-    description: "Crie metas financeiras que vão além dos números e se conectam com seus verdadeiros sonhos e paixões.",
+    title: "Transforme sonhos em planos",
+    description: "Crie metas para sua viagem, sua casa ou sua segurança. Nós te ajudamos a chegar lá, passo a passo.",
   },
   {
     icon: <DollarSign className="h-8 w-8 text-primary" />,
-    title: "Clareza Financeira Total",
-    description: "Visualize suas receitas, despesas e investimentos em um painel intuitivo e fácil de entender.",
+    title: "Entenda seu dinheiro, sem planilhas",
+    description: "Veja para onde vai cada real com um painel simples e visual. Chega de se sentir perdido(a) no fim do mês.",
   },
   {
     icon: <Lightbulb className="h-8 w-8 text-primary" />,
-    title: "Inteligência para Decisões",
-    description: "Receba insights e dicas personalizadas para otimizar seus gastos e acelerar o alcance dos seus objetivos.",
+    title: "Decisões inteligentes, sem estresse",
+    description: "Receba dicas claras para fazer seu dinheiro render mais e alcançar seus objetivos mais rápido.",
   },
 ];
 
