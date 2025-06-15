@@ -32,7 +32,7 @@ const Hero = () => {
             </Button>
           </div>
         </div>
-        <div className="hidden md:flex justify-center items-center animate-fade-in [animation-delay:200ms]">
+        <div className="flex justify-center items-center animate-fade-in [animation-delay:200ms] mt-8 md:mt-0">
           <div className="relative w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/10">
             <img 
               src="https://images.unsplash.com/photo-1560518883-ce09059ee353?q=80&w=1974&auto=format&fit=crop" 
