@@ -14,11 +14,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 
 const formSchema = z.object({
   fullName: z.string().min(3, { message: "O nome completo é obrigatório." }),
   email: z.string().email({ message: "Por favor, insira um email válido." }),
   password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres." }),
+  terms: z.boolean().refine(val => val === true, {
+    message: "Você deve aceitar os termos e condições.",
+  }),
 });
 
 export function SignUpForm() {
@@ -28,6 +33,7 @@ export function SignUpForm() {
       fullName: "",
       email: "",
       password: "",
+      terms: false,
     },
   });
 
@@ -90,6 +96,36 @@ export function SignUpForm() {
                 <Input type="password" placeholder="Crie uma senha forte" {...field} />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="terms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  <span className="text-sm font-normal text-muted-foreground">
+                    Eu li e aceito os{' '}
+                    <Link to="/terms" target="_blank" className="font-medium text-primary hover:underline">
+                      Termos de Serviço
+                    </Link>{' '}
+                    e a{' '}
+                    <Link to="/privacy" target="_blank" className="font-medium text-primary hover:underline">
+                      Política de Privacidade
+                    </Link>
+                    .
+                  </span>
+                </FormLabel>
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />

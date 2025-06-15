@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um email válido." }),
@@ -32,8 +32,6 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // We are explicitly creating an object with email and password to match what Supabase expects.
-    // This resolves the TypeScript error, as form validation already ensures these values are present.
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password,
@@ -48,7 +46,7 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
@@ -67,7 +65,15 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Senha</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Senha</FormLabel>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Esqueceu sua senha?
+                </Link>
+              </div>
               <FormControl>
                 <Input type="password" placeholder="Sua senha" {...field} />
               </FormControl>

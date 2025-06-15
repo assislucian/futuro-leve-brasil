@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Pricing from "@/components/Pricing";
 import { Sparkles } from "lucide-react";
+import { Faq } from "@/components/Faq";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -35,6 +36,7 @@ const Index = () => {
         <Hero />
         <Features />
         <Pricing />
+        <Faq />
       </main>
       <Footer />
     </div>
