@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 import { useNextAction } from "@/hooks/useNextAction";
-import { ArrowRight, Lightbulb, CircleDollarSign, Star, AlertTriangle, Target, Sparkles } from "lucide-react";
+import { ArrowRight, Lightbulb, CircleDollarSign, Star, AlertTriangle, Target, Sparkles, Rocket } from "lucide-react";
 
 const iconMap = {
   CircleDollarSign,
@@ -13,6 +13,7 @@ const iconMap = {
   AlertTriangle,
   Target,
   Sparkles,
+  Rocket,
 };
 
 export function NextActionCard() {

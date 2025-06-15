@@ -8,11 +8,44 @@ import GoalsSummary from "@/components/GoalsSummary";
 import BudgetsSummary from "@/components/BudgetsSummary";
 import { NextActionCard } from "@/components/NextActionCard";
 import { GoalCompletionCelebration } from "@/components/GoalCompletionCelebration";
+import { useHasTransactions } from "@/hooks/useHasTransactions";
+import { WelcomeGuide } from "@/components/WelcomeGuide";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
+
+  if (isLoadingHasTransactions) {
+    return (
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <Skeleton className="h-9 w-64" />
+            <Skeleton className="h-5 w-96 mt-2" />
+          </div>
+          <Skeleton className="h-10 w-44" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-96 w-full" />
+          </div>
+          <div className="lg:col-span-1 flex flex-col gap-8">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasTransactions) {
+    return <WelcomeGuide />;
+  }
 
   return (
     <>
