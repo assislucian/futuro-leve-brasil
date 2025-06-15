@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { UserNav } from "./UserNav";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   const { user, loading } = useAuth();
@@ -21,6 +22,7 @@ const Header = () => {
           <a href="/#pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Preços</a>
         </nav>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {loading ? (
             <div className="h-10 w-48 animate-pulse rounded-md bg-muted"></div>
           ) : user ? (

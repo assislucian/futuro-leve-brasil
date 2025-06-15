@@ -2,6 +2,7 @@
 import React from 'react';
 import { UserNav } from './UserNav';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { ThemeToggle } from './ThemeToggle';
 
 const AppHeader = () => {
   return (
@@ -11,6 +12,7 @@ const AppHeader = () => {
         <div className="ml-auto flex-1 sm:flex-initial">
           {/* Futuro campo de busca ou ações rápidas */}
         </div>
+        <ThemeToggle />
         <UserNav />
       </div>
     </header>
