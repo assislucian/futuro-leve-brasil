@@ -1,36 +1,14 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, FileText } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useRecentTransactions } from "@/hooks/useRecentTransactions";
 
 const TransactionList = () => {
-  const { user } = useAuth();
-
-  const { data: transactions, isLoading, error } = useQuery({
-    queryKey: ['transactions', user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false })
-        .limit(50); // Limitamos a 50 para performance inicial
-
-      if (error) {
-        throw new Error(error.message);
-      }
-      return data;
-    },
-    enabled: !!user,
-  });
+  const { data: transactions, isLoading, error } = useRecentTransactions();
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });

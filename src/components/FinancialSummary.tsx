@@ -1,48 +1,12 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ArrowUp, ArrowDown, AlertCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
 
 const FinancialSummary = () => {
-  const { user } = useAuth();
-
-  const { data: summary, isLoading, error } = useQuery({
-    queryKey: ['summary', user?.id],
-    queryFn: async () => {
-      if (!user) return { totalIncome: 0, totalExpense: 0, balance: 0 };
-      
-      // NOTA: Para uma aplicação em escala, essa lógica de agregação
-      // seria idealmente movida para uma Função de Banco de Dados (RPC) no Supabase
-      // para melhor performance. Para esta fase, o cálculo no cliente é suficiente.
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('amount, type')
-        .eq('user_id', user.id);
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const totalIncome = data
-        .filter(t => t.type === 'income')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-      const totalExpense = data
-        .filter(t => t.type === 'expense')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-      const balance = totalIncome - totalExpense;
-
-      return { totalIncome, totalExpense, balance };
-    },
-    enabled: !!user,
-  });
-
+  const { data: summary, isLoading, error } = useFinancialSummaryData();
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString("pt-BR", {
