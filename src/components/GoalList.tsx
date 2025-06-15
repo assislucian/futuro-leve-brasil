@@ -1,13 +1,14 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Target } from "lucide-react";
+import { AlertCircle, Target, PlusCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { AddContributionDialog } from "./AddContributionDialog";
 
 const GoalList = () => {
   const { user } = useAuth();
@@ -94,16 +95,24 @@ const GoalList = () => {
                 {goal.target_date && ` até ${new Date(goal.target_date + 'T00:00:00').toLocaleDateString('pt-BR')}`}
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex-grow">
+            <CardContent className="flex-grow space-y-4">
               <div className="space-y-2">
                 <Progress value={progress} />
-                <p className="text-sm text-muted-foreground">
-                  {formatCurrency(goal.current_amount)} de {formatCurrency(goal.target_amount)}
-                </p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {formatCurrency(goal.current_amount)}
+                  </span>
+                  <span className="font-medium">{progress.toFixed(0)}%</span>
+                </div>
               </div>
             </CardContent>
             <CardFooter>
-              <p className="text-sm font-medium">{progress.toFixed(0)}% completo</p>
+              <AddContributionDialog goalId={goal.id} goalName={goal.name}>
+                <Button variant="outline" className="w-full" disabled={isCompleted}>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Adicionar Progresso
+                </Button>
+              </AddContributionDialog>
             </CardFooter>
           </Card>
         );
