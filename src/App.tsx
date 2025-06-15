@@ -12,6 +12,7 @@ import AuthPage from "./pages/Auth";
 import AppLayout from "./pages/AppLayout";
 import DashboardPage from "./pages/Dashboard";
 import GoalsPage from "./pages/GoalsPage";
+import BudgetsPage from "./pages/BudgetsPage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ function App() {
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/goals" element={<GoalsPage />} />
+                <Route path="/budgets" element={<BudgetsPage />} />
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

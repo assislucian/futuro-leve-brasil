@@ -5,6 +5,7 @@ import TransactionList from "@/components/TransactionList";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { useAuth } from "@/hooks/useAuth";
 import GoalsSummary from "@/components/GoalsSummary";
+import BudgetsSummary from "@/components/BudgetsSummary";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -25,8 +26,9 @@ const DashboardPage = () => {
         <div className="lg:col-span-2">
             <FinancialSummary />
         </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 grid gap-4">
             <GoalsSummary />
+            <BudgetsSummary />
         </div>
       </div>
       
