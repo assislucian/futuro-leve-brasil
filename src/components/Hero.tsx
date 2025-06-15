@@ -35,7 +35,7 @@ const Hero = () => {
         <div className="order-1 flex w-full items-center justify-center animate-in fade-in-50 duration-500 [animation-delay:200ms] md:order-2 md:w-1/2">
           <div className="relative w-full max-w-md aspect-video overflow-hidden rounded-2xl border border-border/50 shadow-2xl shadow-primary/10">
             <img 
-              src="https://images.unsplash.com/photo-1560518883-ce09059ee353?q=80&w=1974&auto=format&fit=crop" 
+              src="https://images.unsplash.com/photo-1554224155-1696413565d3?q=80&w=2070&auto=format&fit=crop" 
               alt="Casal feliz planejando o futuro financeiro em sua nova casa"
               className="h-full w-full object-cover"
             />
