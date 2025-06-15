@@ -35,8 +35,8 @@ const Hero = () => {
         <div className="hidden md:flex justify-center items-center animate-fade-in [animation-delay:200ms]">
           <div className="relative w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/10">
             <img 
-              src="https://images.unsplash.com/photo-1554224155-8d04421cd6e2?q=80&w=2070&auto=format&fit=crop" 
-              alt="Casal sorrindo enquanto planeja suas finanças no computador"
+              src="https://images.unsplash.com/photo-1560518883-ce09059ee353?q=80&w=1974&auto=format&fit=crop" 
+              alt="Casal feliz planejando o futuro financeiro em sua nova casa"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
