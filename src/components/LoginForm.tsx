@@ -42,7 +42,7 @@ export function LoginForm() {
       toast.error(error.message);
     } else {
       toast.success("Login realizado com sucesso!");
-      navigate("/");
+      navigate("/dashboard");
     }
   }
 

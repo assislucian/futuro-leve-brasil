@@ -39,7 +39,7 @@ export function SignUpForm() {
         data: {
           full_name: values.fullName,
         },
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     });
 
