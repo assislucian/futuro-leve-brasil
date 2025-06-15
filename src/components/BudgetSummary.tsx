@@ -21,7 +21,7 @@ interface BudgetSummaryProps {
 }
 
 export function BudgetSummary({ summary }: BudgetSummaryProps) {
-  const { totalBudgeted, totalSpent, totalRemaining, overallProgress } from summary;
+  const { totalBudgeted, totalSpent, totalRemaining, overallProgress } = summary;
 
   return (
     <Card>
