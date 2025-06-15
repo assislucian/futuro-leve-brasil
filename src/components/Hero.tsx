@@ -35,8 +35,8 @@ const Hero = () => {
         <div className="order-1 flex w-full items-center justify-center animate-in fade-in-50 duration-500 [animation-delay:200ms] md:order-2 md:w-1/2">
           <div className="relative w-full max-w-md aspect-video overflow-hidden rounded-2xl border border-border/50 shadow-2xl shadow-primary/10">
             <img 
-              src="https://images.unsplash.com/photo-1576104852640-c50360b57f52?q=80&w=2070&auto=format&fit=crop" 
-              alt="Família feliz no sofá, simbolizando segurança e bem-estar financeiro."
+              src="https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+              alt="Família feliz sorrindo em um parque, representando a tranquilidade e realização que o Plenus proporciona."
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
