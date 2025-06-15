@@ -1,4 +1,5 @@
 
+import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
