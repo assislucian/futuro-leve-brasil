@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { AddTransactionDialog } from "./AddTransactionDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -8,6 +9,7 @@ import { Button } from "./ui/button";
 export const WelcomeGuide = () => {
     const { user } = useAuth();
     const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     return (
         <div className="flex justify-center items-center h-full py-12">
@@ -26,12 +28,11 @@ export const WelcomeGuide = () => {
                         Clique no botão abaixo para registrar uma receita ou despesa. 
                         Isso nos ajudará a criar seu primeiro resumo financeiro e a traçar o mapa para seus sonhos.
                     </p>
-                    <AddTransactionDialog>
-                       <Button size="lg">
-                            Adicionar Primeira Transação
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                       </Button>
-                    </AddTransactionDialog>
+                    <Button size="lg" onClick={() => setIsDialogOpen(true)}>
+                        Adicionar Primeira Transação
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    <AddTransactionDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
                 </CardContent>
             </Card>
         </div>
