@@ -12,9 +12,7 @@ const GoalsPage = () => {
 
   const isLoading = authLoading || goalsLoading;
   const goalCount = goalsSummary?.count || 0;
-  const isFreePlan = profile?.plan === 'free';
-  const hasAccessToCreate = profile?.plan === 'premium' || isTrialing;
-  const limitReached = isFreePlan && !isTrialing && goalCount >= 2;
+  const limitReached = profile?.plan === 'free' && !isTrialing && goalCount >= 2;
 
   return (
     <div className="flex flex-col gap-8">
@@ -28,7 +26,7 @@ const GoalsPage = () => {
         {isLoading ? (
           <Skeleton className="h-10 w-44" />
         ) : (
-          <AddGoalDialog disabled={!hasAccessToCreate && limitReached} />
+          <AddGoalDialog disabled={limitReached} />
         )}
       </div>
 
