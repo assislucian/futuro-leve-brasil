@@ -20,10 +20,11 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const collapsed = state === 'collapsed';
 
   return (
-    <Sidebar className="border-r transition-all duration-300 ease-in-out" collapsedWidth={80}>
+    <Sidebar className="border-r transition-all duration-300 ease-in-out">
       <SidebarContent>
         <SidebarHeader className="h-16 flex items-center justify-center">
             <Link to="/dashboard" className="flex items-center gap-2">
@@ -39,7 +40,7 @@ export function AppSidebar() {
                     {({ isActive }) => (
                         <Button
                             variant={isActive ? 'secondary' : 'ghost'}
-                            className={cn("w-full justify-start gap-3", collapsed && "w-12 h-12 justify-center p-0")}
+                            className={cn("w-full justify-start gap-3 h-12", collapsed && "justify-center p-0")}
                         >
                             <item.icon className="h-5 w-5 shrink-0" />
                             {!collapsed && <span className="flex-1 text-left">{item.label}</span>}

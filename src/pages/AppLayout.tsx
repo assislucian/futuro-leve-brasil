@@ -31,7 +31,7 @@ const AppLayout = () => {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider style={{ '--sidebar-width-icon': '80px' } as React.CSSProperties}>
       <div className="flex min-h-screen w-full bg-muted/40">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
