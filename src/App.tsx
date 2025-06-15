@@ -13,6 +13,7 @@ import AppLayout from "./pages/AppLayout";
 import DashboardPage from "./pages/Dashboard";
 import GoalsPage from "./pages/GoalsPage";
 import BudgetsPage from "./pages/BudgetsPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/goals" element={<GoalsPage />} />
                 <Route path="/budgets" element={<BudgetsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

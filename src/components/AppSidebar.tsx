@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Star, Wallet, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Star, Wallet, Sparkles, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -17,6 +17,7 @@ const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/goals', label: 'Minhas Metas', icon: Star },
   { href: '/budgets', label: 'Orçamentos', icon: Wallet },
+  { href: '/settings', label: 'Configurações', icon: Settings },
 ];
 
 export function AppSidebar() {

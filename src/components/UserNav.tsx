@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { LogOut, User, Settings } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export function UserNav() {
   const { user } = useAuth();
@@ -59,15 +59,21 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Meu Perfil
+          <DropdownMenuItem asChild>
+            <Link to="/settings" className="w-full flex items-center cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              <span>Meu Perfil</span>
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Configurações
+          <DropdownMenuItem asChild>
+            <Link to="/settings" className="w-full flex items-center cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configurações</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sair</span>
         </DropdownMenuItem>
