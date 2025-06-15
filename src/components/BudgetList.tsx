@@ -1,3 +1,4 @@
+
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,7 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { CircleDollarSign } from "lucide-react";
+import { CircleDollarSign, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EditBudgetDialog } from "./EditBudgetDialog";
+import { DeleteBudgetAlert } from "./DeleteBudgetAlert";
 
 const formatCurrency = (amount: number) => {
   if (typeof amount !== 'number') return '';
@@ -170,7 +180,10 @@ export function BudgetList() {
               <TableHead className="w-[25%]">Categoria</TableHead>
               <TableHead className="w-[35%]">Progresso</TableHead>
               <TableHead className="w-[20%] text-right">Gasto</TableHead>
-              <TableHead className="w-[20%] text-right">Restante</TableHead>
+              <TableHead className="w-[15%] text-right">Restante</TableHead>
+              <TableHead className="w-[5%] text-right">
+                <span className="sr-only">Ações</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -186,6 +199,30 @@ export function BudgetList() {
                 <TableCell className="text-right">{formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}</TableCell>
                 <TableCell className={`text-right font-medium ${budget.remaining < 0 ? 'text-destructive' : ''}`}>
                   {formatCurrency(budget.remaining)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Abrir menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <EditBudgetDialog budget={budget}>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                      </EditBudgetDialog>
+                      <DeleteBudgetAlert budgetId={budget.id} category={budget.category}>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                           <Trash2 className="mr-2 h-4 w-4" />
+                           <span>Excluir</span>
+                        </DropdownMenuItem>
+                      </DeleteBudgetAlert>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
