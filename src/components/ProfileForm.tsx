@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -71,29 +70,43 @@ export function ProfileForm() {
     mutationFn: async (values: ProfileFormValues) => {
       if (!user || !profile) throw new Error("Usuário não encontrado.");
       
-      let avatarUrl = profile.avatar_url;
+      const currentProfile = profile as any;
+      let avatarUrl = currentProfile.avatar_url;
+      let avatarPath = currentProfile.avatar_path;
 
       if (values.avatar_file && values.avatar_file.length > 0) {
         const file = values.avatar_file[0];
-        const filePath = `${user.id}/${Date.now()}_${file.name}`;
+        const newAvatarPath = `${user.id}/${Date.now()}_${file.name}`;
         
         const { error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(filePath, file);
+          .upload(newAvatarPath, file);
 
         if (uploadError) throw new Error(`Erro no upload: ${uploadError.message}`);
         
         const { data: { publicUrl } } = supabase.storage
           .from('avatars')
-          .getPublicUrl(filePath);
+          .getPublicUrl(newAvatarPath);
           
+        const oldAvatarPath = avatarPath;
         avatarUrl = publicUrl;
+        avatarPath = newAvatarPath;
+
+        if (oldAvatarPath) {
+          const { error: deleteError } = await supabase.storage
+            .from('avatars')
+            .remove([oldAvatarPath]);
+          if (deleteError) {
+            console.error("Erro ao deletar avatar antigo:", deleteError.message);
+          }
+        }
       }
       
       const { error: userUpdateError } = await supabase.auth.updateUser({
         data: {
           full_name: values.full_name,
           avatar_url: avatarUrl,
+          avatar_path: avatarPath,
         },
       });
 
@@ -104,6 +117,7 @@ export function ProfileForm() {
         .update({
           full_name: values.full_name,
           avatar_url: avatarUrl,
+          avatar_path: avatarPath,
         })
         .eq('id', user.id);
 
@@ -112,7 +126,8 @@ export function ProfileForm() {
     onSuccess: async () => {
       toast.success("Perfil atualizado com sucesso!");
       await queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
-      form.reset({ avatar_file: undefined });
+      await supabase.auth.refreshSession();
+      form.reset({ ...form.getValues(), avatar_file: undefined });
       setPreviewUrl(null);
     },
     onError: (error) => {
@@ -132,7 +147,6 @@ export function ProfileForm() {
         return () => URL.revokeObjectURL(newPreviewUrl);
     }
   }, [avatarFile]);
-
 
   if (isLoadingProfile) {
     return (
@@ -161,9 +175,9 @@ export function ProfileForm() {
               <FormLabel>Foto de Perfil</FormLabel>
               <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={previewUrl || profile?.avatar_url || ""} alt={profile?.full_name || ""} />
+                  <AvatarImage src={previewUrl || (profile as any)?.avatar_url || ""} alt={(profile as any)?.full_name || ""} />
                   <AvatarFallback className="text-2xl">
-                    {getInitials(profile?.full_name)}
+                    {getInitials((profile as any)?.full_name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="relative">

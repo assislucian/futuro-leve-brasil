@@ -109,16 +109,19 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_path: string | null
           avatar_url: string | null
           full_name: string | null
           id: string
         }
         Insert: {
+          avatar_path?: string | null
           avatar_url?: string | null
           full_name?: string | null
           id: string
         }
         Update: {
+          avatar_path?: string | null
           avatar_url?: string | null
           full_name?: string | null
           id?: string
