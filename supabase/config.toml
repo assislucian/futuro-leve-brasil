@@ -1,1 +1,37 @@
+
+# Este é o ID do seu projeto Supabase. Não altere.
 project_id = "jmglnaxtpkrccabxrnku"
+
+[functions.auth-webhook]
+# Desativa a verificação de JWT do usuário, pois a segurança é feita pela assinatura do webhook.
+verify_jwt = false
+# Injeta as chaves secretas do Vault do Supabase na função.
+secret_keys = ["RESEND_API_KEY", "AUTH_WEBHOOK_SECRET"]
+
+[auth.hooks]
+# Define nossa edge function como o hook para envio de e-mails.
+send_email_hook_uri = "http://localhost:54321/functions/v1/auth-webhook"
+# Especifica para quais eventos o hook deve ser acionado.
+send_email_events = ["signup", "recovery_requested"]
+
+# Desativa os e-mails padrão do Supabase, deixando o controle total para nossa função.
+# Isso é feito fornecendo templates vazios.
+[auth.email.templates.invite]
+subject = ""
+content = ""
+
+[auth.email.templates.magic_link]
+subject = ""
+content = ""
+
+[auth.email.templates.recovery]
+subject = ""
+content = ""
+
+[auth.email.templates.email_change]
+subject = ""
+content = ""
+
+[auth.email.templates.confirmation]
+subject = ""
+content = ""
