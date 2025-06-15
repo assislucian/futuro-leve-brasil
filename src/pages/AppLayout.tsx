@@ -4,6 +4,8 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AppHeader from '@/components/AppHeader';
 import { Sparkles } from 'lucide-react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import AppSidebar from '@/components/AppSidebar';
 
 const AppLayout = () => {
   const { user, loading } = useAuth();
@@ -29,12 +31,17 @@ const AppLayout = () => {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <AppHeader />
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <Outlet />
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-muted/40">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <AppHeader />
+          <main className="flex-1 overflow-y-auto p-4 md:gap-8 md:p-8">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
