@@ -66,7 +66,14 @@ export function AddTransactionDialog() {
       return;
     }
 
-    const { error } = await supabase.from("transactions").insert({ ...values, user_id: user.id });
+    const { error } = await supabase.from("transactions").insert({
+      description: values.description,
+      amount: values.amount,
+      type: values.type,
+      category: values.category,
+      transaction_date: values.transaction_date,
+      user_id: user.id
+    });
 
     if (error) {
       toast.error("Ocorreu um erro ao salvar a transação: " + error.message);
