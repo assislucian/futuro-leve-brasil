@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Target, PlusCircle, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { AlertCircle, Target, PlusCircle, MoreVertical, Pencil, Trash2, History } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EditGoalDialog } from "./EditGoalDialog";
 import { DeleteGoalDialog } from "./DeleteGoalDialog";
+import { ContributionHistoryDialog } from "./ContributionHistoryDialog";
 
 const GoalList = () => {
   const { user } = useAuth();
@@ -116,13 +117,19 @@ const GoalList = () => {
                       <EditGoalDialog goal={goal}>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                           <Pencil className="mr-2 h-4 w-4" />
-                          <span>Editar</span>
+                          <span>Editar Meta</span>
                         </DropdownMenuItem>
                       </EditGoalDialog>
+                      <ContributionHistoryDialog goalId={goal.id} goalName={goal.name}>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <History className="mr-2 h-4 w-4" />
+                          <span>Histórico</span>
+                        </DropdownMenuItem>
+                      </ContributionHistoryDialog>
                       <DeleteGoalDialog goalId={goal.id}>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
                           <Trash2 className="mr-2 h-4 w-4" />
-                          <span>Apagar</span>
+                          <span>Apagar Meta</span>
                         </DropdownMenuItem>
                       </DeleteGoalDialog>
                     </DropdownMenuContent>
