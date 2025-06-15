@@ -10,6 +10,7 @@ import { AuthProvider } from "./contexts/AuthProvider";
 import AuthPage from "./pages/Auth";
 import AppLayout from "./pages/AppLayout";
 import DashboardPage from "./pages/Dashboard";
+import GoalsPage from "./pages/GoalsPage"; // Import a nova página
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             {/* Rotas Protegidas */}
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/goals" element={<GoalsPage />} /> {/* Adiciona a rota de metas */}
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
