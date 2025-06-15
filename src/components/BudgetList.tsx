@@ -1,10 +1,11 @@
-
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import { CircleDollarSign } from "lucide-react";
 
 const formatCurrency = (amount: number) => {
@@ -30,17 +31,64 @@ async function fetchBudgets(userId: string, year: number, month: number) {
   return data;
 }
 
+async function fetchMonthlyExpenses(userId: string, year: number, month: number) {
+  if (!userId) return [];
+  
+  let nextMonth = month + 1;
+  let nextYear = year;
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear = year + 1;
+  }
+  
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const endDate = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`;
+
+  const { data, error } = await supabase
+    .from("transactions")
+    .select("category, amount")
+    .eq("user_id", userId)
+    .eq("type", "expense")
+    .gte("transaction_date", startDate)
+    .lt("transaction_date", endDate);
+
+  if (error) {
+    throw new Error(`Erro ao buscar despesas: ${error.message}`);
+  }
+  return data;
+}
+
 export function BudgetList() {
   const { user } = useAuth();
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
 
-  const { data: budgets, isLoading, error } = useQuery({
+  const { data: budgets, isPending: isBudgetsPending, error: budgetsError } = useQuery({
     queryKey: ["budgets", user?.id, currentYear, currentMonth],
     queryFn: () => fetchBudgets(user!.id, currentYear, currentMonth),
     enabled: !!user,
   });
+
+  const { data: expenses, isPending: isExpensesPending, error: expensesError } = useQuery({
+    queryKey: ["monthlyExpenses", user?.id, currentYear, currentMonth],
+    queryFn: () => fetchMonthlyExpenses(user!.id, currentYear, currentMonth),
+    enabled: !!user,
+  });
+
+  const spentByCategory = useMemo(() => {
+    if (!expenses) return {};
+    return expenses.reduce((acc, transaction) => {
+      if (!acc[transaction.category]) {
+        acc[transaction.category] = 0;
+      }
+      acc[transaction.category] += transaction.amount;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [expenses]);
+  
+  const isLoading = isBudgetsPending || isExpensesPending;
+  const error = budgetsError || expensesError;
 
   const monthName = new Date(currentYear, currentMonth - 1).toLocaleString('pt-BR', { month: 'long' });
 
@@ -52,11 +100,26 @@ export function BudgetList() {
           <Skeleton className="h-4 w-3/4" />
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[25%]"><Skeleton className="h-5 w-full" /></TableHead>
+                <TableHead className="w-[35%]"><Skeleton className="h-5 w-full" /></TableHead>
+                <TableHead className="w-[20%] text-right"><Skeleton className="h-5 w-full" /></TableHead>
+                <TableHead className="w-[20%] text-right"><Skeleton className="h-5 w-full" /></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(3)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-full" /></TableCell>
+                  <TableCell className="text-right"><Skeleton className="h-5 w-full" /></TableCell>
+                  <TableCell className="text-right"><Skeleton className="h-5 w-full" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     );
@@ -85,6 +148,13 @@ export function BudgetList() {
     );
   }
 
+  const budgetsWithSpending = budgets.map(budget => {
+    const spent = spentByCategory[budget.category] || 0;
+    const remaining = budget.amount - spent;
+    const progress = budget.amount > 0 ? (spent / budget.amount) * 100 : 0;
+    return { ...budget, spent, remaining, progress };
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -97,16 +167,26 @@ export function BudgetList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Categoria</TableHead>
-              <TableHead className="text-right">Orçado</TableHead>
-              {/* Adicionaremos 'Gasto' e 'Restante' em uma próxima etapa */}
+              <TableHead className="w-[25%]">Categoria</TableHead>
+              <TableHead className="w-[35%]">Progresso</TableHead>
+              <TableHead className="w-[20%] text-right">Gasto</TableHead>
+              <TableHead className="w-[20%] text-right">Restante</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {budgets.map((budget) => (
+            {budgetsWithSpending.map((budget) => (
               <TableRow key={budget.id}>
                 <TableCell className="font-medium">{budget.category}</TableCell>
-                <TableCell className="text-right">{formatCurrency(budget.amount)}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-4">
+                    <Progress value={budget.progress} className="flex-1" />
+                    <span className="text-sm text-muted-foreground">{Math.round(budget.progress)}%</span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">{formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}</TableCell>
+                <TableCell className={`text-right font-medium ${budget.remaining < 0 ? 'text-destructive' : ''}`}>
+                  {formatCurrency(budget.remaining)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
