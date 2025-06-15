@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DeleteBudgetAlertProps {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ interface DeleteBudgetAlertProps {
 export function DeleteBudgetAlert({ children, budgetId, category }: DeleteBudgetAlertProps) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
@@ -39,7 +41,8 @@ export function DeleteBudgetAlert({ children, budgetId, category }: DeleteBudget
       toast.success("Orçamento excluído!", {
         description: `O orçamento para ${category} foi removido.`,
       });
-      queryClient.invalidateQueries({ queryKey: ["budgets"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["budgetsSummary", user?.id] });
       setOpen(false);
     },
     onError: (error) => {

@@ -6,6 +6,7 @@ import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +47,7 @@ export function AddBudgetDialog({ children }: AddBudgetDialogProps) {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const form = useForm<BudgetFormValues>({
     resolver: zodResolver(budgetSchema),
@@ -81,14 +83,25 @@ export function AddBudgetDialog({ children }: AddBudgetDialogProps) {
         description: `Agora você pode acompanhar seus gastos na categoria ${variables.category}.`,
       });
       queryClient.invalidateQueries({ queryKey: ["budgets", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["budgetsSummary", user?.id] });
       form.reset({ category: "", amount: undefined });
       setOpen(false);
     },
     onError: (error) => {
-      if (error.message.includes('recurso exclusivo do plano Premium')) {
+      const isPremiumError = error.message.includes('exclusiva do plano Premium') || error.message.includes('terminou');
+      
+      if (isPremiumError) {
         toast.error("Funcionalidade Premium", {
-          description: "A criação de orçamentos está disponível apenas no plano Premium. Faça o upgrade para ter acesso!",
-          action: { label: "Fazer Upgrade", onClick: () => console.log('Navigate to pricing') }
+          description: error.message.includes('terminou')
+            ? "Seu período de teste acabou. Faça upgrade para continuar usando orçamentos."
+            : "A criação de orçamentos é um recurso exclusivo do plano Premium.",
+          action: {
+            label: "Ver Planos",
+            onClick: () => {
+              setOpen(false);
+              navigate('/#pricing');
+            }
+          },
         });
       } else if (error.message.includes('Você já tem um orçamento')) {
         toast.error("Erro ao criar orçamento", {
