@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { Webhook } from 'https://esm.sh/standardwebhooks@1.0.0';
 import { Resend } from 'npm:resend@3.4.0';
@@ -73,7 +72,7 @@ serve(async (req) => {
 
     // Envia o e-mail usando Resend
     const { error: resendError } = await resend.emails.send({
-      from: 'Plenus <onboarding@resend.dev>', // IMPORTANTE: Mude para seu domínio verificado
+      from: 'Plenus <info@lifabrasil.com>',
       to: [user.email],
       subject,
       html,
