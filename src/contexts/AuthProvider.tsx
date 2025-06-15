@@ -17,21 +17,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // onAuthStateChange fires an INITIAL_SESSION event on page load.
+    // It also fires on SIGN_IN, SIGN_OUT, TOKEN_REFRESHED, etc.
+    // This is the single source of truth for the user's auth state.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-    };
+    });
 
-    getSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+    // We still call getSession to cover edge cases where the listener might not fire
+    // on initial load for a cached session. The listener will override this if it fires.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
         setSession(session);
-        setUser(session?.user ?? null);
+        setUser(session.user);
       }
-    );
+      setLoading(false);
+    });
 
     return () => {
       subscription?.unsubscribe();
