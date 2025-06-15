@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,13 +22,18 @@ const Header = () => {
         </nav>
         <div className="flex items-center gap-4">
           {loading ? (
-            <div className="h-8 w-20 animate-pulse rounded-md bg-muted"></div>
+            <div className="h-10 w-48 animate-pulse rounded-md bg-muted"></div>
           ) : user ? (
             <UserNav />
           ) : (
-            <Button asChild variant="ghost">
-              <Link to="/auth">Entrar</Link>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="ghost">
+                <Link to="/auth">Entrar</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/auth">Criar Conta Grátis</Link>
+              </Button>
+            </div>
           )}
         </div>
       </div>

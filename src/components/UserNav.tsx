@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export function UserNav() {
@@ -59,12 +59,6 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link to="/settings" className="w-full flex items-center cursor-pointer">
-              <User className="mr-2 h-4 w-4" />
-              <span>Meu Perfil</span>
-            </Link>
-          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link to="/settings" className="w-full flex items-center cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
