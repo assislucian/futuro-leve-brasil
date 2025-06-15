@@ -1,13 +1,12 @@
-import { useMemo } from "react";
+
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { Target, ArrowRight } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { Target, ArrowRight, AlertCircle } from "lucide-react";
+import { useBudgetsSummary } from "@/hooks/useBudgetsSummary";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const formatCurrency = (amount: number) => {
   if (typeof amount !== "number") return "";
@@ -18,54 +17,7 @@ const formatCurrency = (amount: number) => {
 };
 
 const BudgetsSummary = () => {
-    const { user } = useAuth();
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-
-    const { data, isLoading } = useQuery({
-        queryKey: ['budgetsSummary', user?.id, currentYear, currentMonth],
-        queryFn: async () => {
-            if (!user) return { totalBudgeted: 0, totalSpent: 0 };
-
-            // Fetch budgets for the current month
-            const { data: budgets, error: budgetsError } = await supabase
-                .from("budgets")
-                .select("amount, category")
-                .eq("user_id", user.id)
-                .eq("year", currentYear)
-                .eq("month", currentMonth);
-            
-            if (budgetsError) throw new Error(budgetsError.message);
-
-            const totalBudgeted = budgets.reduce((acc, budget) => acc + budget.amount, 0);
-
-            // Fetch expenses for the current month
-            let nextMonth = currentMonth + 1;
-            let nextYear = currentYear;
-            if (nextMonth > 12) {
-                nextMonth = 1;
-                nextYear = currentYear + 1;
-            }
-            const startDate = `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`;
-            const endDate = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`;
-
-            const { data: expenses, error: expensesError } = await supabase
-                .from("transactions")
-                .select("amount")
-                .eq("user_id", user.id)
-                .eq("type", "expense")
-                .gte("transaction_date", startDate)
-                .lt("transaction_date", endDate);
-            
-            if (expensesError) throw new Error(expensesError.message);
-
-            const totalSpent = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-
-            return { totalBudgeted, totalSpent };
-        },
-        enabled: !!user,
-    });
+    const { data, isLoading, error } = useBudgetsSummary();
 
     const { totalBudgeted = 0, totalSpent = 0 } = data || {};
     const progress = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0;
@@ -86,6 +38,31 @@ const BudgetsSummary = () => {
                 </CardContent>
             </Card>
         )
+    }
+
+    if (error) {
+      return (
+        <Card className="h-full flex flex-col">
+          <CardHeader>
+             <div className="flex items-start justify-between">
+                <div>
+                  <CardTitle>Seus Orçamentos</CardTitle>
+                  <CardDescription>Resumo do seu plano de gastos.</CardDescription>
+                </div>
+                <Target className="h-6 w-6 text-primary" />
+              </div>
+          </CardHeader>
+          <CardContent className="flex-grow flex items-center justify-center">
+            <Alert variant="destructive" className="w-full">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erro ao Carregar</AlertTitle>
+              <AlertDescription>
+                Não foi possível buscar o resumo dos seus orçamentos.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+      );
     }
 
     return (

@@ -1,41 +1,19 @@
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Target, ArrowRight, Star } from "lucide-react";
+import { Star, ArrowRight, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { useGoalsSummary } from "@/hooks/useGoalsSummary";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const formatCurrency = (value: number) => {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
 
 const GoalsSummary = () => {
-  const { user } = useAuth();
-
-  const { data: summary, isLoading } = useQuery({
-    queryKey: ['goalsSummary', user?.id],
-    queryFn: async () => {
-      if (!user) return { count: 0, totalSaved: 0 };
-      
-      const { data, error } = await supabase
-        .from('goals')
-        .select('current_amount')
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error("Erro ao buscar resumo de metas:", error);
-        return { count: 0, totalSaved: 0 };
-      }
-
-      const totalSaved = data.reduce((acc, goal) => acc + goal.current_amount, 0);
-      return { count: data.length, totalSaved };
-    },
-    enabled: !!user,
-  });
+  const { data: summary, isLoading, error } = useGoalsSummary();
 
   if (isLoading) {
     return (
@@ -50,6 +28,33 @@ const GoalsSummary = () => {
          <CardFooter>
             <Skeleton className="h-10 w-full" />
         </CardFooter>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="flex flex-col h-full">
+        <CardHeader>
+           <div className="flex items-start justify-between">
+            <div>
+              <CardTitle>Seus Sonhos</CardTitle>
+              <CardDescription>
+                Acompanhe a evolução das suas metas.
+              </CardDescription>
+            </div>
+            <Star className="h-6 w-6 text-amber-400" />
+          </div>
+        </CardHeader>
+        <CardContent className="flex-grow flex items-center justify-center">
+            <Alert variant="destructive" className="w-full">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erro ao Carregar</AlertTitle>
+              <AlertDescription>
+                Não foi possível buscar o resumo das suas metas.
+              </AlertDescription>
+            </Alert>
+        </CardContent>
       </Card>
     );
   }
