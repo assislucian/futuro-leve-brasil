@@ -29,20 +29,32 @@ import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
 
-export function AddTransactionDialog() {
-  const [open, setOpen] = useState(false);
+interface AddTransactionDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function AddTransactionDialog({ open: controlledOpen, onOpenChange: controlledOnOpenChange }: AddTransactionDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+  
   const { form, onSubmit } = useTransactionForm({ setOpen });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" className="h-8 gap-1">
-          <PlusCircle className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Nova Transação
-          </span>
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button size="sm" className="h-8 gap-1">
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Nova Transação
+            </span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Adicionar Nova Transação</DialogTitle>
