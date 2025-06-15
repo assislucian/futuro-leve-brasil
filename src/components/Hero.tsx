@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -33,22 +33,13 @@ const Hero = () => {
           </div>
         </div>
         <div className="hidden md:flex justify-center items-center animate-fade-in [animation-delay:200ms]">
-          <div className="relative w-full max-w-md aspect-[4/3] rounded-2xl bg-card p-6 border border-border/50 shadow-2xl shadow-primary/10">
-            <div className="absolute top-3 left-4 flex gap-2">
-              <span className="h-3 w-3 rounded-full bg-muted"></span>
-              <span className="h-3 w-3 rounded-full bg-muted"></span>
-              <span className="h-3 w-3 rounded-full bg-muted"></span>
-            </div>
-            <div className="mt-6 h-full flex flex-col justify-center items-center text-center gap-4">
-              <Sparkles className="h-16 w-16 text-primary/50" />
-              <p className="font-medium text-muted-foreground">
-                Aqui, seus sonhos tomam forma.
-              </p>
-              <div className="w-full space-y-3 pt-4">
-                <div className="w-full h-12 rounded-lg bg-muted/50 animate-pulse"></div>
-                <div className="w-3/4 h-8 rounded-lg bg-muted/50 animate-pulse [animation-delay:100ms]"></div>
-              </div>
-            </div>
+          <div className="relative w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/10">
+            <img 
+              src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=80&w=2070&auto=format&fit=crop" 
+              alt="Mulher usando laptop para planejamento financeiro"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
           </div>
         </div>
       </div>
