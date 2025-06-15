@@ -10,7 +10,7 @@ const Hero = () => {
         <div className="flex flex-col items-start text-left space-y-6 animate-fade-in">
           <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl lg:text-6xl">
             Onde seu dinheiro e seus{" "}
-            <span className="bg-gradient-to-r from-primary to-green-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
               sonhos
             </span>{" "}
             se encontram.
