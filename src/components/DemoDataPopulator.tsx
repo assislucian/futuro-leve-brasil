@@ -21,27 +21,27 @@ export function DemoDataPopulator() {
 
     setIsLoading(true);
     try {
-      // 1. Criar transações de exemplo
+      // 1. Criar transações de exemplo com tipos corretos
       const transactions = [
         // Receitas
-        { amount: 5500.00, type: 'income', category: 'Salário', description: 'Salário mensal', date: '2025-06-01', classification: null, planning_status: null },
-        { amount: 800.00, type: 'income', category: 'Freelance', description: 'Projeto extra', date: '2025-06-05', classification: null, planning_status: null },
-        { amount: 150.00, type: 'income', category: 'Investimentos', description: 'Dividendos', date: '2025-06-10', classification: null, planning_status: null },
+        { amount: 5500.00, type: 'income' as const, category: 'Salário', description: 'Salário mensal', date: '2025-06-01', classification: null, planning_status: null },
+        { amount: 800.00, type: 'income' as const, category: 'Freelance', description: 'Projeto extra', date: '2025-06-05', classification: null, planning_status: null },
+        { amount: 150.00, type: 'income' as const, category: 'Investimentos', description: 'Dividendos', date: '2025-06-10', classification: null, planning_status: null },
 
         // Despesas fixas
-        { amount: 1200.00, type: 'expense', category: 'Moradia', description: 'Aluguel apartamento', date: '2025-06-01', classification: 'fixed', planning_status: 'planned' },
-        { amount: 150.00, type: 'expense', category: 'Moradia', description: 'Condomínio', date: '2025-06-01', classification: 'fixed', planning_status: 'planned' },
-        { amount: 89.90, type: 'expense', category: 'Assinaturas', description: 'Netflix', date: '2025-06-02', classification: 'fixed', planning_status: 'planned' },
-        { amount: 39.90, type: 'expense', category: 'Assinaturas', description: 'Spotify', date: '2025-06-03', classification: 'fixed', planning_status: 'planned' },
+        { amount: 1200.00, type: 'expense' as const, category: 'Moradia', description: 'Aluguel apartamento', date: '2025-06-01', classification: 'fixed' as const, planning_status: 'planned' as const },
+        { amount: 150.00, type: 'expense' as const, category: 'Moradia', description: 'Condomínio', date: '2025-06-01', classification: 'fixed' as const, planning_status: 'planned' as const },
+        { amount: 89.90, type: 'expense' as const, category: 'Assinaturas', description: 'Netflix', date: '2025-06-02', classification: 'fixed' as const, planning_status: 'planned' as const },
+        { amount: 39.90, type: 'expense' as const, category: 'Assinaturas', description: 'Spotify', date: '2025-06-03', classification: 'fixed' as const, planning_status: 'planned' as const },
 
         // Despesas variáveis
-        { amount: 450.00, type: 'expense', category: 'Alimentação', description: 'Supermercado', date: '2025-06-02', classification: 'variable', planning_status: 'planned' },
-        { amount: 120.00, type: 'expense', category: 'Transporte', description: 'Combustível', date: '2025-06-03', classification: 'variable', planning_status: 'planned' },
-        { amount: 85.50, type: 'expense', category: 'Lazer', description: 'Cinema com amigos', date: '2025-06-04', classification: 'variable', planning_status: 'planned' },
-        { amount: 200.00, type: 'expense', category: 'Alimentação', description: 'Delivery e restaurantes', date: '2025-06-05', classification: 'variable', planning_status: 'unplanned' },
-        { amount: 75.00, type: 'expense', category: 'Saúde', description: 'Farmácia', date: '2025-06-14', classification: 'variable', planning_status: 'unplanned' },
-        { amount: 300.00, type: 'expense', category: 'Compras', description: 'Roupas', date: '2025-06-15', classification: 'variable', planning_status: 'unplanned' },
-        { amount: 180.00, type: 'expense', category: 'Alimentação', description: 'Supermercado semanal', date: '2025-06-16', classification: 'variable', planning_status: 'planned' }
+        { amount: 450.00, type: 'expense' as const, category: 'Alimentação', description: 'Supermercado', date: '2025-06-02', classification: 'variable' as const, planning_status: 'planned' as const },
+        { amount: 120.00, type: 'expense' as const, category: 'Transporte', description: 'Combustível', date: '2025-06-03', classification: 'variable' as const, planning_status: 'planned' as const },
+        { amount: 85.50, type: 'expense' as const, category: 'Lazer', description: 'Cinema com amigos', date: '2025-06-04', classification: 'variable' as const, planning_status: 'planned' as const },
+        { amount: 200.00, type: 'expense' as const, category: 'Alimentação', description: 'Delivery e restaurantes', date: '2025-06-05', classification: 'variable' as const, planning_status: 'unplanned' as const },
+        { amount: 75.00, type: 'expense' as const, category: 'Saúde', description: 'Farmácia', date: '2025-06-14', classification: 'variable' as const, planning_status: 'unplanned' as const },
+        { amount: 300.00, type: 'expense' as const, category: 'Compras', description: 'Roupas', date: '2025-06-15', classification: 'variable' as const, planning_status: 'unplanned' as const },
+        { amount: 180.00, type: 'expense' as const, category: 'Alimentação', description: 'Supermercado semanal', date: '2025-06-16', classification: 'variable' as const, planning_status: 'planned' as const }
       ];
 
       const { error: transactionsError } = await supabase
@@ -175,13 +175,13 @@ export function DemoDataPopulator() {
 
       if (budgetsError) throw budgetsError;
 
-      // 5. Criar transações recorrentes
+      // 5. Criar transações recorrentes com tipos corretos
       const recurringTransactions = [
-        { description: 'Salário mensal', amount: 5500.00, type: 'income', category: 'Salário', frequency: 'monthly' },
-        { description: 'Aluguel', amount: 1200.00, type: 'expense', category: 'Moradia', frequency: 'monthly' },
-        { description: 'Condomínio', amount: 150.00, type: 'expense', category: 'Moradia', frequency: 'monthly' },
-        { description: 'Netflix', amount: 89.90, type: 'expense', category: 'Assinaturas', frequency: 'monthly' },
-        { description: 'Spotify', amount: 39.90, type: 'expense', category: 'Assinaturas', frequency: 'monthly' }
+        { description: 'Salário mensal', amount: 5500.00, type: 'income' as const, category: 'Salário', frequency: 'monthly' as const },
+        { description: 'Aluguel', amount: 1200.00, type: 'expense' as const, category: 'Moradia', frequency: 'monthly' as const },
+        { description: 'Condomínio', amount: 150.00, type: 'expense' as const, category: 'Moradia', frequency: 'monthly' as const },
+        { description: 'Netflix', amount: 89.90, type: 'expense' as const, category: 'Assinaturas', frequency: 'monthly' as const },
+        { description: 'Spotify', amount: 39.90, type: 'expense' as const, category: 'Assinaturas', frequency: 'monthly' as const }
       ];
 
       const { error: recurringError } = await supabase
@@ -227,12 +227,12 @@ export function DemoDataPopulator() {
 
       if (installmentError) throw installmentError;
 
-      // 7. Criar padrões de classificação
+      // 7. Criar padrões de classificação com tipos corretos
       const classificationPatterns = [
-        { pattern_type: 'description', pattern_value: 'supermercado', classification: 'variable', planning_status: 'planned', confidence_score: 0.9 },
-        { pattern_type: 'description', pattern_value: 'aluguel', classification: 'fixed', planning_status: 'planned', confidence_score: 0.95 },
-        { pattern_type: 'category', pattern_value: 'Assinaturas', classification: 'fixed', planning_status: 'planned', confidence_score: 0.9 },
-        { pattern_type: 'description', pattern_value: 'delivery', classification: 'variable', planning_status: 'unplanned', confidence_score: 0.85 }
+        { pattern_type: 'description', pattern_value: 'supermercado', classification: 'variable' as const, planning_status: 'planned' as const, confidence_score: 0.9 },
+        { pattern_type: 'description', pattern_value: 'aluguel', classification: 'fixed' as const, planning_status: 'planned' as const, confidence_score: 0.95 },
+        { pattern_type: 'category', pattern_value: 'Assinaturas', classification: 'fixed' as const, planning_status: 'planned' as const, confidence_score: 0.9 },
+        { pattern_type: 'description', pattern_value: 'delivery', classification: 'variable' as const, planning_status: 'unplanned' as const, confidence_score: 0.85 }
       ];
 
       const { error: patternsError } = await supabase
