@@ -40,6 +40,8 @@ export function SignUpForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      console.log('Iniciando cadastro para:', values.email);
+      
       // Armazenar o e-mail para possível reenvio
       localStorage.setItem('pendingEmailConfirmation', values.email);
       
@@ -54,22 +56,41 @@ export function SignUpForm() {
         },
       });
 
+      console.log('Resultado do cadastro:', { data, error });
+
       if (error) {
         console.error('Erro no cadastro:', error);
-        toast.error(`Erro no cadastro: ${error.message}`);
+        
+        // Tratar erros específicos com mensagens em português
+        if (error.message.includes('User already registered')) {
+          toast.error('Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.');
+        } else if (error.message.includes('Invalid email')) {
+          toast.error('E-mail inválido. Verifique e tente novamente.');
+        } else if (error.message.includes('Password')) {
+          toast.error('Senha muito fraca. Use pelo menos 6 caracteres.');
+        } else {
+          toast.error(`Erro no cadastro: ${error.message}`);
+        }
         return;
       }
 
-      // Se o usuário foi criado mas precisa confirmar e-mail
-      if (data.user && !data.session) {
-        toast.success("Cadastro realizado! Verifique seu e-mail para confirmar a conta.");
-        form.reset();
-        // Redireciona para a página de confirmação
-        navigate('/email-confirmation');
-      } else if (data.session) {
-        // Se o e-mail foi confirmado automaticamente
-        toast.success("Cadastro realizado e conta confirmada!");
-        navigate('/dashboard');
+      // Se chegou até aqui, o cadastro foi bem-sucedido
+      if (data.user) {
+        console.log('Usuário criado:', data.user.email, 'Confirmado:', data.user.email_confirmed_at);
+        
+        if (data.user.email_confirmed_at) {
+          // E-mail já confirmado (improvável com configuração atual)
+          toast.success("Cadastro realizado e conta confirmada!");
+          localStorage.removeItem('pendingEmailConfirmation');
+          navigate('/dashboard');
+        } else {
+          // E-mail precisa ser confirmado (cenário normal)
+          toast.success("Cadastro realizado! Verifique seu e-mail para confirmar a conta.");
+          form.reset();
+          navigate('/email-confirmation');
+        }
+      } else {
+        toast.error("Erro inesperado ao criar conta. Tente novamente.");
       }
     } catch (error) {
       console.error('Erro inesperado:', error);

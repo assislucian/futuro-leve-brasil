@@ -39,4 +39,15 @@ content = ""
 # Configurações importantes para o funcionamento correto
 [auth]
 site_url = "https://app.plenus.com.br"
-additional_redirect_urls = ["http://localhost:3000", "https://app.plenus.com.br", "https://app.plenus.com.br/email-confirmation"]
+additional_redirect_urls = [
+  "http://localhost:3000", 
+  "https://app.plenus.com.br", 
+  "https://app.plenus.com.br/email-confirmation",
+  "http://localhost:3000/email-confirmation"
+]
+
+# Configurações de segurança para e-mail
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+secure_email_change_enabled = true
