@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -56,5 +57,4 @@ const PrivacyPage = () => {
   );
 };
 
-export { PrivacyPage };
 export default PrivacyPage;

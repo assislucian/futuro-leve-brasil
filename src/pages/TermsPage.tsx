@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -50,5 +51,4 @@ const TermsPage = () => {
   );
 };
 
-export { TermsPage };
 export default TermsPage;

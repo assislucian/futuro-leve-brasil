@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/LoginForm";
@@ -71,5 +72,4 @@ const AuthPage = () => {
   );
 };
 
-export { AuthPage as Auth };
 export default AuthPage;
