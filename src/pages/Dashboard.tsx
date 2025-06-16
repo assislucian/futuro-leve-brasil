@@ -37,27 +37,27 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="flex flex-col gap-8 min-h-screen bg-slate-50/30 p-6 md:p-8">
-        <div className="flex items-center justify-between flex-wrap gap-6">
-          <div className="space-y-3">
-            <Skeleton className="h-10 w-80" />
-            <Skeleton className="h-4 w-96" />
+      <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-72" />
+            <Skeleton className="h-4 w-80" />
           </div>
-          <div className="flex gap-3">
-            <Skeleton className="h-10 w-36" />
-            <Skeleton className="h-10 w-36" />
-            <Skeleton className="h-10 w-44" />
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-32" />
+            <Skeleton className="h-9 w-32" />
+            <Skeleton className="h-9 w-36" />
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8 space-y-6">
-            <Skeleton className="h-48 w-full rounded-xl" />
-            <Skeleton className="h-96 w-full rounded-xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div className="lg:col-span-8 space-y-4">
+            <Skeleton className="h-40 w-full rounded-lg" />
+            <Skeleton className="h-80 w-full rounded-lg" />
           </div>
-          <div className="lg:col-span-4 space-y-5">
-            <Skeleton className="h-64 w-full rounded-xl" />
-            <Skeleton className="h-48 w-full rounded-xl" />
-            <Skeleton className="h-64 w-full rounded-xl" />
+          <div className="lg:col-span-4 space-y-4">
+            <Skeleton className="h-56 w-full rounded-lg" />
+            <Skeleton className="h-40 w-full rounded-lg" />
+            <Skeleton className="h-56 w-full rounded-lg" />
           </div>
         </div>
       </div>
@@ -71,27 +71,27 @@ const DashboardPage = () => {
   return (
     <>
       <GoalCompletionCelebration />
-      <div className="flex flex-col gap-8 min-h-screen bg-slate-50/30 p-6 md:p-8">
+      <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
         {/* Header mais limpo e profissional */}
-        <div className="flex items-start justify-between flex-wrap gap-6">
-          <div className="space-y-3">
-            <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="text-3xl md:text-4xl font-semibold text-slate-900 leading-tight">
+        <div className="flex items-start justify-between flex-wrap gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight">
                 {getGreeting()}, {firstName}! {getGreetingEmoji()}
               </h1>
               <Badge 
                 variant="secondary" 
-                className="bg-slate-100 text-slate-600 border-slate-200 font-medium px-3 py-1 text-sm"
+                className="bg-gray-100 text-gray-600 border-gray-200 font-medium px-2 py-1 text-xs"
               >
-                Versão Gratuita
+                Gratuito
               </Badge>
             </div>
-            <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-              Acompanhe seus progressos financeiros e continue construindo seus sonhos
+            <p className="text-base text-gray-600 leading-relaxed max-w-xl">
+              Acompanhe seus progressos e continue construindo seus sonhos
             </p>
           </div>
           
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <AddRecurringTransactionDialog />
             <AddInstallmentPlanDialog />
             <AddTransactionDialog />
@@ -99,19 +99,19 @@ const DashboardPage = () => {
         </div>
 
         {/* Layout com grid mais limpo */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Coluna principal */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="lg:col-span-8 space-y-4">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
               <FinancialSummary />
             </div>
-            <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
               <TransactionList />
             </div>
           </div>
           
           {/* Sidebar mais limpa */}
-          <div className="lg:col-span-4 space-y-5">
+          <div className="lg:col-span-4 space-y-4">
             <SmartInsightsCard />
             <NextActionCard />
             <GoalsSummary />
