@@ -1,11 +1,9 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import * as z from "zod";
 
 // Definir tipos explicitamente para evitar inferência complexa
 interface SignUpFormData {
@@ -16,19 +14,32 @@ interface SignUpFormData {
   terms: boolean;
 }
 
-// Schema simplificado
-const signUpSchema = z.object({
-  fullName: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Por favor, insira um email válido"),
-  password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
-  confirmPassword: z.string(),
-  terms: z.boolean().refine(val => val === true, {
-    message: "Você deve aceitar os termos e condições",
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"],
-});
+// Função de validação simples
+function validateForm(values: SignUpFormData): Record<string, string> {
+  const errors: Record<string, string> = {};
+  
+  if (!values.fullName || values.fullName.length < 2) {
+    errors.fullName = "O nome deve ter pelo menos 2 caracteres";
+  }
+  
+  if (!values.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+    errors.email = "Por favor, insira um email válido";
+  }
+  
+  if (!values.password || values.password.length < 8) {
+    errors.password = "A senha deve ter pelo menos 8 caracteres";
+  }
+  
+  if (values.password !== values.confirmPassword) {
+    errors.confirmPassword = "As senhas não coincidem";
+  }
+  
+  if (!values.terms) {
+    errors.terms = "Você deve aceitar os termos e condições";
+  }
+  
+  return errors;
+}
 
 // Função de validação de força da senha
 function validatePasswordStrength(password: string) {
@@ -65,7 +76,7 @@ export function useSignUpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
+    mode: 'onChange',
     defaultValues: {
       fullName: "",
       email: "",
@@ -80,6 +91,16 @@ export function useSignUpForm() {
     
     try {
       console.log('Iniciando cadastro para:', values.email);
+      
+      // Validar forma manual
+      const formErrors = validateForm(values);
+      if (Object.keys(formErrors).length > 0) {
+        Object.entries(formErrors).forEach(([field, message]) => {
+          form.setError(field as keyof SignUpFormData, { message });
+        });
+        setIsSubmitting(false);
+        return;
+      }
       
       // Validar força da senha
       const passwordValidation = validatePasswordStrength(values.password);
