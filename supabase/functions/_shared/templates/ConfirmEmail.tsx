@@ -1,4 +1,3 @@
-
 import { Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text } from 'npm:@react-email/components@0.0.22';
 import * as React from 'npm:react@18.3.1';
 
@@ -7,7 +6,7 @@ interface ConfirmEmailProps {
   userName?: string;
 }
 
-const baseUrl = "https://app.plenus.com.br"; // Domínio principal da sua aplicação
+const baseUrl = process.env.NODE_ENV === 'production' ? "https://app.plenus.com.br" : "http://localhost:3000";
 
 export const ConfirmEmail = ({
   confirmationLink,

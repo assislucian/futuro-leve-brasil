@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -45,6 +44,10 @@ export function SignUpForm() {
       // Armazenar o e-mail para possível reenvio
       localStorage.setItem('pendingEmailConfirmation', values.email);
       
+      // Usar a URL correta baseada no ambiente
+      const redirectUrl = `${window.location.origin}/email-confirmation`;
+      console.log('URL de redirecionamento:', redirectUrl);
+      
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -52,7 +55,7 @@ export function SignUpForm() {
           data: {
             full_name: values.fullName,
           },
-          emailRedirectTo: `${window.location.origin}/email-confirmation`,
+          emailRedirectTo: redirectUrl,
         },
       });
 
@@ -85,7 +88,7 @@ export function SignUpForm() {
           navigate('/dashboard');
         } else {
           // E-mail precisa ser confirmado (cenário normal)
-          toast.success("Cadastro realizado! Verifique seu e-mail para confirmar a conta.");
+          toast.success("Cadastro realizado com sucesso! Verifique seu e-mail para confirmar a conta.");
           form.reset();
           navigate('/email-confirmation');
         }
