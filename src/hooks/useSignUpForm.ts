@@ -5,14 +5,60 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { signUpFormSchema, SignUpFormData, validatePasswordStrength } from "@/lib/validators/signup";
+import * as z from "zod";
+
+// Definir o schema diretamente aqui para evitar problemas de inferência
+const signUpSchema = z.object({
+  fullName: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
+  email: z.string().email("Por favor, insira um email válido"),
+  password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
+  confirmPassword: z.string(),
+  terms: z.boolean().refine(val => val === true, {
+    message: "Você deve aceitar os termos e condições",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
+
+type SignUpFormData = z.infer<typeof signUpSchema>;
+
+// Função de validação de força da senha
+function validatePasswordStrength(password: string) {
+  const errors: string[] = [];
+  
+  if (password.length < 8) {
+    errors.push("A senha deve ter pelo menos 8 caracteres");
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push("A senha deve conter pelo menos uma letra minúscula");
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push("A senha deve conter pelo menos uma letra maiúscula");
+  }
+  
+  if (!/\d/.test(password)) {
+    errors.push("A senha deve conter pelo menos um número");
+  }
+  
+  if (!/[@$!%*?&]/.test(password)) {
+    errors.push("A senha deve conter pelo menos um caractere especial (@$!%*?&)");
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
 
 export function useSignUpForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpFormSchema),
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       fullName: "",
       email: "",
@@ -114,3 +160,5 @@ export function useSignUpForm() {
     isSubmitting,
   };
 }
+
+export type { SignUpFormData };
