@@ -23,19 +23,24 @@ import AnalyticsPage from "@/pages/AnalyticsPage";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: 2,
       refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutos
+      cacheTime: 10 * 60 * 1000, // 10 minutos
+    },
+    mutations: {
+      retry: 1,
     },
   },
 });
 
 function App() {
-  console.log("App: Initializing Plenus application");
+  console.log("App: Inicializando aplicação Plenus");
   
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <ThemeProvider defaultTheme="light" storageKey="plenus-ui-theme">
           <AuthProvider>
             <Routes>
               <Route path="/" element={<Index />} />

@@ -1,5 +1,5 @@
 
-import { BarChart3, Settings, Target, Wallet, TrendingUp, LogOut, User } from "lucide-react";
+import { BarChart3, Settings, Target, Wallet, TrendingUp, LogOut } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import {
@@ -36,18 +36,21 @@ export default function AppSidebar() {
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
 
-  const isActive = (path: string) => currentPath === path;
-
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    console.log("AppSidebar: Fazendo logout");
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error("AppSidebar: Erro ao fazer logout:", error);
+    }
   };
 
-  const userName = user?.user_metadata?.full_name || "Usuário";
+  const userName = user?.user_metadata?.full_name || profile?.full_name || "Usuário";
   const userEmail = user?.email || "";
-  const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+  const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
     <Sidebar className={isCollapsed ? "w-14" : "w-60"} collapsible="icon">
@@ -83,8 +86,10 @@ export default function AppSidebar() {
       <SidebarFooter className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={profile?.avatar_url} />
-            <AvatarFallback>{userInitials}</AvatarFallback>
+            <AvatarImage src={profile?.avatar_url || undefined} />
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {userInitials}
+            </AvatarFallback>
           </Avatar>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
@@ -98,7 +103,7 @@ export default function AppSidebar() {
             variant="ghost"
             size="sm"
             onClick={handleSignOut}
-            className="mt-2 w-full justify-start"
+            className="mt-2 w-full justify-start text-muted-foreground hover:text-foreground"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Sair

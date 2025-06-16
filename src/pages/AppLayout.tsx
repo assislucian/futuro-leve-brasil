@@ -1,23 +1,27 @@
 
-import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import AppHeader from '@/components/AppHeader';
-import { Sparkles } from 'lucide-react';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import AppSidebar from '@/components/AppSidebar';
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import AppSidebar from "@/components/AppSidebar";
+import AppHeader from "@/components/AppHeader";
+import { Sparkles } from "lucide-react";
 
 const AppLayout = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("AppLayout: Verificando autenticação - usuário:", !!user, "carregando:", loading);
+    
     if (!loading && !user) {
-      navigate('/auth');
+      console.log("AppLayout: Usuário não autenticado, redirecionando para auth");
+      navigate('/auth', { replace: true });
     }
   }, [user, loading, navigate]);
 
   if (loading) {
+    console.log("AppLayout: Mostrando carregamento");
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
@@ -27,16 +31,23 @@ const AppLayout = () => {
   }
 
   if (!user) {
-    return null; // O useEffect já está cuidando do redirecionamento
+    console.log("AppLayout: Sem usuário, redirecionando...");
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+        <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+        <p className="text-muted-foreground">Redirecionando...</p>
+      </div>
+    );
   }
 
+  console.log("AppLayout: Renderizando layout da aplicação");
   return (
-    <SidebarProvider style={{ '--sidebar-width-icon': '80px' } as React.CSSProperties}>
-      <div className="flex min-h-screen w-full bg-muted/40">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <div className="flex flex-1 flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           <AppHeader />
-          <main className="flex-1 overflow-y-auto p-4 md:gap-8 md:p-8">
+          <main className="flex-1 overflow-auto p-6">
             <Outlet />
           </main>
         </div>
