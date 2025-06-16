@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, FileText, MoreHorizontal, Edit, Trash2, TrendingUp, TrendingDown } from "lucide-react";
+import { AlertCircle, FileText, MoreHorizontal, Edit, Trash2, TrendingUp, TrendingDown, Target, Plus } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useRecentTransactions } from "@/hooks/useRecentTransactions";
 import { Button } from "./ui/button";
@@ -12,6 +12,7 @@ import { EditTransactionDialog } from "./EditTransactionDialog";
 import { DeleteTransactionAlert } from "./DeleteTransactionAlert";
 import { TransactionBadge } from "./ui/transaction-badge";
 import { TransactionGoalConnector } from "./TransactionGoalConnector";
+import { AddTransactionDialog } from "./AddTransactionDialog";
 
 const TransactionList = () => {
   const { data: transactions, isLoading, error } = useRecentTransactions();
@@ -61,12 +62,25 @@ const TransactionList = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          📊 Transações Recentes
-        </CardTitle>
-        <CardDescription>
-          Aqui estão as últimas movimentações da sua conta.
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              📊 Transações Recentes
+            </CardTitle>
+            <CardDescription>
+              Aqui estão as últimas movimentações da sua conta.
+            </CardDescription>
+          </div>
+          <AddTransactionDialog>
+            <Button 
+              size="sm" 
+              className="h-8 gap-1.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-sm"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Adicionar</span>
+            </Button>
+          </AddTransactionDialog>
+        </div>
       </CardHeader>
       <CardContent>
         {transactions && transactions.length > 0 ? (
@@ -109,7 +123,7 @@ const TransactionList = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      {/* Botão de conectar à meta (apenas para receitas) */}
+                      {/* Botão de conectar à meta otimizado (apenas para receitas) */}
                       {transaction.type === 'income' && (
                         <TransactionGoalConnector
                           transactionAmount={transaction.amount}
@@ -124,7 +138,7 @@ const TransactionList = () => {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end" className="w-48 bg-white shadow-lg border">
                            <EditTransactionDialog transaction={transaction}>
                               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                 <Edit className="mr-2 h-4 w-4" />
@@ -147,14 +161,24 @@ const TransactionList = () => {
             </TableBody>
           </Table>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <FileText className="h-8 w-8 text-primary" />
+          <div className="flex flex-col items-center justify-center gap-6 py-12 text-center">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-blue-100 flex items-center justify-center">
+              <FileText className="h-8 w-8 text-slate-500" />
             </div>
-            <div>
-              <h3 className="text-xl font-semibold">Nenhuma transação encontrada</h3>
-              <p className="text-muted-foreground">Parece que você ainda não adicionou nenhuma transação. <br/> Comece registrando uma nova receita ou despesa!</p>
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-slate-800">Comece sua Jornada Financeira!</h3>
+              <p className="text-slate-600 max-w-md leading-relaxed">
+                Ainda não há transações registradas. Que tal adicionar sua primeira receita ou despesa?
+                <br/>
+                <span className="font-medium text-emerald-600">Cada passo conta para seus sonhos! ✨</span>
+              </p>
             </div>
+            <AddTransactionDialog>
+              <Button className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg hover:shadow-emerald-200 transition-all duration-200">
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Primeira Transação
+              </Button>
+            </AddTransactionDialog>
           </div>
         )}
       </CardContent>
