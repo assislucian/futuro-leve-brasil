@@ -5,12 +5,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { signUpFormSchema, SignUpFormData, validatePasswordStrength } from "@/lib/validators/signup";
+import { 
+  signUpFormSchema, 
+  SignUpFormData, 
+  validatePasswordStrength,
+  isValidEmail 
+} from "@/lib/validators/signup";
+import { AuthError } from "@supabase/supabase-js";
 
+// Interface para estado do hook
+interface UseSignUpFormState {
+  isSubmitting: boolean;
+  lastAttemptEmail: string | null;
+}
+
+// Interface para resultado do cadastro
+interface SignUpResult {
+  success: boolean;
+  requiresEmailConfirmation: boolean;
+  error?: string;
+}
+
+/**
+ * Hook personalizado para gerenciar o formulário de cadastro
+ * Fornece validação, submissão e tratamento de erros robusto
+ */
 export function useSignUpForm() {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [state, setState] = useState<UseSignUpFormState>({
+    isSubmitting: false,
+    lastAttemptEmail: null
+  });
 
+  // Configuração do formulário com validação Zod
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
@@ -20,39 +47,80 @@ export function useSignUpForm() {
       confirmPassword: "",
       terms: false,
     },
+    mode: "onChange", // Validação em tempo real
   });
 
-  const onSubmit = async (values: SignUpFormData) => {
-    setIsSubmitting(true);
-    
+  /**
+   * Verifica se o email já está em uso
+   * @param email - Email a ser verificado
+   * @returns true se disponível
+   */
+  const checkEmailAvailability = async (email: string): Promise<boolean> => {
     try {
-      console.log('Iniciando cadastro para:', values.email);
-      
-      // Validar força da senha
-      const passwordValidation = validatePasswordStrength(values.password);
-      if (!passwordValidation.isValid) {
-        toast.error(passwordValidation.errors[0]);
-        setIsSubmitting(false);
-        return;
-      }
-      
-      // Verificar se o email já está em uso
-      const { data: existingUser } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('id')
-        .eq('email', values.email)
+        .eq('id', email) // Verificação pelo ID que seria o email do auth
         .single();
 
-      if (existingUser) {
-        toast.error('Este email já possui uma conta. Tente fazer login ou use outro email.');
-        setIsSubmitting(false);
-        return;
+      if (error && error.code === 'PGRST116') {
+        // Email não encontrado, está disponível
+        return true;
       }
-
-      // Armazenar o e-mail para possível reenvio
-      localStorage.setItem('pendingEmailConfirmation', values.email);
       
-      const redirectUrl = `${window.location.origin}/email-confirmation`;
+      return !data; // Se encontrou dados, email não está disponível
+    } catch (error) {
+      console.warn('Erro ao verificar disponibilidade do email:', error);
+      return true; // Em caso de erro, prosseguir com tentativa
+    }
+  };
+
+  /**
+   * Trata erros específicos do Supabase Auth
+   * @param error - Erro do Supabase
+   * @returns Mensagem de erro user-friendly
+   */
+  const handleAuthError = (error: AuthError): string => {
+    const errorMap: Record<string, string> = {
+      'User already registered': 'Este email já está cadastrado. Tente fazer login ou usar outro email.',
+      'Invalid email': 'Email inválido. Verifique o formato e tente novamente.',
+      'Password should be at least 6 characters': 'Senha não atende aos critérios de segurança.',
+      'Signup is disabled': 'Cadastros estão temporariamente desabilitados.',
+      'Email rate limit exceeded': 'Muitas tentativas de cadastro. Aguarde alguns minutos.',
+      'Captcha verification failed': 'Falha na verificação de segurança. Tente novamente.',
+    };
+
+    // Busca por correspondência parcial na mensagem
+    for (const [key, message] of Object.entries(errorMap)) {
+      if (error.message.includes(key)) {
+        return message;
+      }
+    }
+
+    // Tratamento genérico baseado no status
+    if (error.status === 422) {
+      return 'Dados inválidos. Verifique as informações e tente novamente.';
+    }
+    
+    if (error.status === 429) {
+      return 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.';
+    }
+
+    return 'Erro no cadastro. Tente novamente em alguns minutos.';
+  };
+
+  /**
+   * Executa o processo de cadastro
+   * @param values - Dados do formulário
+   * @returns Resultado do cadastro
+   */
+  const performSignUp = async (values: SignUpFormData): Promise<SignUpResult> => {
+    try {
+      // Gerar URL de redirecionamento segura
+      const baseUrl = window.location.origin;
+      const redirectUrl = `${baseUrl}/email-confirmation`;
+      
+      console.log('Iniciando cadastro para:', values.email);
       console.log('URL de redirecionamento:', redirectUrl);
       
       const { data, error } = await supabase.auth.signUp({
@@ -66,51 +134,103 @@ export function useSignUpForm() {
         },
       });
 
-      console.log('Resultado do cadastro:', { data, error });
-
       if (error) {
         console.error('Erro no cadastro:', error);
-        
-        // Tratamento específico de erros com mensagens user-friendly
-        if (error.message.includes('User already registered')) {
-          toast.error('Este email já está cadastrado. Tente fazer login ou recuperar sua senha.');
-        } else if (error.message.includes('Invalid email')) {
-          toast.error('Email inválido. Verifique o formato e tente novamente.');
-        } else if (error.message.includes('Password')) {
-          toast.error('Senha não atende aos critérios de segurança. Verifique os requisitos acima.');
-        } else if (error.message.includes('rate limit')) {
-          toast.error('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
-        } else {
-          toast.error('Erro no cadastro. Tente novamente em alguns minutos.');
-        }
-        return;
+        return {
+          success: false,
+          requiresEmailConfirmation: false,
+          error: handleAuthError(error)
+        };
       }
 
-      // Sucesso no cadastro
       if (data.user) {
-        console.log('Usuário criado:', data.user.email);
+        console.log('Usuário criado com sucesso:', data.user.email);
         
-        toast.success("Conta criada com sucesso! Verifique seu email para ativar a conta.", {
-          duration: 5000,
-        });
+        // Armazenar email para possível reenvio de confirmação
+        localStorage.setItem('pendingEmailConfirmation', values.email);
         
+        return {
+          success: true,
+          requiresEmailConfirmation: !data.user.email_confirmed_at,
+        };
+      }
+
+      return {
+        success: false,
+        requiresEmailConfirmation: false,
+        error: 'Erro inesperado durante o cadastro.'
+      };
+      
+    } catch (error) {
+      console.error('Erro inesperado no cadastro:', error);
+      return {
+        success: false,
+        requiresEmailConfirmation: false,
+        error: 'Erro no sistema. Tente novamente em alguns minutos.'
+      };
+    }
+  };
+
+  /**
+   * Handler principal do formulário
+   * @param values - Dados validados do formulário
+   */
+  const onSubmit = async (values: SignUpFormData) => {
+    // Prevenir múltiplas submissões
+    if (state.isSubmitting) return;
+    
+    setState(prev => ({ ...prev, isSubmitting: true }));
+    
+    try {
+      console.log('Iniciando processo de cadastro...');
+      
+      // Validação adicional de email
+      if (!isValidEmail(values.email)) {
+        toast.error('Formato de email inválido. Verifique e tente novamente.');
+        return;
+      }
+      
+      // Validação rigorosa da senha
+      const passwordValidation = validatePasswordStrength(values.password);
+      if (!passwordValidation.isValid) {
+        toast.error(passwordValidation.errors[0]);
+        return;
+      }
+      
+      // Executar cadastro
+      const result = await performSignUp(values);
+      
+      if (result.success) {
+        // Sucesso - limpar formulário e redirecionar
         form.reset();
-        navigate('/email-confirmation');
+        setState(prev => ({ ...prev, lastAttemptEmail: values.email }));
+        
+        if (result.requiresEmailConfirmation) {
+          toast.success(
+            "Conta criada com sucesso! Verifique seu email para ativar a conta.", 
+            { duration: 5000 }
+          );
+          navigate('/email-confirmation');
+        } else {
+          toast.success("Conta criada e ativada com sucesso!");
+          navigate('/dashboard');
+        }
       } else {
-        toast.error("Erro inesperado. Tente novamente.");
+        toast.error(result.error || 'Erro no cadastro');
       }
       
     } catch (error) {
-      console.error('Erro inesperado:', error);
-      toast.error("Erro no sistema. Tente novamente em alguns minutos.");
+      console.error('Erro no handler de submit:', error);
+      toast.error("Erro inesperado. Tente novamente.");
     } finally {
-      setIsSubmitting(false);
+      setState(prev => ({ ...prev, isSubmitting: false }));
     }
   };
 
   return {
     form,
     onSubmit,
-    isSubmitting,
+    isSubmitting: state.isSubmitting,
+    lastAttemptEmail: state.lastAttemptEmail,
   };
 }
