@@ -22,7 +22,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
 
 // Validação simplificada de senha para evitar problemas de tipo
-const passwordValidation = z.string()
+const passwordSchema = z.string()
   .min(8, { message: "A senha deve ter pelo menos 8 caracteres" })
   .refine((password) => {
     const hasLowercase = /[a-z]/.test(password);
@@ -42,7 +42,7 @@ const formSchema = z.object({
   email: z.string()
     .email({ message: "Por favor, insira um email válido" })
     .toLowerCase(),
-  password: passwordValidation,
+  password: passwordSchema,
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, {
     message: "Você deve aceitar os termos e condições",
@@ -52,13 +52,15 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 export function SignUpForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
@@ -71,7 +73,7 @@ export function SignUpForm() {
 
   const password = form.watch("password");
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormData) {
     setIsSubmitting(true);
     
     try {
