@@ -29,7 +29,7 @@ export const useRecurringTransactions = () => {
       if (!user) return [];
       
       const { data, error } = await supabase
-        .from("recurring_transactions" as any)
+        .from("recurring_transactions")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
@@ -50,7 +50,7 @@ export const useCreateRecurringTransaction = () => {
       if (!user) throw new Error("User not authenticated");
 
       const { data: result, error } = await supabase
-        .from("recurring_transactions" as any)
+        .from("recurring_transactions")
         .insert({
           ...data,
           user_id: user.id

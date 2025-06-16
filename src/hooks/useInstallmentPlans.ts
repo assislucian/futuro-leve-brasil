@@ -28,7 +28,7 @@ export const useInstallmentPlans = () => {
       if (!user) return [];
       
       const { data, error } = await supabase
-        .from("installment_plans" as any)
+        .from("installment_plans")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
@@ -49,7 +49,7 @@ export const useCreateInstallmentPlan = () => {
       if (!user) throw new Error("User not authenticated");
 
       const { data: result, error } = await supabase
-        .from("installment_plans" as any)
+        .from("installment_plans")
         .insert({
           ...data,
           user_id: user.id,
