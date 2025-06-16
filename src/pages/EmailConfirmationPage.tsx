@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Sparkles, Mail, CheckCircle, XCircle, Loader2, RefreshCw } from "lucide-react";
+import { Sparkles, Mail, CheckCircle, XCircle, Loader2, RefreshCw, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 const EmailConfirmationPage = () => {
@@ -14,10 +14,10 @@ const EmailConfirmationPage = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'pending'>('pending');
   const [message, setMessage] = useState('');
   const [isResending, setIsResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
     const handleEmailConfirmation = async () => {
-      // Verifica se há parâmetros de confirmação na URL
       const token = searchParams.get('token');
       const tokenHash = searchParams.get('token_hash');
       const type = searchParams.get('type');
@@ -26,14 +26,16 @@ const EmailConfirmationPage = () => {
 
       console.log('Parâmetros da URL:', { token, tokenHash, type, error, errorDescription });
 
-      // Se há erro na URL, mostrar o erro
       if (error) {
         setStatus('error');
-        setMessage(errorDescription || 'Erro na confirmação do e-mail');
+        if (error === 'access_denied') {
+          setMessage('Link expirado ou inválido. Solicite um novo email de confirmação.');
+        } else {
+          setMessage(errorDescription || 'Erro na confirmação do e-mail');
+        }
         return;
       }
 
-      // Se há token de confirmação, processar
       if (tokenHash && type) {
         setStatus('loading');
         try {
@@ -49,17 +51,21 @@ const EmailConfirmationPage = () => {
           if (verifyError) {
             console.error('Erro na verificação:', verifyError);
             setStatus('error');
-            setMessage('Link de confirmação inválido ou expirado. Tente solicitar um novo e-mail de confirmação.');
+            if (verifyError.message.includes('expired')) {
+              setMessage('Link de confirmação expirado. Solicite um novo email de confirmação.');
+            } else if (verifyError.message.includes('invalid')) {
+              setMessage('Link de confirmação inválido. Verifique se você clicou no link correto do email.');
+            } else {
+              setMessage('Erro na confirmação. Tente solicitar um novo email de confirmação.');
+            }
           } else if (data.user) {
             console.log('E-mail confirmado com sucesso:', data.user.email);
             setStatus('success');
-            setMessage('E-mail confirmado com sucesso! Redirecionando para o dashboard...');
-            toast.success('Bem-vindo(a) ao Plenus! Sua conta foi ativada.');
+            setMessage('E-mail confirmado com sucesso! Sua conta está ativa.');
+            toast.success('🎉 Bem-vindo(a) ao Plenus! Sua conta foi ativada com sucesso.');
             
-            // Limpar o localStorage
             localStorage.removeItem('pendingEmailConfirmation');
             
-            // Redirecionar após 2 segundos
             setTimeout(() => {
               navigate('/dashboard');
             }, 2000);
@@ -70,10 +76,9 @@ const EmailConfirmationPage = () => {
         } catch (error) {
           console.error('Erro inesperado:', error);
           setStatus('error');
-          setMessage('Erro inesperado ao confirmar e-mail.');
+          setMessage('Erro do sistema. Tente novamente em alguns minutos.');
         }
       } else {
-        // Sem parâmetros de confirmação, mostrar status de pendente
         setStatus('pending');
         setMessage('Aguardando confirmação de e-mail...');
       }
@@ -82,11 +87,27 @@ const EmailConfirmationPage = () => {
     handleEmailConfirmation();
   }, [searchParams, navigate]);
 
+  // Cooldown para reenvio
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      interval = setInterval(() => {
+        setResendCooldown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendCooldown]);
+
   const resendConfirmation = async () => {
     const email = localStorage.getItem('pendingEmailConfirmation');
     if (!email) {
       toast.error('E-mail não encontrado. Tente fazer o cadastro novamente.');
       navigate('/auth');
+      return;
+    }
+
+    if (resendCooldown > 0) {
+      toast.error(`Aguarde ${resendCooldown} segundos antes de tentar novamente.`);
       return;
     }
 
@@ -105,17 +126,19 @@ const EmailConfirmationPage = () => {
       if (error) {
         console.error('Erro ao reenviar:', error);
         if (error.message.includes('rate limit')) {
-          toast.error('Aguarde alguns segundos antes de tentar novamente.');
+          toast.error('Limite de reenvios atingido. Aguarde alguns minutos.');
+          setResendCooldown(300); // 5 minutos
         } else {
-          toast.error('Erro ao reenviar e-mail: ' + error.message);
+          toast.error('Erro ao reenviar e-mail. Tente novamente.');
         }
       } else {
-        toast.success('E-mail de confirmação reenviado! Verifique sua caixa de entrada.');
-        setMessage('Novo e-mail de confirmação enviado! Verifique sua caixa de entrada e spam.');
+        toast.success('📧 Email reenviado! Verifique sua caixa de entrada e spam.');
+        setMessage('Novo e-mail de confirmação enviado! Verifique sua caixa de entrada e pasta de spam.');
+        setResendCooldown(60); // 1 minuto
       }
     } catch (error) {
       console.error('Erro inesperado ao reenviar:', error);
-      toast.error('Erro inesperado. Tente novamente.');
+      toast.error('Erro do sistema. Tente novamente.');
     } finally {
       setIsResending(false);
     }
@@ -191,12 +214,17 @@ const EmailConfirmationPage = () => {
                     onClick={resendConfirmation} 
                     variant="outline" 
                     className="w-full"
-                    disabled={isResending}
+                    disabled={isResending || resendCooldown > 0}
                   >
                     {isResending ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                         Reenviando...
+                      </>
+                    ) : resendCooldown > 0 ? (
+                      <>
+                        <Clock className="w-4 h-4 mr-2" />
+                        Aguarde {resendCooldown}s
                       </>
                     ) : (
                       'Reenviar e-mail de confirmação'
@@ -215,12 +243,17 @@ const EmailConfirmationPage = () => {
                   <Button 
                     onClick={resendConfirmation} 
                     className="w-full"
-                    disabled={isResending}
+                    disabled={isResending || resendCooldown > 0}
                   >
                     {isResending ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                         Reenviando...
+                      </>
+                    ) : resendCooldown > 0 ? (
+                      <>
+                        <Clock className="w-4 h-4 mr-2" />
+                        Aguarde {resendCooldown}s
                       </>
                     ) : (
                       'Solicitar novo e-mail'

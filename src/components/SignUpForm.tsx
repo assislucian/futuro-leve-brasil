@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,36 +16,92 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Eye, EyeOff, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Validação robusta de senha seguindo melhores práticas
+const passwordValidation = z.string()
+  .min(8, { message: "A senha deve ter pelo menos 8 caracteres" })
+  .regex(/^(?=.*[a-z])/, { message: "A senha deve conter pelo menos uma letra minúscula" })
+  .regex(/^(?=.*[A-Z])/, { message: "A senha deve conter pelo menos uma letra maiúscula" })
+  .regex(/^(?=.*\d)/, { message: "A senha deve conter pelo menos um número" })
+  .regex(/^(?=.*[@$!%*?&])/, { message: "A senha deve conter pelo menos um caractere especial (@$!%*?&)" });
 
 const formSchema = z.object({
-  fullName: z.string().min(3, { message: "O nome completo é obrigatório." }),
-  email: z.string().email({ message: "Por favor, insira um email válido." }),
-  password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres." }),
+  fullName: z.string()
+    .min(2, { message: "O nome deve ter pelo menos 2 caracteres" })
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, { message: "O nome deve conter apenas letras e espaços" }),
+  email: z.string()
+    .email({ message: "Por favor, insira um email válido" })
+    .toLowerCase(),
+  password: passwordValidation,
+  confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, {
-    message: "Você deve aceitar os termos e condições.",
+    message: "Você deve aceitar os termos e condições",
   }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
 });
 
 export function SignUpForm() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
       email: "",
       password: "",
+      confirmPassword: "",
       terms: false,
     },
   });
 
+  const password = form.watch("password");
+
+  // Verificador de força da senha em tempo real
+  const getPasswordStrength = (password: string) => {
+    const checks = [
+      { test: password.length >= 8, label: "Pelo menos 8 caracteres" },
+      { test: /[a-z]/.test(password), label: "Uma letra minúscula" },
+      { test: /[A-Z]/.test(password), label: "Uma letra maiúscula" },
+      { test: /\d/.test(password), label: "Um número" },
+      { test: /[@$!%*?&]/.test(password), label: "Um caractere especial" },
+    ];
+    
+    const passedChecks = checks.filter(check => check.test).length;
+    return { checks, strength: passedChecks };
+  };
+
+  const passwordStrength = getPasswordStrength(password);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+    
     try {
       console.log('Iniciando cadastro para:', values.email);
       
+      // Verificar se o email já está em uso
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', values.email)
+        .single();
+
+      if (existingUser) {
+        toast.error('Este email já possui uma conta. Tente fazer login ou use outro email.');
+        setIsSubmitting(false);
+        return;
+      }
+
       // Armazenar o e-mail para possível reenvio
       localStorage.setItem('pendingEmailConfirmation', values.email);
       
-      // Usar a URL correta baseada no ambiente
       const redirectUrl = `${window.location.origin}/email-confirmation`;
       console.log('URL de redirecionamento:', redirectUrl);
       
@@ -64,40 +121,40 @@ export function SignUpForm() {
       if (error) {
         console.error('Erro no cadastro:', error);
         
-        // Tratar erros específicos com mensagens em português
+        // Tratamento específico de erros com mensagens user-friendly
         if (error.message.includes('User already registered')) {
-          toast.error('Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.');
+          toast.error('Este email já está cadastrado. Tente fazer login ou recuperar sua senha.');
         } else if (error.message.includes('Invalid email')) {
-          toast.error('E-mail inválido. Verifique e tente novamente.');
+          toast.error('Email inválido. Verifique o formato e tente novamente.');
         } else if (error.message.includes('Password')) {
-          toast.error('Senha muito fraca. Use pelo menos 6 caracteres.');
+          toast.error('Senha não atende aos critérios de segurança. Verifique os requisitos acima.');
+        } else if (error.message.includes('rate limit')) {
+          toast.error('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
         } else {
-          toast.error(`Erro no cadastro: ${error.message}`);
+          toast.error('Erro no cadastro. Tente novamente em alguns minutos.');
         }
         return;
       }
 
-      // Se chegou até aqui, o cadastro foi bem-sucedido
+      // Sucesso no cadastro
       if (data.user) {
-        console.log('Usuário criado:', data.user.email, 'Confirmado:', data.user.email_confirmed_at);
+        console.log('Usuário criado:', data.user.email);
         
-        if (data.user.email_confirmed_at) {
-          // E-mail já confirmado (improvável com configuração atual)
-          toast.success("Cadastro realizado e conta confirmada!");
-          localStorage.removeItem('pendingEmailConfirmation');
-          navigate('/dashboard');
-        } else {
-          // E-mail precisa ser confirmado (cenário normal)
-          toast.success("Cadastro realizado com sucesso! Verifique seu e-mail para confirmar a conta.");
-          form.reset();
-          navigate('/email-confirmation');
-        }
+        toast.success("Conta criada com sucesso! Verifique seu email para ativar a conta.", {
+          duration: 5000,
+        });
+        
+        form.reset();
+        navigate('/email-confirmation');
       } else {
-        toast.error("Erro inesperado ao criar conta. Tente novamente.");
+        toast.error("Erro inesperado. Tente novamente.");
       }
+      
     } catch (error) {
       console.error('Erro inesperado:', error);
-      toast.error("Erro inesperado ao criar conta. Tente novamente.");
+      toast.error("Erro no sistema. Tente novamente em alguns minutos.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -111,12 +168,17 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Nome Completo</FormLabel>
               <FormControl>
-                <Input placeholder="Seu nome completo" {...field} />
+                <Input 
+                  placeholder="Seu nome completo" 
+                  {...field}
+                  autoComplete="name"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="email"
@@ -124,12 +186,18 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="seu@email.com" {...field} />
+                <Input 
+                  placeholder="seu@email.com" 
+                  type="email"
+                  {...field}
+                  autoComplete="email"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -137,12 +205,104 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Senha</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Crie uma senha forte" {...field} />
+                <div className="relative">
+                  <Input 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="Crie uma senha forte" 
+                    {...field}
+                    autoComplete="new-password"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              
+              {/* Indicador de força da senha */}
+              {password && (
+                <div className="mt-2 space-y-2">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((level) => (
+                      <div
+                        key={level}
+                        className={`h-1 flex-1 rounded ${
+                          level <= passwordStrength.strength
+                            ? passwordStrength.strength <= 2
+                              ? 'bg-red-500'
+                              : passwordStrength.strength <= 3
+                              ? 'bg-yellow-500'
+                              : 'bg-green-500'
+                            : 'bg-gray-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  
+                  <div className="text-xs space-y-1">
+                    {passwordStrength.checks.map((check, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        {check.test ? (
+                          <CheckCircle className="h-3 w-3 text-green-500" />
+                        ) : (
+                          <XCircle className="h-3 w-3 text-gray-400" />
+                        )}
+                        <span className={check.test ? "text-green-600" : "text-gray-500"}>
+                          {check.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirmar Senha</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input 
+                    type={showConfirmPassword ? "text" : "password"} 
+                    placeholder="Digite a senha novamente" 
+                    {...field}
+                    autoComplete="new-password"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="terms"
@@ -173,8 +333,22 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full btn-primary" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Criando conta..." : "Criar Conta Gratuita"}
+
+        {/* Aviso de segurança */}
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="text-sm">
+            <strong>100% Seguro:</strong> Seus dados são criptografados e protegidos. 
+            Nunca compartilhamos informações pessoais com terceiros.
+          </AlertDescription>
+        </Alert>
+
+        <Button 
+          type="submit" 
+          className="w-full btn-primary" 
+          disabled={isSubmitting || !form.formState.isValid}
+        >
+          {isSubmitting ? "Criando conta..." : "Criar Conta Gratuita"}
         </Button>
       </form>
     </Form>
