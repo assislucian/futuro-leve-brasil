@@ -37,7 +37,7 @@ export function OnboardingTour() {
 
   return (
     <Dialog open={isOnboardingActive} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md" hideCloseButton>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-full flex items-center justify-center">
             <IconComponent className="h-8 w-8 text-emerald-600" />
