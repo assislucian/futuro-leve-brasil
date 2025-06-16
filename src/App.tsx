@@ -20,9 +20,18 @@ import TermsPage from "@/pages/TermsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
+  console.log("App: Initializing Plenus application");
+  
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

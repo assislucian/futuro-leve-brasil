@@ -25,42 +25,82 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("AuthProvider: Setting up auth state listener");
+    
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log("Auth state changed:", _event, session?.user?.id);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("AuthProvider: Auth state changed:", event, "User ID:", session?.user?.id);
+      
       setSession(session);
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
       if (currentUser) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentUser.id)
-          .single();
-        setProfile(profileData as Profile);
+        console.log("AuthProvider: Fetching profile for user:", currentUser.id);
+        try {
+          const { data: profileData, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+          
+          if (error) {
+            console.error("AuthProvider: Error fetching profile:", error);
+          } else {
+            console.log("AuthProvider: Profile fetched successfully");
+            setProfile(profileData as Profile);
+          }
+        } catch (error) {
+          console.error("AuthProvider: Exception fetching profile:", error);
+        }
       } else {
+        console.log("AuthProvider: No user, clearing profile");
         setProfile(null);
       }
+      
       setLoading(false);
+      console.log("AuthProvider: Auth state update complete");
     });
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    // Verificar sessão inicial
+    console.log("AuthProvider: Getting initial session");
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (error) {
+        console.error("AuthProvider: Error getting session:", error);
+        setLoading(false);
+        return;
+      }
+      
       if (session) {
+        console.log("AuthProvider: Initial session found for user:", session.user.id);
         setSession(session);
         setUser(session.user);
-         const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        setProfile(profileData as Profile);
+        
+        try {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          
+          if (profileError) {
+            console.error("AuthProvider: Error fetching initial profile:", profileError);
+          } else {
+            setProfile(profileData as Profile);
+          }
+        } catch (error) {
+          console.error("AuthProvider: Exception fetching initial profile:", error);
+        }
+      } else {
+        console.log("AuthProvider: No initial session found");
       }
+      
       setLoading(false);
     });
 
     return () => {
+      console.log("AuthProvider: Cleaning up auth listener");
       subscription?.unsubscribe();
     };
   }, []);
@@ -74,6 +114,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loading,
     isTrialing,
   };
+
+  console.log("AuthProvider: Current state - user:", !!user, "loading:", loading, "profile:", !!profile);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
