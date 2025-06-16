@@ -37,7 +37,6 @@ export default function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
-  const isExpanded = items.some((i) => isActive(i.url));
 
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
@@ -62,7 +61,7 @@ export default function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup open={isExpanded}>
+        <SidebarGroup>
           <SidebarGroupLabel>Navegação</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

@@ -4,7 +4,6 @@ import { Session, User } from "@supabase/supabase-js";
 import React, { createContext, useEffect, useState } from "react";
 import { Database } from "@/integrations/supabase/types";
 
-// Extendemos o tipo Profile para incluir trial_ends_at que foi adicionado na migração
 type Profile = Database['public']['Tables']['profiles']['Row'] & {
   trial_ends_at: string | null;
 };
@@ -26,12 +25,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // onAuthStateChange fires an INITIAL_SESSION event on page load.
-    // It also fires on SIGN_IN, SIGN_OUT, TOKEN_REFRESHED, etc.
-    // This is the single source of truth for the user's auth state.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log("Auth state changed:", _event, session?.user?.id);
       setSession(session);
       const currentUser = session?.user ?? null;
       setUser(currentUser);
@@ -49,8 +46,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     });
 
-    // We still call getSession to cover edge cases where the listener might not fire
-    // on initial load for a cached session. The listener will override this if it fires.
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         setSession(session);
@@ -62,9 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .single();
         setProfile(profileData as Profile);
       }
-      // Set loading to false only if the listener hasn't already done it.
-      // This avoids a flicker on authenticated page loads.
-      setLoading(l => (l ? false : l));
+      setLoading(false);
     });
 
     return () => {
