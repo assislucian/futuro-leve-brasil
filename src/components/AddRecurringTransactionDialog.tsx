@@ -25,15 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Repeat, Calendar } from "lucide-react";
+import { Repeat } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCreateRecurringTransaction } from "@/hooks/useRecurringTransactions";
 import { BRAZILIAN_CATEGORIES, RECURRENCE_OPTIONS } from "@/lib/constants/categories";
 
 const recurringTransactionSchema = z.object({
@@ -60,8 +57,7 @@ export function AddRecurringTransactionDialog({
   onOpenChange: controlledOnOpenChange 
 }: AddRecurringTransactionDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const createRecurringTransaction = useCreateRecurringTransaction();
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -84,35 +80,22 @@ export function AddRecurringTransactionDialog({
   const categories = selectedType === "income" ? BRAZILIAN_CATEGORIES.INCOME : BRAZILIAN_CATEGORIES.EXPENSE;
 
   async function onSubmit(values: RecurringTransactionFormValues) {
-    if (!user) {
-      toast.error("Você precisa estar logado para criar uma transação recorrente.");
-      return;
-    }
-
-    // Calcular próxima data de execução
     const startDate = new Date(values.start_date);
-    let nextExecutionDate = startDate;
-
-    const { error } = await supabase.from("recurring_transactions").insert({
+    
+    await createRecurringTransaction.mutateAsync({
       description: values.description,
       amount: values.amount,
       type: values.type,
       category: values.category,
       frequency: values.frequency,
       start_date: values.start_date,
-      end_date: values.end_date || null,
-      next_execution_date: nextExecutionDate.toISOString().split("T")[0],
-      user_id: user.id
+      end_date: values.end_date || undefined,
+      next_execution_date: startDate.toISOString().split("T")[0],
+      is_active: true,
     });
 
-    if (error) {
-      toast.error(`Erro ao criar transação recorrente: ${error.message}`);
-    } else {
-      toast.success("🔄 Transação recorrente criada! Ela será executada automaticamente.");
-      queryClient.invalidateQueries({ queryKey: ["recurring-transactions"] });
-      setOpen(false);
-      form.reset();
-    }
+    setOpen(false);
+    form.reset();
   }
 
   return (
@@ -274,8 +257,8 @@ export function AddRecurringTransactionDialog({
             </div>
 
             <DialogFooter>
-              <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
-                {form.formState.isSubmitting ? "Criando..." : "🔄 Criar Recorrência"}
+              <Button type="submit" disabled={createRecurringTransaction.isPending} className="w-full">
+                {createRecurringTransaction.isPending ? "Criando..." : "🔄 Criar Recorrência"}
               </Button>
             </DialogFooter>
           </form>

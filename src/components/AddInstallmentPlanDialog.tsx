@@ -30,10 +30,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCreateInstallmentPlan } from "@/hooks/useInstallmentPlans";
 
 const installmentPlanSchema = z.object({
   description: z.string().min(2, { message: "A descrição precisa ter pelo menos 2 caracteres." }),
@@ -68,8 +65,7 @@ export function AddInstallmentPlanDialog({
   onOpenChange: controlledOnOpenChange 
 }: AddInstallmentPlanDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const createInstallmentPlan = useCreateInstallmentPlan();
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -91,31 +87,19 @@ export function AddInstallmentPlanDialog({
   const installmentAmount = totalAmount && totalInstallments ? totalAmount / totalInstallments : 0;
 
   async function onSubmit(values: InstallmentPlanFormValues) {
-    if (!user) {
-      toast.error("Você precisa estar logado para criar um plano de parcelas.");
-      return;
-    }
-
     const calculatedInstallmentAmount = values.total_amount / values.total_installments;
 
-    const { error } = await supabase.from("installment_plans").insert({
+    await createInstallmentPlan.mutateAsync({
       description: values.description,
       total_amount: values.total_amount,
       installment_amount: calculatedInstallmentAmount,
       total_installments: values.total_installments,
       category: values.category,
       start_date: values.start_date,
-      user_id: user.id
     });
 
-    if (error) {
-      toast.error(`Erro ao criar plano de parcelas: ${error.message}`);
-    } else {
-      toast.success("💳 Plano de parcelas criado! Você pode registrar os pagamentos conforme vai pagando.");
-      queryClient.invalidateQueries({ queryKey: ["installment-plans"] });
-      setOpen(false);
-      form.reset();
-    }
+    setOpen(false);
+    form.reset();
   }
 
   return (
@@ -240,8 +224,8 @@ export function AddInstallmentPlanDialog({
             />
 
             <DialogFooter>
-              <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
-                {form.formState.isSubmitting ? "Criando..." : "💳 Criar Plano de Parcelas"}
+              <Button type="submit" disabled={createInstallmentPlan.isPending} className="w-full">
+                {createInstallmentPlan.isPending ? "Criando..." : "💳 Criar Plano de Parcelas"}
               </Button>
             </DialogFooter>
           </form>

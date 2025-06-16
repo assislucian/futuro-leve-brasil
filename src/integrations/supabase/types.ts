@@ -107,6 +107,96 @@ export type Database = {
         }
         Relationships: []
       }
+      installment_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          installment_number: number
+          installment_plan_id: string
+          payment_date: string
+          transaction_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          installment_number: number
+          installment_plan_id: string
+          payment_date: string
+          transaction_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          installment_number?: number
+          installment_plan_id?: string
+          payment_date?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "installment_payments_installment_plan_id_fkey"
+            columns: ["installment_plan_id"]
+            isOneToOne: false
+            referencedRelation: "installment_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "installment_payments_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      installment_plans: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          installment_amount: number
+          is_active: boolean
+          paid_installments: number
+          start_date: string
+          total_amount: number
+          total_installments: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          id?: string
+          installment_amount: number
+          is_active?: boolean
+          paid_installments?: number
+          start_date: string
+          total_amount: number
+          total_installments: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          installment_amount?: number
+          is_active?: boolean
+          paid_installments?: number
+          start_date?: string
+          total_amount?: number
+          total_installments?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_path: string | null
@@ -131,6 +221,54 @@ export type Database = {
           id?: string
           plan?: Database["public"]["Enums"]["app_plan"]
           trial_ends_at?: string | null
+        }
+        Relationships: []
+      }
+      recurring_transactions: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          description: string
+          end_date: string | null
+          frequency: Database["public"]["Enums"]["recurrence_frequency"]
+          id: string
+          is_active: boolean
+          next_execution_date: string
+          start_date: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          description: string
+          end_date?: string | null
+          frequency: Database["public"]["Enums"]["recurrence_frequency"]
+          id?: string
+          is_active?: boolean
+          next_execution_date: string
+          start_date: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          frequency?: Database["public"]["Enums"]["recurrence_frequency"]
+          id?: string
+          is_active?: boolean
+          next_execution_date?: string
+          start_date?: string
+          type?: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -172,10 +310,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_next_execution_date: {
+        Args: {
+          input_date: string
+          frequency: Database["public"]["Enums"]["recurrence_frequency"]
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_plan: "free" | "premium"
+      recurrence_frequency:
+        | "monthly"
+        | "bimonthly"
+        | "quarterly"
+        | "semiannual"
+        | "annual"
       transaction_type: "income" | "expense"
     }
     CompositeTypes: {
@@ -293,6 +443,13 @@ export const Constants = {
   public: {
     Enums: {
       app_plan: ["free", "premium"],
+      recurrence_frequency: [
+        "monthly",
+        "bimonthly",
+        "quarterly",
+        "semiannual",
+        "annual",
+      ],
       transaction_type: ["income", "expense"],
     },
   },
