@@ -5,33 +5,54 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { useSmartInsights, SmartInsight } from "@/hooks/useSmartInsights";
-import { AlertCircle, TrendingUp, Target, Sparkles } from "lucide-react";
+import { AlertCircle, TrendingUp, Target, Sparkles, ArrowRight, Brain } from "lucide-react";
 
 const getInsightIcon = (type: SmartInsight['type']) => {
   switch (type) {
     case 'goal_opportunity':
-      return <TrendingUp className="h-5 w-5 text-emerald-600" />;
+      return <TrendingUp className="h-4 w-4 text-emerald-600" />;
     case 'budget_alert':
-      return <AlertCircle className="h-5 w-5 text-amber-600" />;
+      return <AlertCircle className="h-4 w-4 text-amber-600" />;
     case 'smart_suggestion':
-      return <Sparkles className="h-5 w-5 text-blue-600" />;
+      return <Brain className="h-4 w-4 text-blue-600" />;
     case 'celebration':
-      return <Target className="h-5 w-5 text-purple-600" />;
+      return <Target className="h-4 w-4 text-purple-600" />;
     default:
-      return <Sparkles className="h-5 w-5 text-primary" />;
+      return <Sparkles className="h-4 w-4 text-primary" />;
   }
 };
 
-const getPriorityColor = (priority: SmartInsight['priority']) => {
+const getPriorityStyles = (priority: SmartInsight['priority']) => {
   switch (priority) {
     case 'high':
-      return 'bg-red-100 text-red-800 border-red-200';
+      return {
+        badge: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100',
+        card: 'border-l-4 border-l-red-400 bg-gradient-to-r from-red-50/50 to-transparent'
+      };
     case 'medium':
-      return 'bg-amber-100 text-amber-800 border-amber-200';
+      return {
+        badge: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100',
+        card: 'border-l-4 border-l-amber-400 bg-gradient-to-r from-amber-50/50 to-transparent'
+      };
     case 'low':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
+      return {
+        badge: 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100',
+        card: 'border-l-4 border-l-blue-400 bg-gradient-to-r from-blue-50/50 to-transparent'
+      };
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return {
+        badge: 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100',
+        card: 'border-l-4 border-l-slate-400 bg-gradient-to-r from-slate-50/50 to-transparent'
+      };
+  }
+};
+
+const getPriorityLabel = (priority: SmartInsight['priority']) => {
+  switch (priority) {
+    case 'high': return '🔥 Urgente';
+    case 'medium': return '⚡ Importante';
+    case 'low': return '💡 Dica';
+    default: return 'Info';
   }
 };
 
@@ -40,20 +61,25 @@ export function SmartInsightsCard() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-4">
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5" />
+            <div className="p-2 bg-purple-100 rounded-full">
+              <Sparkles className="h-4 w-4 text-purple-600" />
+            </div>
             Insights Inteligentes
           </CardTitle>
           <CardDescription>
-            Analisando suas finanças...
+            Nossa IA está analisando suas finanças...
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-4">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="space-y-2">
-              <Skeleton className="h-4 w-3/4" />
+            <div key={i} className="space-y-3 p-3 rounded-lg border bg-slate-50/50">
+              <div className="flex items-start justify-between">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-5 w-16" />
+              </div>
               <Skeleton className="h-6 w-full" />
               <Skeleton className="h-8 w-24" />
             </div>
@@ -65,16 +91,31 @@ export function SmartInsightsCard() {
 
   if (error || !insights || insights.length === 0) {
     return (
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-4">
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5" />
+            <div className="p-2 bg-purple-100 rounded-full">
+              <Brain className="h-4 w-4 text-purple-600" />
+            </div>
             Insights Inteligentes
           </CardTitle>
           <CardDescription>
-            {error ? 'Erro ao carregar insights' : 'Continue usando o Plenus para receber insights personalizados!'}
+            {error ? 'Erro ao carregar insights' : 'Continue usando o Plenus para receber insights personalizados sobre suas finanças!'}
           </CardDescription>
         </CardHeader>
+        {!error && (
+          <CardContent className="p-4">
+            <div className="text-center py-6">
+              <Brain className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+              <p className="text-sm text-slate-600 mb-4">
+                Nossa IA está aprendendo sobre seus hábitos financeiros.
+              </p>
+              <p className="text-xs text-slate-500">
+                Adicione mais transações para receber insights personalizados!
+              </p>
+            </div>
+          </CardContent>
+        )}
       </Card>
     );
   }
@@ -83,52 +124,75 @@ export function SmartInsightsCard() {
   const topInsights = insights.slice(0, 3);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5" />
+    <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <div className="p-2 bg-purple-100 rounded-full">
+            <Brain className="h-4 w-4 text-purple-600" />
+          </div>
           Insights Inteligentes
         </CardTitle>
-        <CardDescription>
-          Descobrimos oportunidades para acelerar seus sonhos!
+        <CardDescription className="text-slate-600">
+          🚀 Nossa IA descobriu oportunidades para acelerar seus sonhos!
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {topInsights.map((insight) => (
-          <div
-            key={insight.id}
-            className="flex items-start gap-3 p-3 rounded-lg border bg-gradient-to-r from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200 transition-all"
-          >
-            <div className="flex-shrink-0 mt-0.5">
-              {getInsightIcon(insight.type)}
-            </div>
-            <div className="flex-grow min-w-0">
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <h4 className="font-medium text-sm leading-tight">{insight.title}</h4>
-                <Badge 
-                  variant="outline" 
-                  className={`${getPriorityColor(insight.priority)} text-xs px-2 py-0.5 flex-shrink-0`}
-                >
-                  {insight.priority === 'high' ? 'Urgente' : insight.priority === 'medium' ? 'Importante' : 'Sugestão'}
-                </Badge>
+      <CardContent className="space-y-3 p-4">
+        {topInsights.map((insight, index) => {
+          const styles = getPriorityStyles(insight.priority);
+          return (
+            <div
+              key={insight.id}
+              className={`relative p-4 rounded-lg border transition-all duration-200 hover:shadow-sm ${styles.card}`}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5 p-1.5 bg-white rounded-full shadow-sm">
+                  {getInsightIcon(insight.type)}
+                </div>
+                <div className="flex-grow min-w-0 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-semibold text-sm leading-tight text-slate-800">
+                      {insight.title}
+                    </h4>
+                    <Badge 
+                      variant="outline" 
+                      className={`${styles.badge} text-xs px-2 py-0.5 flex-shrink-0 font-medium`}
+                    >
+                      {getPriorityLabel(insight.priority)}
+                    </Badge>
+                  </div>
+                  
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {insight.description}
+                  </p>
+                  
+                  <Button 
+                    asChild 
+                    size="sm" 
+                    className="h-8 text-xs bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all duration-200"
+                  >
+                    <Link to={insight.actionPath} className="flex items-center gap-1.5">
+                      {insight.actionLabel}
+                      <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                {insight.description}
-              </p>
-              <Button asChild size="sm" variant="outline" className="h-7 text-xs">
-                <Link to={insight.actionPath}>
-                  {insight.actionLabel}
-                </Link>
-              </Button>
+              
+              {/* Efeito visual sutil de prioridade */}
+              {index === 0 && insight.priority === 'high' && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
         
         {insights.length > 3 && (
-          <div className="text-center pt-2">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/insights">
+          <div className="text-center pt-3 border-t border-slate-100">
+            <Button variant="ghost" size="sm" asChild className="text-slate-600 hover:text-slate-800">
+              <Link to="/insights" className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
                 Ver todos os insights ({insights.length})
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
