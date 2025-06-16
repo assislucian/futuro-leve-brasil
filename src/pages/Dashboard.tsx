@@ -1,3 +1,4 @@
+
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -21,20 +22,20 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
-            <Skeleton className="h-9 w-64" />
-            <Skeleton className="h-5 w-96 mt-2" />
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-96 mt-2" />
           </div>
-          <Skeleton className="h-10 w-44" />
+          <Skeleton className="h-9 w-44" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 flex flex-col gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-6">
             <Skeleton className="h-32 w-full" />
             <Skeleton className="h-96 w-full" />
           </div>
-          <div className="lg:col-span-1 flex flex-col gap-8">
+          <div className="lg:col-span-1 flex flex-col gap-6">
             <Skeleton className="h-48 w-full" />
             <Skeleton className="h-64 w-full" />
             <Skeleton className="h-64 w-full" />
@@ -51,13 +52,13 @@ const DashboardPage = () => {
   return (
     <>
       <GoalCompletionCelebration />
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               Olá, {firstName}! 👋
             </h1>
-            <p className="text-muted-foreground">Bem-vindo(a) de volta ao controle da sua vida financeira.</p>
+            <p className="text-sm text-muted-foreground mt-1">Bem-vindo(a) de volta ao controle da sua vida financeira.</p>
           </div>
           <div className="flex items-center gap-2">
             <AddRecurringTransactionDialog />
@@ -66,13 +67,13 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 flex flex-col gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-6">
             <FinancialSummary />
             <TransactionList />
           </div>
           
-          <div className="lg:col-span-1 flex flex-col gap-8">
+          <div className="lg:col-span-1 flex flex-col gap-6">
             <NextActionCard />
             <BudgetsSummary />
             <GoalsSummary />

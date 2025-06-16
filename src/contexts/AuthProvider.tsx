@@ -1,6 +1,6 @@
 
 import React, { createContext, useEffect, useState, ReactNode } from "react";
-import { User } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
@@ -9,6 +9,7 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
+  session: Session | null;
   loading: boolean;
   isTrialing: boolean;
 }
@@ -22,6 +23,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   console.log("AuthProvider: Estado atual - user:", !!user, "profile:", !!profile, "loading:", loading);
@@ -62,6 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (mounted) {
             setUser(null);
             setProfile(null);
+            setSession(null);
             setLoading(false);
           }
           return;
@@ -72,6 +75,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           
           if (mounted) {
             setUser(session.user);
+            setSession(session);
           }
 
           // Buscar perfil
@@ -86,6 +90,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (mounted) {
             setUser(null);
             setProfile(null);
+            setSession(null);
             setLoading(false);
           }
         }
@@ -94,6 +99,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (mounted) {
           setUser(null);
           setProfile(null);
+          setSession(null);
           setLoading(false);
         }
       }
@@ -110,15 +116,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user);
+          setSession(session);
           const profileData = await fetchProfile(session.user.id);
           setProfile(profileData);
           setLoading(false);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setProfile(null);
+          setSession(null);
           setLoading(false);
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           setUser(session.user);
+          setSession(session);
           // Não precisamos recarregar o perfil no refresh do token
           setLoading(false);
         }
@@ -136,7 +145,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     : false;
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isTrialing }}>
+    <AuthContext.Provider value={{ user, profile, session, loading, isTrialing }}>
       {children}
     </AuthContext.Provider>
   );
