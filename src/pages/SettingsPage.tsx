@@ -1,4 +1,3 @@
-
 import { ProfileForm } from '@/components/ProfileForm';
 import { DeleteAccountDialog } from '@/components/DeleteAccountDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -46,4 +45,5 @@ const SettingsPage = () => {
   );
 };
 
+export { SettingsPage };
 export default SettingsPage;
