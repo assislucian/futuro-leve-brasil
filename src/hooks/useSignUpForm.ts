@@ -7,7 +7,16 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import * as z from "zod";
 
-// Definir o schema diretamente aqui para evitar problemas de inferência
+// Definir tipos explicitamente para evitar inferência complexa
+interface SignUpFormData {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  terms: boolean;
+}
+
+// Schema simplificado
 const signUpSchema = z.object({
   fullName: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Por favor, insira um email válido"),
@@ -20,8 +29,6 @@ const signUpSchema = z.object({
   message: "As senhas não coincidem",
   path: ["confirmPassword"],
 });
-
-type SignUpFormData = z.infer<typeof signUpSchema>;
 
 // Função de validação de força da senha
 function validatePasswordStrength(password: string) {

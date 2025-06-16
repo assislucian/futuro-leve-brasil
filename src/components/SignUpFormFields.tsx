@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
-import { SignUpFormData } from "@/lib/validators/signup";
+import { SignUpFormData } from "@/hooks/useSignUpForm";
 
 interface SignUpFormFieldsProps {
   form: UseFormReturn<SignUpFormData>;
