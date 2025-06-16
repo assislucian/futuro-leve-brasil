@@ -15,10 +15,12 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Badge } from "@/components/ui/badge";
+import { OnboardingTour } from "@/components/OnboardingTour";
 
 /**
  * Componente principal do Dashboard
  * Ponto central da aplicação onde o usuário visualiza seu resumo financeiro
+ * Agora inclui onboarding interativo para novos usuários
  */
 const Dashboard = () => {
   const { user } = useAuth();
@@ -59,11 +61,17 @@ const Dashboard = () => {
   }
 
   if (!hasTransactions) {
-    return <WelcomeGuide />;
+    return (
+      <>
+        <OnboardingTour />
+        <WelcomeGuide />
+      </>
+    );
   }
 
   return (
     <>
+      <OnboardingTour />
       <GoalCompletionCelebration />
       <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
         {/* Header otimizado com melhor hierarquia visual */}
