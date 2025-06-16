@@ -1,82 +1,18 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-
-// Definir tipos explicitamente para evitar inferência complexa
-interface SignUpFormData {
-  fullName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  terms: boolean;
-}
-
-// Função de validação simples
-function validateForm(values: SignUpFormData): Record<string, string> {
-  const errors: Record<string, string> = {};
-  
-  if (!values.fullName || values.fullName.length < 2) {
-    errors.fullName = "O nome deve ter pelo menos 2 caracteres";
-  }
-  
-  if (!values.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-    errors.email = "Por favor, insira um email válido";
-  }
-  
-  if (!values.password || values.password.length < 8) {
-    errors.password = "A senha deve ter pelo menos 8 caracteres";
-  }
-  
-  if (values.password !== values.confirmPassword) {
-    errors.confirmPassword = "As senhas não coincidem";
-  }
-  
-  if (!values.terms) {
-    errors.terms = "Você deve aceitar os termos e condições";
-  }
-  
-  return errors;
-}
-
-// Função de validação de força da senha
-function validatePasswordStrength(password: string) {
-  const errors: string[] = [];
-  
-  if (password.length < 8) {
-    errors.push("A senha deve ter pelo menos 8 caracteres");
-  }
-  
-  if (!/[a-z]/.test(password)) {
-    errors.push("A senha deve conter pelo menos uma letra minúscula");
-  }
-  
-  if (!/[A-Z]/.test(password)) {
-    errors.push("A senha deve conter pelo menos uma letra maiúscula");
-  }
-  
-  if (!/\d/.test(password)) {
-    errors.push("A senha deve conter pelo menos um número");
-  }
-  
-  if (!/[@$!%*?&]/.test(password)) {
-    errors.push("A senha deve conter pelo menos um caractere especial (@$!%*?&)");
-  }
-  
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
+import { signUpFormSchema, SignUpFormData, validatePasswordStrength } from "@/lib/validators/signup";
 
 export function useSignUpForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignUpFormData>({
-    mode: 'onChange',
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       fullName: "",
       email: "",
@@ -91,29 +27,6 @@ export function useSignUpForm() {
     
     try {
       console.log('Iniciando cadastro para:', values.email);
-      
-      // Validar forma manual
-      const formErrors = validateForm(values);
-      if (Object.keys(formErrors).length > 0) {
-        // Usar uma abordagem mais simples para definir erros
-        if (formErrors.fullName) {
-          form.setError("fullName", { message: formErrors.fullName });
-        }
-        if (formErrors.email) {
-          form.setError("email", { message: formErrors.email });
-        }
-        if (formErrors.password) {
-          form.setError("password", { message: formErrors.password });
-        }
-        if (formErrors.confirmPassword) {
-          form.setError("confirmPassword", { message: formErrors.confirmPassword });
-        }
-        if (formErrors.terms) {
-          form.setError("terms", { message: formErrors.terms });
-        }
-        setIsSubmitting(false);
-        return;
-      }
       
       // Validar força da senha
       const passwordValidation = validatePasswordStrength(values.password);
@@ -201,5 +114,3 @@ export function useSignUpForm() {
     isSubmitting,
   };
 }
-
-export type { SignUpFormData };

@@ -27,14 +27,14 @@ const BudgetsSummary = () => {
     if (isLoading) {
         return (
             <Card className="h-full flex flex-col border border-gray-200 shadow-sm bg-white">
-                <CardHeader className="space-y-2 pb-3">
-                    <Skeleton className="h-5 w-1/3" />
-                    <Skeleton className="h-3 w-1/2" />
+                <CardHeader className="space-y-3">
+                    <Skeleton className="h-6 w-1/3" />
+                    <Skeleton className="h-4 w-1/2" />
                 </CardHeader>
-                <CardContent className="flex-grow flex flex-col justify-center items-start space-y-2 p-3">
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-8 w-full rounded-md" />
+                <CardContent className="flex-grow flex flex-col justify-center items-start space-y-3">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-8 w-3/4" />
+                    <Skeleton className="h-10 w-full rounded-md" />
                 </CardContent>
             </Card>
         )
@@ -43,22 +43,22 @@ const BudgetsSummary = () => {
     if (error) {
       return (
         <Card className="h-full flex flex-col border border-gray-200 shadow-sm bg-white">
-          <CardHeader className="space-y-2 pb-3">
+          <CardHeader className="space-y-3">
              <div className="flex items-start justify-between">
                 <div className="space-y-1">
-                  <CardTitle className="text-base text-gray-900">Seus Orçamentos</CardTitle>
-                  <CardDescription className="text-xs text-gray-600">Resumo do seu plano de gastos.</CardDescription>
+                  <CardTitle className="text-lg text-gray-900">Seus Orçamentos</CardTitle>
+                  <CardDescription className="text-sm text-gray-600">Resumo do seu plano de gastos.</CardDescription>
                 </div>
-                <div className="p-1.5 bg-blue-50 rounded-md">
-                  <Target className="h-4 w-4 text-blue-600" />
+                <div className="p-2 bg-blue-50 rounded-md">
+                  <Target className="h-5 w-5 text-blue-600" />
                 </div>
               </div>
           </CardHeader>
-          <CardContent className="flex-grow flex items-center justify-center p-3">
+          <CardContent className="flex-grow flex items-center justify-center">
             <Alert variant="destructive" className="w-full border border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="text-sm">Erro ao Carregar</AlertTitle>
-              <AlertDescription className="text-xs">
+              <AlertTitle>Erro ao Carregar</AlertTitle>
+              <AlertDescription>
                 Não foi possível buscar o resumo dos seus orçamentos.
               </AlertDescription>
             </Alert>
@@ -69,32 +69,32 @@ const BudgetsSummary = () => {
 
     return (
         <Card className="h-full flex flex-col border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 bg-white">
-            <CardHeader className="space-y-2 pb-3">
+            <CardHeader className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <CardTitle className="text-base text-gray-900">Seus Orçamentos</CardTitle>
-                    <CardDescription className="text-xs text-gray-600">Resumo do seu plano de gastos.</CardDescription>
+                    <CardTitle className="text-lg text-gray-900">Seus Orçamentos</CardTitle>
+                    <CardDescription className="text-sm text-gray-600">Resumo do seu plano de gastos.</CardDescription>
                   </div>
-                  <div className="p-1.5 bg-blue-50 rounded-md">
-                    <Target className="h-4 w-4 text-blue-600" />
+                  <div className="p-2 bg-blue-50 rounded-md">
+                    <Target className="h-5 w-5 text-blue-600" />
                   </div>
                 </div>
             </CardHeader>
-            <CardContent className="flex-grow flex flex-col justify-center items-start p-3">
+            <CardContent className="flex-grow flex flex-col justify-center items-start">
                 {hasBudgets ? (
-                    <div className="w-full space-y-3">
-                        <div className="space-y-2">
+                    <div className="w-full space-y-4">
+                        <div className="space-y-3">
                           <div className="flex justify-between items-baseline">
-                            <span className="text-xs font-medium text-gray-600">Gasto Total</span>
-                            <span className={`text-lg font-semibold ${remaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                            <span className="text-sm font-medium text-gray-600">Gasto Total</span>
+                            <span className={`text-xl font-semibold ${remaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                               {formatCurrency(totalSpent)}
                             </span>
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-2">
                             <Progress value={Math.min(progress, 100)} className="h-2" />
                             <div className="flex justify-between items-baseline">
-                                <span className="text-xs text-gray-500">de {formatCurrency(totalBudgeted)}</span>
-                                <span className={`text-xs font-medium ${remaining < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                                <span className="text-sm text-gray-500">de {formatCurrency(totalBudgeted)}</span>
+                                <span className={`text-sm font-medium ${remaining < 0 ? 'text-red-600' : 'text-gray-600'}`}>
                                   {remaining >= 0 ? `${formatCurrency(remaining)} restantes` : `${formatCurrency(Math.abs(remaining))} acima`}
                                 </span>
                             </div>
@@ -103,17 +103,17 @@ const BudgetsSummary = () => {
                     </div>
                 ) : (
                     <div className="text-center space-y-2">
-                        <p className="text-xs text-gray-600 leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                             Defina limites de gastos para ganhar clareza sobre suas finanças.
                         </p>
                     </div>
                 )}
             </CardContent>
-            <CardFooter className="pt-3 p-3">
-                 <Button asChild className="w-full h-9 bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium text-sm">
+            <CardFooter className="pt-4">
+                 <Button asChild className="w-full h-10 bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
                     <Link to="/budgets" className="flex items-center justify-center gap-2">
                         Gerenciar Orçamentos
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <ArrowRight className="h-4 w-4" />
                     </Link>
                 </Button>
             </CardFooter>
