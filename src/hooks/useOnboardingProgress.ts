@@ -29,7 +29,7 @@ export function useOnboardingProgress() {
       if (error) return false;
       return data && data.length > 0;
     },
-    enabled: !!user && isOnboardingActive,
+    enabled: !!user && !!isOnboardingActive,
   });
 
   // Verifica se o usuário tem orçamentos
@@ -46,7 +46,7 @@ export function useOnboardingProgress() {
       if (error) return false;
       return data && data.length > 0;
     },
-    enabled: !!user && isOnboardingActive,
+    enabled: !!user && !!isOnboardingActive,
   });
 
   // Avança automaticamente baseado no progresso real
