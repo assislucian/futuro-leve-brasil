@@ -3,6 +3,8 @@ import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
+import { AddRecurringTransactionDialog } from "@/components/AddRecurringTransactionDialog";
+import { AddInstallmentPlanDialog } from "@/components/AddInstallmentPlanDialog";
 import { useAuth } from "@/hooks/useAuth";
 import GoalsSummary from "@/components/GoalsSummary";
 import BudgetsSummary from "@/components/BudgetsSummary";
@@ -53,10 +55,16 @@ const DashboardPage = () => {
       <div className="flex flex-col gap-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Olá, {firstName}! 👋</h1>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+              Olá, {firstName}! 👋
+            </h1>
             <p className="text-muted-foreground">Bem-vindo(a) de volta ao controle da sua vida financeira.</p>
           </div>
-          <AddTransactionDialog />
+          <div className="flex items-center gap-2">
+            <AddRecurringTransactionDialog />
+            <AddInstallmentPlanDialog />
+            <AddTransactionDialog />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
