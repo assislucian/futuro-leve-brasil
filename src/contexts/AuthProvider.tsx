@@ -1,13 +1,10 @@
 
+import React, { createContext, useEffect, useState, ReactNode } from "react";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { Session, User } from "@supabase/supabase-js";
-import React, { createContext, useEffect, useState } from "react";
 import { Database } from "@/integrations/supabase/types";
 
-// Extendemos o tipo Profile para incluir trial_ends_at que foi adicionado na migração
-type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  trial_ends_at: string | null;
-};
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface AuthContextType {
   user: User | null;
@@ -19,68 +16,137 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.log("AuthProvider: Estado atual - user:", !!user, "session:", !!session, "profile:", !!profile, "loading:", loading);
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      console.log("AuthProvider: Buscando perfil para userId:", userId);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error("AuthProvider: Erro ao buscar perfil:", error);
+        return null;
+      }
+
+      console.log("AuthProvider: Perfil encontrado:", data);
+      return data;
+    } catch (error) {
+      console.error("AuthProvider: Erro inesperado ao buscar perfil:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    // onAuthStateChange fires an INITIAL_SESSION event on page load.
-    // It also fires on SIGN_IN, SIGN_OUT, TOKEN_REFRESHED, etc.
-    // This is the single source of truth for the user's auth state.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
+    let mounted = true;
 
-      if (currentUser) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentUser.id)
-          .single();
-        setProfile(profileData as Profile);
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
+    const initializeAuth = async () => {
+      try {
+        console.log("AuthProvider: Inicializando autenticação");
+        
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("AuthProvider: Erro ao obter sessão:", error);
+          if (mounted) {
+            setUser(null);
+            setSession(null);
+            setProfile(null);
+            setLoading(false);
+          }
+          return;
+        }
 
-    // We still call getSession to cover edge cases where the listener might not fire
-    // on initial load for a cached session. The listener will override this if it fires.
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        setSession(session);
-        setUser(session.user);
-         const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        setProfile(profileData as Profile);
+        if (currentSession?.user) {
+          console.log("AuthProvider: Sessão encontrada para usuário:", currentSession.user.id);
+          
+          if (mounted) {
+            setUser(currentSession.user);
+            setSession(currentSession);
+          }
+
+          // Buscar perfil
+          const profileData = await fetchProfile(currentSession.user.id);
+          
+          if (mounted) {
+            setProfile(profileData);
+            setLoading(false);
+          }
+        } else {
+          console.log("AuthProvider: Nenhuma sessão encontrada");
+          if (mounted) {
+            setUser(null);
+            setSession(null);
+            setProfile(null);
+            setLoading(false);
+          }
+        }
+      } catch (error) {
+        console.error("AuthProvider: Erro na inicialização:", error);
+        if (mounted) {
+          setUser(null);
+          setSession(null);
+          setProfile(null);
+          setLoading(false);
+        }
       }
-      // Set loading to false only if the listener hasn't already done it.
-      // This avoids a flicker on authenticated page loads.
-      setLoading(l => (l ? false : l));
-    });
+    };
+
+    initializeAuth();
+
+    // Listener para mudanças de autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        console.log("AuthProvider: Evento de auth:", event, "Session:", !!newSession);
+        
+        if (!mounted) return;
+
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          setUser(newSession.user);
+          setSession(newSession);
+          const profileData = await fetchProfile(newSession.user.id);
+          setProfile(profileData);
+          setLoading(false);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setSession(null);
+          setProfile(null);
+          setLoading(false);
+        } else if (event === 'TOKEN_REFRESHED' && newSession?.user) {
+          setUser(newSession.user);
+          setSession(newSession);
+          // Não precisamos recarregar o perfil no refresh do token
+          setLoading(false);
+        }
+      }
+    );
 
     return () => {
-      subscription?.unsubscribe();
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
-  const isTrialing = profile?.trial_ends_at ? new Date(profile.trial_ends_at) > new Date() : false;
+  const isTrialing = profile?.trial_ends_at 
+    ? new Date(profile.trial_ends_at) > new Date() 
+    : false;
 
-  const value = {
-    user,
-    session,
-    profile,
-    loading,
-    isTrialing,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, session, profile, loading, isTrialing }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { EditBudgetDialog } from "./EditBudgetDialog";
 import { DeleteBudgetAlert } from "./DeleteBudgetAlert";
 import { BudgetWithSpending } from "@/hooks/useBudgets";
+import { TransactionBadge } from "./ui/transaction-badge";
 
 const formatCurrency = (amount: number) => {
   if (typeof amount !== 'number') return '';
@@ -22,17 +23,30 @@ interface BudgetListItemProps {
 
 export function BudgetListItem({ budget }: BudgetListItemProps) {
   return (
-    <TableRow key={budget.id}>
-      <TableCell className="font-medium">{budget.category}</TableCell>
+    <TableRow key={budget.id} className="hover:bg-muted/50 transition-colors">
+      <TableCell className="font-medium">
+        <TransactionBadge type="expense" category={budget.category} />
+      </TableCell>
       <TableCell>
         <div className="flex items-center gap-4">
-          <Progress value={budget.progress} className="flex-1" />
-          <span className="text-sm text-muted-foreground">{Math.round(budget.progress)}%</span>
+          <Progress 
+            value={budget.progress} 
+            className={`flex-1 h-3 ${budget.progress > 100 ? '[&>div]:bg-destructive' : ''}`}
+          />
+          <span className={`text-sm font-medium ${budget.progress > 100 ? 'text-destructive' : 'text-muted-foreground'}`}>
+            {Math.round(budget.progress)}%
+          </span>
         </div>
       </TableCell>
-      <TableCell className="text-right">{formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}</TableCell>
-      <TableCell className={`text-right font-medium ${budget.remaining < 0 ? 'text-destructive' : ''}`}>
-        {formatCurrency(budget.remaining)}
+      <TableCell className="text-right">
+        <div className="text-sm">
+          <span className="font-medium">{formatCurrency(budget.spent)}</span>
+          <span className="text-muted-foreground"> / {formatCurrency(budget.amount)}</span>
+        </div>
+      </TableCell>
+      <TableCell className={`text-right font-bold ${budget.remaining < 0 ? 'text-destructive' : 'text-emerald-600'}`}>
+        {budget.remaining < 0 ? '⚠️ ' : '✅ '}
+        {formatCurrency(Math.abs(budget.remaining))}
       </TableCell>
       <TableCell className="text-right">
         <DropdownMenu>

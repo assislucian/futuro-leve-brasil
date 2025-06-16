@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AddGoalDialog } from "@/components/AddGoalDialog";
 import GoalList from "@/components/GoalList";
@@ -50,4 +49,5 @@ const GoalsPage = () => {
   );
 };
 
+export { GoalsPage };
 export default GoalsPage;

@@ -34,7 +34,6 @@ const UpdatePasswordPage = () => {
     }
   }, [session, loading, navigate]);
 
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { error } = await supabase.auth.updateUser({
       password: values.password,
@@ -101,4 +100,5 @@ const UpdatePasswordPage = () => {
   );
 };
 
+export { UpdatePasswordPage };
 export default UpdatePasswordPage;
