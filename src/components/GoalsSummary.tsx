@@ -19,23 +19,23 @@ const GoalsSummary = () => {
   if (isLoading) {
     return (
       <Card className="flex flex-col h-full overflow-hidden">
-        <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 pb-4">
+        <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 pb-3">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-4 w-48" />
+            <div className="space-y-1">
+              <Skeleton className="h-5 w-28" />
+              <Skeleton className="h-3 w-36" />
             </div>
-            <Skeleton className="w-10 h-10 rounded-full" />
+            <Skeleton className="w-8 h-8 rounded-full" />
           </div>
         </CardHeader>
-        <CardContent className="flex-grow p-4">
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-8 w-24" />
+        <CardContent className="flex-grow p-3">
+          <div className="space-y-2">
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-6 w-20" />
           </div>
         </CardContent>
-        <CardFooter className="p-4">
-          <Skeleton className="h-10 w-full" />
+        <CardFooter className="p-3">
+          <Skeleton className="h-9 w-full" />
         </CardFooter>
       </Card>
     );
@@ -44,24 +44,24 @@ const GoalsSummary = () => {
   if (error) {
     return (
       <Card className="flex flex-col h-full">
-        <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 pb-4">
+        <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 pb-3">
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-amber-500" />
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Star className="h-4 w-4 text-amber-500" />
                 Seus Sonhos
               </CardTitle>
-              <CardDescription className="mt-1">
+              <CardDescription className="mt-1 text-xs">
                 Acompanhe a evolução das suas metas.
               </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="flex-grow flex items-center justify-center p-4">
+        <CardContent className="flex-grow flex items-center justify-center p-3">
           <Alert variant="destructive" className="w-full">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Erro ao Carregar</AlertTitle>
-            <AlertDescription>
+            <AlertTitle className="text-sm">Erro ao Carregar</AlertTitle>
+            <AlertDescription className="text-xs">
               Não foi possível buscar o resumo das suas metas.
             </AlertDescription>
           </Alert>
@@ -75,16 +75,16 @@ const GoalsSummary = () => {
 
   return (
     <Card className="flex flex-col h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
-      <CardHeader className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 pb-4">
+      <CardHeader className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 pb-3">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="p-2 bg-amber-100 rounded-full">
-                <Target className="h-4 w-4 text-amber-600" />
+            <CardTitle className="flex items-center gap-2 text-base">
+              <div className="p-1.5 bg-amber-100 rounded-full">
+                <Target className="h-3.5 w-3.5 text-amber-600" />
               </div>
               Seus Sonhos
             </CardTitle>
-            <CardDescription className="text-slate-600">
+            <CardDescription className="text-xs text-slate-600">
               {goalCount > 0 
                 ? `${goalCount} sonho${goalCount > 1 ? 's' : ''} em andamento` 
                 : "Transforme seus sonhos em realidade"
@@ -92,44 +92,44 @@ const GoalsSummary = () => {
             </CardDescription>
           </div>
           {goalCount > 0 && (
-            <Badge variant="secondary" className="bg-amber-100 text-amber-700 border-amber-200">
+            <Badge variant="secondary" className="bg-amber-100 text-amber-700 border-amber-200 text-xs px-2 py-0.5">
               {goalCount} ativa{goalCount > 1 ? 's' : ''}
             </Badge>
           )}
         </div>
       </CardHeader>
       
-      <CardContent className="flex-grow flex flex-col justify-center p-6">
+      <CardContent className="flex-grow flex flex-col justify-center p-3">
         {goalCount > 0 ? (
-          <div className="space-y-4">
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
-                <TrendingUp className="h-4 w-4 text-emerald-600" />
-                Total já guardado para seus sonhos
+          <div className="space-y-3">
+            <div className="text-center space-y-1.5">
+              <div className="flex items-center justify-center gap-2 text-xs text-slate-600">
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+                Total já guardado
               </div>
-              <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+              <div className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
                 {formatCurrency(totalSaved)}
               </div>
             </div>
             
-            <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-100">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-4 w-4 text-emerald-600" />
-                <span className="text-sm font-semibold text-emerald-800">Parabéns!</span>
+            <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                <span className="text-xs font-semibold text-emerald-800">Parabéns!</span>
               </div>
               <p className="text-xs text-emerald-700 leading-relaxed">
-                Você está construindo seu futuro financeiro! Cada real economizado é um passo mais perto dos seus sonhos. 🚀
+                Você está construindo seu futuro! Cada real economizado é um passo mais perto dos seus sonhos. 🚀
               </p>
             </div>
           </div>
         ) : (
-          <div className="text-center space-y-4 py-2">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto">
-              <Target className="h-8 w-8 text-amber-600" />
+          <div className="text-center space-y-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto">
+              <Target className="h-6 w-6 text-amber-600" />
             </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-slate-800">Comece a Sonhar!</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+            <div className="space-y-1">
+              <h3 className="font-semibold text-slate-800 text-sm">Comece a Sonhar!</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Dê um propósito para o seu dinheiro e veja seus sonhos se tornarem realidade.
               </p>
             </div>
@@ -137,11 +137,11 @@ const GoalsSummary = () => {
         )}
       </CardContent>
       
-      <CardFooter className="p-4 bg-slate-50/50">
+      <CardFooter className="p-3 bg-slate-50/50">
         <Link to="/goals" className="w-full">
-          <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-lg hover:shadow-amber-200 transition-all duration-200">
+          <Button className="w-full h-9 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-lg hover:shadow-amber-200 transition-all duration-200 text-sm">
             {goalCount > 0 ? 'Ver Minhas Metas' : 'Criar Primeira Meta'}
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <ArrowRight className="ml-2 h-3.5 w-3.5" />
           </Button>
         </Link>
       </CardFooter>
