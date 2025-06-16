@@ -115,7 +115,7 @@ export function useTransactionForm({ setOpen, transaction }: { setOpen: (open: b
         .from('goals')
         .select('name, current_amount, target_amount')
         .eq('user_id', user.id)
-        .lt('current_amount', supabase.rpc('target_amount'));
+        .filter('current_amount', 'lt', 'target_amount');
 
       if (error || !goals || goals.length === 0) return;
 

@@ -50,7 +50,7 @@ export function TransactionGoalConnector({
         .from('goals')
         .select('*')
         .eq('user_id', user.id)
-        .lt('current_amount', supabase.rpc('target_amount')) // Apenas metas não concluídas
+        .filter('current_amount', 'lt', 'target_amount')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
