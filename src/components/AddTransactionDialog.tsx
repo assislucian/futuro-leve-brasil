@@ -36,9 +36,10 @@ import { Badge } from "./ui/badge";
 interface AddTransactionDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 
-export function AddTransactionDialog({ open: controlledOpen, onOpenChange: controlledOnOpenChange }: AddTransactionDialogProps) {
+export function AddTransactionDialog({ open: controlledOpen, onOpenChange: controlledOnOpenChange, children }: AddTransactionDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
 
@@ -77,16 +78,16 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {!isControlled && (
-        <DialogTrigger asChild>
+      <DialogTrigger asChild>
+        {children || (
           <Button size="sm" className="h-8 gap-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">
             <PlusCircle className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Nova Transação
             </span>
           </Button>
-        </DialogTrigger>
-      )}
+        )}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
