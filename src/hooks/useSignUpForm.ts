@@ -95,9 +95,22 @@ export function useSignUpForm() {
       // Validar forma manual
       const formErrors = validateForm(values);
       if (Object.keys(formErrors).length > 0) {
-        Object.entries(formErrors).forEach(([field, message]) => {
-          form.setError(field as keyof SignUpFormData, { message });
-        });
+        // Usar uma abordagem mais simples para definir erros
+        if (formErrors.fullName) {
+          form.setError("fullName", { message: formErrors.fullName });
+        }
+        if (formErrors.email) {
+          form.setError("email", { message: formErrors.email });
+        }
+        if (formErrors.password) {
+          form.setError("password", { message: formErrors.password });
+        }
+        if (formErrors.confirmPassword) {
+          form.setError("confirmPassword", { message: formErrors.confirmPassword });
+        }
+        if (formErrors.terms) {
+          form.setError("terms", { message: formErrors.terms });
+        }
         setIsSubmitting(false);
         return;
       }
