@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -33,6 +32,7 @@ const UpdatePasswordPage = () => {
       navigate("/forgot-password");
     }
   }, [session, loading, navigate]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { error } = await supabase.auth.updateUser({
