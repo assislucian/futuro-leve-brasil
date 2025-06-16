@@ -1,19 +1,6 @@
 
 import * as z from "zod";
 
-const passwordSchema = z.string()
-  .min(8, { message: "A senha deve ter pelo menos 8 caracteres" })
-  .refine((password) => {
-    const hasLowercase = /[a-z]/.test(password);
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    const hasSpecialChar = /[@$!%*?&]/.test(password);
-    
-    return hasLowercase && hasUppercase && hasNumber && hasSpecialChar;
-  }, {
-    message: "A senha deve conter pelo menos: uma letra minúscula, uma maiúscula, um número e um caractere especial (@$!%*?&)"
-  });
-
 export const signUpFormSchema = z.object({
   fullName: z.string()
     .min(2, { message: "O nome deve ter pelo menos 2 caracteres" })
@@ -21,7 +8,8 @@ export const signUpFormSchema = z.object({
   email: z.string()
     .email({ message: "Por favor, insira um email válido" })
     .toLowerCase(),
-  password: passwordSchema,
+  password: z.string()
+    .min(8, { message: "A senha deve ter pelo menos 8 caracteres" }),
   confirmPassword: z.string(),
   terms: z.boolean().refine(val => val === true, {
     message: "Você deve aceitar os termos e condições",
@@ -32,3 +20,36 @@ export const signUpFormSchema = z.object({
 });
 
 export type SignUpFormData = z.infer<typeof signUpFormSchema>;
+
+// Função auxiliar para validar força da senha
+export function validatePasswordStrength(password: string): {
+  isValid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+  
+  if (password.length < 8) {
+    errors.push("A senha deve ter pelo menos 8 caracteres");
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push("A senha deve conter pelo menos uma letra minúscula");
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push("A senha deve conter pelo menos uma letra maiúscula");
+  }
+  
+  if (!/\d/.test(password)) {
+    errors.push("A senha deve conter pelo menos um número");
+  }
+  
+  if (!/[@$!%*?&]/.test(password)) {
+    errors.push("A senha deve conter pelo menos um caractere especial (@$!%*?&)");
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}

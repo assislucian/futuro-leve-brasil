@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { signUpFormSchema, SignUpFormData } from "@/lib/validators/signup";
+import { signUpFormSchema, SignUpFormData, validatePasswordStrength } from "@/lib/validators/signup";
 
 export function useSignUpForm() {
   const navigate = useNavigate();
@@ -27,6 +27,14 @@ export function useSignUpForm() {
     
     try {
       console.log('Iniciando cadastro para:', values.email);
+      
+      // Validar força da senha
+      const passwordValidation = validatePasswordStrength(values.password);
+      if (!passwordValidation.isValid) {
+        toast.error(passwordValidation.errors[0]);
+        setIsSubmitting(false);
+        return;
+      }
       
       // Verificar se o email já está em uso
       const { data: existingUser } = await supabase
