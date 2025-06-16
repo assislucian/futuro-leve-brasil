@@ -4,42 +4,47 @@
   <defs>
     <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
     </linearGradient>
     <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="card-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0.05);stop-opacity:1" />
     </linearGradient>
   </defs>
   
   <!-- Background -->
   <rect width="1200" height="630" fill="url(#bg-gradient)"/>
   
-  <!-- Decorative elements -->
-  <circle cx="100" cy="100" r="40" fill="#3b82f6" opacity="0.1"/>
-  <circle cx="1100" cy="530" r="60" fill="#f59e0b" opacity="0.1"/>
-  <circle cx="200" cy="500" r="25" fill="#3b82f6" opacity="0.15"/>
-  <circle cx="1000" cy="150" r="35" fill="#f59e0b" opacity="0.15"/>
+  <!-- Decorative circles -->
+  <circle cx="150" cy="120" r="60" fill="#3b82f6" opacity="0.1"/>
+  <circle cx="1050" cy="510" r="80" fill="#1e40af" opacity="0.15"/>
+  <circle cx="250" cy="450" r="40" fill="#3b82f6" opacity="0.1"/>
+  <circle cx="950" cy="180" r="50" fill="#1e40af" opacity="0.12"/>
   
-  <!-- Main content container -->
-  <rect x="100" y="150" width="1000" height="330" rx="20" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  <!-- Main content card -->
+  <rect x="150" y="150" width="900" height="330" rx="24" fill="url(#card-gradient)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
   
-  <!-- Logo/Brand mark -->
-  <circle cx="250" cy="315" r="50" fill="url(#accent-gradient)"/>
-  <text x="250" y="325" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="white">P</text>
+  <!-- Logo circle -->
+  <circle cx="280" cy="315" r="60" fill="url(#accent-gradient)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <text x="280" y="330" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">P</text>
   
   <!-- Main title -->
-  <text x="350" y="290" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white">Plenus</text>
+  <text x="380" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="white">Plenus</text>
   
   <!-- Subtitle -->
-  <text x="350" y="330" font-family="Arial, sans-serif" font-size="24" fill="#94a3b8">Onde seu dinheiro e seus sonhos se encontram</text>
+  <text x="380" y="330" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="400" fill="#94a3b8">Onde seu dinheiro e seus sonhos se encontram</text>
   
-  <!-- Feature highlights -->
-  <text x="350" y="370" font-family="Arial, sans-serif" font-size="18" fill="#64748b">✓ Controle total das suas finanças</text>
-  <text x="350" y="400" font-family="Arial, sans-serif" font-size="18" fill="#64748b">✓ Planejamento inteligente de metas</text>
-  <text x="350" y="430" font-family="Arial, sans-serif" font-size="18" fill="#64748b">✓ Seu futuro financeiro começa aqui</text>
+  <!-- Feature highlights with better spacing -->
+  <text x="380" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#64748b">✓ Controle total das suas finanças</text>
+  <text x="380" y="410" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#64748b">✓ Planejamento inteligente de metas</text>
+  <text x="380" y="440" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#64748b">✓ Seu futuro financeiro começa aqui</text>
   
-  <!-- Bottom accent -->
-  <rect x="0" y="580" width="1200" height="50" fill="url(#accent-gradient)" opacity="0.8"/>
-  <text x="600" y="610" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">lifabrasil.com</text>
+  <!-- Bottom accent bar -->
+  <rect x="0" y="550" width="1200" height="80" fill="url(#accent-gradient)" opacity="0.9"/>
+  <text x="600" y="600" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" text-anchor="middle" fill="white">lifabrasil.com</text>
 </svg>
