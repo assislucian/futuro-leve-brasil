@@ -1,37 +1,21 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useDashboardData } from "./useDashboardData";
 
+/**
+ * Hook simplificado que utiliza o useDashboardData otimizado
+ * Mantém compatibilidade com componentes existentes
+ */
 export function useFinancialSummaryData() {
-  const { user } = useAuth();
+  const { data, isLoading, error, refetch } = useDashboardData();
 
-  return useQuery({
-    queryKey: ['summary', user?.id],
-    queryFn: async () => {
-      if (!user) return { totalIncome: 0, totalExpense: 0, balance: 0 };
-      
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('amount, type')
-        .eq('user_id', user.id);
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const totalIncome = data
-        .filter(t => t.type === 'income')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-      const totalExpense = data
-        .filter(t => t.type === 'expense')
-        .reduce((acc, t) => acc + t.amount, 0);
-
-      const balance = totalIncome - totalExpense;
-
-      return { totalIncome, totalExpense, balance };
-    },
-    enabled: !!user,
-  });
+  return {
+    data: data ? {
+      totalIncome: data.totalIncome,
+      totalExpense: data.totalExpense,
+      balance: data.balance,
+    } : { totalIncome: 0, totalExpense: 0, balance: 0 },
+    isLoading,
+    error,
+    refetch,
+  };
 }

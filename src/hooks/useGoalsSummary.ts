@@ -1,29 +1,20 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useDashboardData } from "./useDashboardData";
 
+/**
+ * Hook simplificado que utiliza o useDashboardData otimizado
+ * Mantém compatibilidade com componentes existentes
+ */
 export function useGoalsSummary() {
-  const { user } = useAuth();
+  const { data, isLoading, error, refetch } = useDashboardData();
 
-  return useQuery({
-    queryKey: ['goalsSummary', user?.id],
-    queryFn: async () => {
-      if (!user) return { count: 0, totalSaved: 0 };
-      
-      const { data, error } = await supabase
-        .from('goals')
-        .select('current_amount')
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error("Erro ao buscar resumo de metas:", error);
-        throw new Error("Não foi possível buscar o resumo de metas.");
-      }
-
-      const totalSaved = data.reduce((acc, goal) => acc + goal.current_amount, 0);
-      return { count: data.length, totalSaved };
-    },
-    enabled: !!user,
-  });
+  return {
+    data: data ? {
+      count: data.goalsCount,
+      totalSaved: data.totalSaved,
+    } : { count: 0, totalSaved: 0 },
+    isLoading,
+    error,
+    refetch,
+  };
 }
