@@ -1,68 +1,60 @@
 
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/theme-provider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./contexts/AuthProvider";
+import AuthPage from "./pages/Auth";
+import AppLayout from "./pages/AppLayout";
+import DashboardPage from "./pages/Dashboard";
+import GoalsPage from "./pages/GoalsPage";
+import BudgetsPage from "./pages/BudgetsPage";
+import SettingsPage from "./pages/SettingsPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import { ThemeProvider } from "./contexts/ThemeProvider";
 
-import { AuthProvider } from "@/contexts/AuthProvider";
-import Index from "@/pages/Index";
-import Auth from "@/pages/Auth";
-import Dashboard from "@/pages/Dashboard";
-import AppLayout from "@/pages/AppLayout";
-import BudgetsPage from "@/pages/BudgetsPage";
-import GoalsPage from "@/pages/GoalsPage";
-import SettingsPage from "@/pages/SettingsPage";
-import NotFound from "@/pages/NotFound";
-import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
-import UpdatePasswordPage from "@/pages/UpdatePasswordPage";
-import TermsPage from "@/pages/TermsPage";
-import PrivacyPage from "@/pages/PrivacyPage";
-import AnalyticsPage from "@/pages/AnalyticsPage";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutos
-      gcTime: 10 * 60 * 1000, // 10 minutos (substituiu cacheTime)
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
-  console.log("App: Inicializando aplicação Plenus");
-  
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ThemeProvider defaultTheme="light" storageKey="plenus-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="plenus-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
           <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/update-password" element={<UpdatePasswordPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route element={<AppLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/budgets" element={<BudgetsPage />} />
-                <Route path="/goals" element={<GoalsPage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/update-password" element={<UpdatePasswordPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+
+                {/* Rotas Protegidas */}
+                <Route element={<AppLayout />}>
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/goals" element={<GoalsPage />} />
+                  <Route path="/budgets" element={<BudgetsPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Route>
+
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
           </AuthProvider>
-        </ThemeProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

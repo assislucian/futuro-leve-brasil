@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Hero = () => {
   return (
@@ -29,6 +30,22 @@ const Hero = () => {
               <Button size="lg" variant="outline" asChild>
                 <a href="/#features">Ver como funciona</a>
               </Button>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2 overflow-hidden">
+                  <Avatar className="inline-block h-8 w-8 rounded-full border-2 border-background">
+                      <AvatarFallback>J</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="inline-block h-8 w-8 rounded-full border-2 border-background">
+                      <AvatarFallback>M</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="inline-block h-8 w-8 rounded-full border-2 border-background">
+                      <AvatarFallback>A</AvatarFallback>
+                  </Avatar>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                  <span className="font-bold text-foreground">Milhares de brasileiros</span> já no controle.
+              </p>
             </div>
           </div>
         </div>

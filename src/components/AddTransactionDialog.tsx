@@ -28,7 +28,6 @@ import {
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
-import { BRAZILIAN_CATEGORIES } from "@/lib/constants/categories";
 
 interface AddTransactionDialogProps {
   open?: boolean;
@@ -44,14 +43,11 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
   
   const { form, onSubmit } = useTransactionForm({ setOpen });
 
-  const selectedType = form.watch("type");
-  const categories = selectedType === "income" ? BRAZILIAN_CATEGORIES.INCOME : BRAZILIAN_CATEGORIES.EXPENSE;
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <DialogTrigger asChild>
-          <Button size="sm" className="h-8 gap-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">
+          <Button size="sm" className="h-8 gap-1">
             <PlusCircle className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Nova Transação
@@ -61,7 +57,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
       )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>✨ Adicionar Nova Transação</DialogTitle>
+          <DialogTitle>Adicionar Nova Transação</DialogTitle>
           <DialogDescription>
             Registre uma nova receita ou despesa para manter tudo organizado.
           </DialogDescription>
@@ -76,23 +72,13 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                   <FormLabel>Tipo</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger>
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="expense" className="text-rose-600">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">💸</span>
-                          <span>Despesa</span>
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="income" className="text-emerald-600">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">💰</span>
-                          <span>Receita</span>
-                        </div>
-                      </SelectItem>
+                      <SelectItem value="expense">Despesa</SelectItem>
+                      <SelectItem value="income">Receita</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -106,11 +92,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder={selectedType === "income" ? "Ex: Salário, Freelance" : "Ex: Supermercado, Gasolina"} 
-                      {...field} 
-                      className="h-11"
-                    />
+                    <Input placeholder="Ex: Salário, Aluguel" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -123,14 +105,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                 <FormItem>
                   <FormLabel>Valor (R$)</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01" 
-                      placeholder="0,00" 
-                      {...field} 
-                      value={field.value ?? ""} 
-                      className="h-11 text-lg"
-                    />
+                    <Input type="number" step="0.01" placeholder="0,00" {...field} value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,20 +117,9 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Categoria</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Selecione uma categoria" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="max-h-[200px]">
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <Input placeholder="Ex: Moradia, Alimentação, Lazer" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -167,19 +131,15 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                 <FormItem>
                   <FormLabel>Data da Transação</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} className="h-11" />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-                <Button 
-                  type="submit" 
-                  disabled={form.formState.isSubmitting}
-                  className="w-full h-11 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-                >
-                  {form.formState.isSubmitting ? "Salvando..." : "💾 Salvar Transação"}
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Salvando..." : "Salvar Transação"}
                 </Button>
             </DialogFooter>
           </form>

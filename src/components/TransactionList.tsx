@@ -1,16 +1,15 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, FileText, MoreHorizontal, Edit, Trash2, TrendingUp, TrendingDown } from "lucide-react";
+import { AlertCircle, FileText, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useRecentTransactions } from "@/hooks/useRecentTransactions";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { EditTransactionDialog } from "./EditTransactionDialog";
 import { DeleteTransactionAlert } from "./DeleteTransactionAlert";
-import { TransactionBadge } from "./ui/transaction-badge";
 
 const TransactionList = () => {
   const { data: transactions, isLoading, error } = useRecentTransactions();
@@ -60,9 +59,7 @@ const TransactionList = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          📊 Transações Recentes
-        </CardTitle>
+        <CardTitle>Transações Recentes</CardTitle>
         <CardDescription>
           Aqui estão as últimas movimentações da sua conta.
         </CardDescription>
@@ -80,41 +77,28 @@ const TransactionList = () => {
             </TableHeader>
             <TableBody>
               {transactions.map((transaction) => (
-                <TableRow key={transaction.id} className="hover:bg-muted/50 transition-colors">
+                <TableRow key={transaction.id}>
                   <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        transaction.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
-                      }`}>
-                        {transaction.type === 'income' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                      </div>
-                      <div>
-                        <div className="font-medium">{transaction.description}</div>
-                        <div className="text-sm text-muted-foreground md:inline">
-                          {new Date(transaction.transaction_date + 'T00:00:00').toLocaleDateString('pt-BR', {day: '2-digit', month: 'short', year: 'numeric'})}
-                        </div>
-                      </div>
+                    <div className="font-medium">{transaction.description}</div>
+                    <div className="text-sm text-muted-foreground md:inline">
+                      {new Date(transaction.transaction_date + 'T00:00:00').toLocaleDateString('pt-BR', {day: '2-digit', month: 'short', year: 'numeric'})}
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <TransactionBadge type={transaction.type} category={transaction.category} />
+                    <Badge variant="outline">{transaction.category}</Badge>
                   </TableCell>
-                  <TableCell className={`text-right font-bold text-lg ${
-                    transaction.type === 'income' ? 'text-emerald-600' : 'text-rose-600'
-                  }`}>
-                    <div className="flex items-center justify-end gap-1">
-                      {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
-                    </div>
+                  <TableCell className={`text-right font-medium ${transaction.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
+                        <Button variant="ghost" className="h-8 w-8 p-0">
                           <span className="sr-only">Abrir menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuContent align="end">
                          <EditTransactionDialog transaction={transaction}>
                             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                               <Edit className="mr-2 h-4 w-4" />
@@ -137,13 +121,9 @@ const TransactionList = () => {
           </Table>
         ) : (
           <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <FileText className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">Nenhuma transação encontrada</h3>
-              <p className="text-muted-foreground">Parece que você ainda não adicionou nenhuma transação. <br/> Comece registrando uma nova receita ou despesa!</p>
-            </div>
+            <FileText className="h-12 w-12 text-muted-foreground" />
+            <h3 className="text-xl font-semibold">Nenhuma transação encontrada</h3>
+            <p className="text-muted-foreground">Parece que você ainda não adicionou nenhuma transação. <br/> Comece registrando uma nova receita ou despesa!</p>
           </div>
         )}
       </CardContent>

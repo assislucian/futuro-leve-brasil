@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { AddBudgetDialog } from "@/components/AddBudgetDialog";
 import { BudgetList } from "@/components/BudgetList";
@@ -130,5 +131,4 @@ const BudgetsPage = () => {
   );
 };
 
-export { BudgetsPage };
 export default BudgetsPage;
