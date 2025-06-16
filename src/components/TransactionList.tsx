@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { EditTransactionDialog } from "./EditTransactionDialog";
 import { DeleteTransactionAlert } from "./DeleteTransactionAlert";
 import { TransactionBadge } from "./ui/transaction-badge";
+import { TransactionGoalConnector } from "./TransactionGoalConnector";
 
 const TransactionList = () => {
   const { data: transactions, isLoading, error } = useRecentTransactions();
@@ -107,29 +108,39 @@ const TransactionList = () => {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
-                          <span className="sr-only">Abrir menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                         <EditTransactionDialog transaction={transaction}>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              <span>Editar</span>
+                    <div className="flex items-center justify-end gap-2">
+                      {/* Botão de conectar à meta (apenas para receitas) */}
+                      {transaction.type === 'income' && (
+                        <TransactionGoalConnector
+                          transactionAmount={transaction.amount}
+                          transactionType={transaction.type}
+                        />
+                      )}
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
+                            <span className="sr-only">Abrir menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                           <EditTransactionDialog transaction={transaction}>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Editar</span>
+                              </DropdownMenuItem>
+                           </EditTransactionDialog>
+                          <DropdownMenuSeparator />
+                          <DeleteTransactionAlert transactionId={transaction.id}>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              <span>Excluir</span>
                             </DropdownMenuItem>
-                         </EditTransactionDialog>
-                        <DropdownMenuSeparator />
-                        <DeleteTransactionAlert transactionId={transaction.id}>
-                          <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            <span>Excluir</span>
-                          </DropdownMenuItem>
-                        </DeleteTransactionAlert>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                          </DeleteTransactionAlert>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

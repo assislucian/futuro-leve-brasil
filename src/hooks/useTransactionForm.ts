@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -106,6 +107,37 @@ export function useTransactionForm({ setOpen, transaction }: { setOpen: (open: b
     }
   };
 
+  const suggestGoalContribution = async (values: TransactionFormValues) => {
+    if (!user || values.type !== 'income') return;
+
+    try {
+      const { data: goals, error } = await supabase
+        .from('goals')
+        .select('name, current_amount, target_amount')
+        .eq('user_id', user.id)
+        .lt('current_amount', supabase.rpc('target_amount'));
+
+      if (error || !goals || goals.length === 0) return;
+
+      const suggestedAmount = Math.min(values.amount * 0.1, 100); // 10% da receita ou R$ 100, o que for menor
+      const nextGoal = goals[0]; // Pegar a primeira meta ativa
+
+      toast.success(`Receita adicionada! 💰`, {
+        description: `Que tal acelerar seu sonho "${nextGoal.name}" contribuindo com ${suggestedAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}?`,
+        action: {
+          label: "Contribuir Agora",
+          onClick: () => {
+            // Redirecionar para a página de metas
+            window.location.href = '/goals';
+          }
+        },
+        duration: 10000,
+      });
+    } catch (e) {
+      console.error("Erro ao sugerir contribuição para meta:", e);
+    }
+  };
+
   async function onSubmit(values: TransactionFormValues) {
     if (!user) {
       toast.error("Você precisa estar logado para adicionar uma transação.");
@@ -137,9 +169,14 @@ export function useTransactionForm({ setOpen, transaction }: { setOpen: (open: b
       queryClient.invalidateQueries({ queryKey: ["nextAction"] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["hasTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["smartInsights"] });
 
+      // Verificar impacto no orçamento e sugerir contribuições
       if (values.type === 'expense') {
         await checkBudgetImpact(values);
+      } else if (values.type === 'income' && !transaction?.id) {
+        // Apenas sugerir para novas receitas
+        await suggestGoalContribution(values);
       }
       
       setOpen(false);

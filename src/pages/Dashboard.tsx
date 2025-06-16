@@ -12,6 +12,7 @@ import { NextActionCard } from "@/components/NextActionCard";
 import { GoalCompletionCelebration } from "@/components/GoalCompletionCelebration";
 import { useHasTransactions } from "@/hooks/useHasTransactions";
 import { WelcomeGuide } from "@/components/WelcomeGuide";
+import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardPage = () => {
@@ -93,6 +94,7 @@ const DashboardPage = () => {
           
           {/* Sidebar - ações e insights */}
           <div className="lg:col-span-1 space-y-6">
+            <SmartInsightsCard />
             <NextActionCard />
             <GoalsSummary />
             <BudgetsSummary />
