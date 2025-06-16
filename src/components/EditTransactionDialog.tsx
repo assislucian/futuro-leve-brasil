@@ -28,6 +28,7 @@ import {
 import { useState } from "react";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
 import type { Database } from "@/integrations/supabase/types";
+import { BRAZILIAN_CATEGORIES } from "@/lib/constants/categories";
 
 type Transaction = Database['public']['Tables']['transactions']['Row'];
 
@@ -40,6 +41,9 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
   const [open, setOpen] = useState(false);
   const { form, onSubmit } = useTransactionForm({ setOpen, transaction });
 
+  const selectedType = form.watch("type");
+  const categories = selectedType === "income" ? BRAZILIAN_CATEGORIES.INCOME : BRAZILIAN_CATEGORIES.EXPENSE;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -47,7 +51,7 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Transação</DialogTitle>
+          <DialogTitle>✏️ Editar Transação</DialogTitle>
           <DialogDescription>
             Atualize os detalhes da sua transação aqui.
           </DialogDescription>
@@ -62,13 +66,23 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
                   <FormLabel>Tipo</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11">
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="expense">Despesa</SelectItem>
-                      <SelectItem value="income">Receita</SelectItem>
+                      <SelectItem value="expense" className="text-rose-600">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">💸</span>
+                          <span>Despesa</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="income" className="text-emerald-600">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">💰</span>
+                          <span>Receita</span>
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -82,7 +96,11 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Salário, Aluguel" {...field} />
+                    <Input 
+                      placeholder={selectedType === "income" ? "Ex: Salário, Freelance" : "Ex: Supermercado, Gasolina"} 
+                      {...field} 
+                      className="h-11"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -95,7 +113,14 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
                 <FormItem>
                   <FormLabel>Valor (R$)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="0,00" {...field} value={field.value ?? ""} />
+                    <Input 
+                      type="number" 
+                      step="0.01" 
+                      placeholder="0,00" 
+                      {...field} 
+                      value={field.value ?? ""} 
+                      className="h-11 text-lg"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,9 +132,20 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Categoria</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: Moradia, Alimentação, Lazer" {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[200px]">
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -121,15 +157,19 @@ export function EditTransactionDialog({ transaction, children }: EditTransaction
                 <FormItem>
                   <FormLabel>Data da Transação</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input type="date" {...field} className="h-11" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "Salvando..." : "Salvar Alterações"}
+                <Button 
+                  type="submit" 
+                  disabled={form.formState.isSubmitting}
+                  className="w-full h-11 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                >
+                  {form.formState.isSubmitting ? "Salvando..." : "💾 Salvar Alterações"}
                 </Button>
             </DialogFooter>
           </form>
