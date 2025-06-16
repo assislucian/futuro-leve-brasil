@@ -14,12 +14,14 @@ const AppLayout = () => {
   useEffect(() => {
     console.log("AppLayout: Verificando autenticação - usuário:", !!user, "carregando:", loading);
     
+    // Só redireciona se não estiver carregando E não tiver usuário
     if (!loading && !user) {
       console.log("AppLayout: Usuário não autenticado, redirecionando para auth");
       navigate('/auth', { replace: true });
     }
   }, [user, loading, navigate]);
 
+  // Mostra loading enquanto verifica autenticação
   if (loading) {
     console.log("AppLayout: Mostrando carregamento");
     return (
@@ -30,12 +32,13 @@ const AppLayout = () => {
     );
   }
 
+  // Se não tem usuário, mostra loading enquanto redireciona
   if (!user) {
     console.log("AppLayout: Sem usuário, redirecionando...");
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
-        <p className="text-muted-foreground">Redirecionando...</p>
+        <p className="text-muted-foreground">Redirecionando para login...</p>
       </div>
     );
   }

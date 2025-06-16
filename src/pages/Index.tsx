@@ -35,13 +35,13 @@ const Index = () => {
     );
   }
 
-  // Se usuário está autenticado, não mostra nada (está redirecionando)
+  // Se usuário está autenticado, mostra loading enquanto redireciona
   if (user) {
     console.log("Index: Usuário autenticado, redirecionando...");
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
-        <p className="text-muted-foreground">Redirecionando...</p>
+        <p className="text-muted-foreground">Redirecionando para o dashboard...</p>
       </div>
     );
   }
