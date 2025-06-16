@@ -17,16 +17,23 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Eye, EyeOff, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
 
-// Validação robusta de senha seguindo melhores práticas
+// Validação simplificada de senha para evitar problemas de tipo
 const passwordValidation = z.string()
   .min(8, { message: "A senha deve ter pelo menos 8 caracteres" })
-  .regex(/^(?=.*[a-z])/, { message: "A senha deve conter pelo menos uma letra minúscula" })
-  .regex(/^(?=.*[A-Z])/, { message: "A senha deve conter pelo menos uma letra maiúscula" })
-  .regex(/^(?=.*\d)/, { message: "A senha deve conter pelo menos um número" })
-  .regex(/^(?=.*[@$!%*?&])/, { message: "A senha deve conter pelo menos um caractere especial (@$!%*?&)" });
+  .refine((password) => {
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[@$!%*?&]/.test(password);
+    
+    return hasLowercase && hasUppercase && hasNumber && hasSpecialChar;
+  }, {
+    message: "A senha deve conter pelo menos: uma letra minúscula, uma maiúscula, um número e um caractere especial (@$!%*?&)"
+  });
 
 const formSchema = z.object({
   fullName: z.string()
@@ -63,22 +70,6 @@ export function SignUpForm() {
   });
 
   const password = form.watch("password");
-
-  // Verificador de força da senha em tempo real
-  const getPasswordStrength = (password: string) => {
-    const checks = [
-      { test: password.length >= 8, label: "Pelo menos 8 caracteres" },
-      { test: /[a-z]/.test(password), label: "Uma letra minúscula" },
-      { test: /[A-Z]/.test(password), label: "Uma letra maiúscula" },
-      { test: /\d/.test(password), label: "Um número" },
-      { test: /[@$!%*?&]/.test(password), label: "Um caractere especial" },
-    ];
-    
-    const passedChecks = checks.filter(check => check.test).length;
-    return { checks, strength: passedChecks };
-  };
-
-  const passwordStrength = getPasswordStrength(password);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -228,42 +219,8 @@ export function SignUpForm() {
                 </div>
               </FormControl>
               
-              {/* Indicador de força da senha */}
-              {password && (
-                <div className="mt-2 space-y-2">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((level) => (
-                      <div
-                        key={level}
-                        className={`h-1 flex-1 rounded ${
-                          level <= passwordStrength.strength
-                            ? passwordStrength.strength <= 2
-                              ? 'bg-red-500'
-                              : passwordStrength.strength <= 3
-                              ? 'bg-yellow-500'
-                              : 'bg-green-500'
-                            : 'bg-gray-200'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  
-                  <div className="text-xs space-y-1">
-                    {passwordStrength.checks.map((check, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        {check.test ? (
-                          <CheckCircle className="h-3 w-3 text-green-500" />
-                        ) : (
-                          <XCircle className="h-3 w-3 text-gray-400" />
-                        )}
-                        <span className={check.test ? "text-green-600" : "text-gray-500"}>
-                          {check.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Indicador de força da senha usando o componente dedicado */}
+              <PasswordStrengthIndicator password={password} />
               <FormMessage />
             </FormItem>
           )}
