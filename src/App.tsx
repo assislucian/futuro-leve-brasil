@@ -19,6 +19,7 @@ import UpdatePasswordPage from "@/pages/UpdatePasswordPage";
 import TermsPage from "@/pages/TermsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
+import EmailConfirmationPage from "@/pages/EmailConfirmationPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +46,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/update-password" element={<UpdatePasswordPage />} />
               <Route path="/terms" element={<TermsPage />} />

@@ -35,3 +35,8 @@ content = ""
 [auth.email.templates.confirmation]
 subject = ""
 content = ""
+
+# Configurações importantes para o funcionamento correto
+[auth]
+site_url = "https://app.plenus.com.br"
+additional_redirect_urls = ["http://localhost:3000", "https://app.plenus.com.br", "https://app.plenus.com.br/email-confirmation"]

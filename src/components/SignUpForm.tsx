@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   fullName: z.string().min(3, { message: "O nome completo é obrigatório." }),
@@ -27,6 +27,7 @@ const formSchema = z.object({
 });
 
 export function SignUpForm() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,22 +39,41 @@ export function SignUpForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        data: {
-          full_name: values.fullName,
+    try {
+      // Armazenar o e-mail para possível reenvio
+      localStorage.setItem('pendingEmailConfirmation', values.email);
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            full_name: values.fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/email-confirmation`,
         },
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
+      });
 
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Cadastro realizado! Verifique seu email para confirmar a conta.");
-      form.reset();
+      if (error) {
+        console.error('Erro no cadastro:', error);
+        toast.error(`Erro no cadastro: ${error.message}`);
+        return;
+      }
+
+      // Se o usuário foi criado mas precisa confirmar e-mail
+      if (data.user && !data.session) {
+        toast.success("Cadastro realizado! Verifique seu e-mail para confirmar a conta.");
+        form.reset();
+        // Redireciona para a página de confirmação
+        navigate('/email-confirmation');
+      } else if (data.session) {
+        // Se o e-mail foi confirmado automaticamente
+        toast.success("Cadastro realizado e conta confirmada!");
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Erro inesperado:', error);
+      toast.error("Erro inesperado ao criar conta. Tente novamente.");
     }
   }
 
@@ -129,7 +149,7 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+        <Button type="submit" className="w-full btn-primary" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Criando conta..." : "Criar Conta Gratuita"}
         </Button>
       </form>
