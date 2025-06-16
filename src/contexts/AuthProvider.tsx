@@ -1,6 +1,6 @@
 
 import React, { createContext, useEffect, useState, ReactNode } from "react";
-import { User } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
@@ -8,6 +8,7 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 interface AuthContextType {
   user: User | null;
+  session: Session | null;
   profile: Profile | null;
   loading: boolean;
   isTrialing: boolean;
@@ -21,10 +22,11 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log("AuthProvider: Estado atual - user:", !!user, "profile:", !!profile, "loading:", loading);
+  console.log("AuthProvider: Estado atual - user:", !!user, "session:", !!session, "profile:", !!profile, "loading:", loading);
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -55,27 +57,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         console.log("AuthProvider: Inicializando autenticação");
         
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error("AuthProvider: Erro ao obter sessão:", error);
           if (mounted) {
             setUser(null);
+            setSession(null);
             setProfile(null);
             setLoading(false);
           }
           return;
         }
 
-        if (session?.user) {
-          console.log("AuthProvider: Sessão encontrada para usuário:", session.user.id);
+        if (currentSession?.user) {
+          console.log("AuthProvider: Sessão encontrada para usuário:", currentSession.user.id);
           
           if (mounted) {
-            setUser(session.user);
+            setUser(currentSession.user);
+            setSession(currentSession);
           }
 
           // Buscar perfil
-          const profileData = await fetchProfile(session.user.id);
+          const profileData = await fetchProfile(currentSession.user.id);
           
           if (mounted) {
             setProfile(profileData);
@@ -85,6 +89,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           console.log("AuthProvider: Nenhuma sessão encontrada");
           if (mounted) {
             setUser(null);
+            setSession(null);
             setProfile(null);
             setLoading(false);
           }
@@ -93,6 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error("AuthProvider: Erro na inicialização:", error);
         if (mounted) {
           setUser(null);
+          setSession(null);
           setProfile(null);
           setLoading(false);
         }
@@ -103,22 +109,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Listener para mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("AuthProvider: Evento de auth:", event, "Session:", !!session);
+      async (event, newSession) => {
+        console.log("AuthProvider: Evento de auth:", event, "Session:", !!newSession);
         
         if (!mounted) return;
 
-        if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user);
-          const profileData = await fetchProfile(session.user.id);
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          setUser(newSession.user);
+          setSession(newSession);
+          const profileData = await fetchProfile(newSession.user.id);
           setProfile(profileData);
           setLoading(false);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
+          setSession(null);
           setProfile(null);
           setLoading(false);
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          setUser(session.user);
+        } else if (event === 'TOKEN_REFRESHED' && newSession?.user) {
+          setUser(newSession.user);
+          setSession(newSession);
           // Não precisamos recarregar o perfil no refresh do token
           setLoading(false);
         }
@@ -136,7 +145,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     : false;
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isTrialing }}>
+    <AuthContext.Provider value={{ user, session, profile, loading, isTrialing }}>
       {children}
     </AuthContext.Provider>
   );
