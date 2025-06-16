@@ -1,4 +1,3 @@
-
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -84,4 +83,5 @@ const DashboardPage = () => {
   );
 };
 
+export { DashboardPage as Dashboard };
 export default DashboardPage;

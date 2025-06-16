@@ -1,175 +1,111 @@
+
+import { BarChart3, Settings, Target, Wallet, TrendingUp, LogOut, User } from "lucide-react";
+import { NavLink, useLocation } from "react-router-dom";
+
 import {
-  Home,
-  Settings,
-  Calculator,
-  Target,
-  BarChart3,
-  CreditCard,
-  LayoutDashboard,
-  ListChecks
-} from "lucide-react";
-import { NavLink } from "react-router-dom";
-import { Button } from "./ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Skeleton } from "./ui/skeleton";
-import { Switch } from "@/components/ui/switch"
-import { useTheme } from "@/components/ui/theme-provider"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Orçamentos",
-    url: "/budgets",
-    icon: Calculator,
-  },
-  {
-    title: "Metas",
-    url: "/goals",
-    icon: Target,
-  },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Configurações",
-    url: "/settings",
-    icon: Settings,
-  },
+  { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
+  { title: "Orçamentos", url: "/budgets", icon: Wallet },
+  { title: "Metas", url: "/goals", icon: Target },
+  { title: "Analytics", url: "/analytics", icon: TrendingUp },
+  { title: "Configurações", url: "/settings", icon: Settings },
 ];
 
-const AppSidebar = () => {
-  const [open, setOpen] = useState(false);
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const { setTheme } = useTheme();
+export default function AppSidebar() {
+  const { state } = useSidebar();
+  const location = useLocation();
+  const { user, profile } = useAuth();
+  
+  const currentPath = location.pathname;
+  const isCollapsed = state === "collapsed";
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setOpen(false);
-      }
-    };
+  const isActive = (path: string) => currentPath === path;
+  const isExpanded = items.some((i) => isActive(i.url));
 
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const getNavClass = ({ isActive }: { isActive: boolean }) =>
+    isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth");
+    await supabase.auth.signOut();
   };
 
+  const userName = user?.user_metadata?.full_name || "Usuário";
+  const userEmail = user?.email || "";
+  const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="md:hidden">
-          <LayoutDashboard className="h-4 w-4" />
-        </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:w-64">
-        <SheetHeader className="space-y-2">
-          <SheetTitle>Menu</SheetTitle>
-          <SheetDescription>
-            Explore as funcionalidades do Plenus para organizar suas finanças.
-          </SheetDescription>
-        </SheetHeader>
-        <div className="py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              {user ? (
-                <Avatar>
-                  <AvatarImage src={user.user_metadata?.avatar_url} />
-                  <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-              ) : (
-                <Skeleton className="h-9 w-9 rounded-full" />
-              )}
-              <div>
-                <h3 className="text-sm font-medium">{user?.user_metadata?.full_name || user?.email}</h3>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
-              </div>
+    <Sidebar className={isCollapsed ? "w-14" : "w-60"} collapsible="icon">
+      <SidebarHeader className="p-4">
+        <div className="flex items-center gap-2">
+          <div className="text-2xl font-bold text-primary">💰</div>
+          {!isCollapsed && (
+            <span className="text-xl font-bold text-primary">Plenus</span>
+          )}
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup open={isExpanded}>
+          <SidebarGroupLabel>Navegação</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} end className={getNavClass}>
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {!isCollapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={profile?.avatar_url} />
+            <AvatarFallback>{userInitials}</AvatarFallback>
+          </Avatar>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{userName}</p>
+              <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Abrir menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Perfil</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          )}
         </div>
-        <div className="grid gap-4 py-4">
-          <div className="flex items-center">
-            <Switch id="airplane-mode" onCheckedChange={(checked) => checked ? setTheme("dark") : setTheme("light")} />
-            <label htmlFor="airplane-mode" className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Modo Noturno
-            </label>
-          </div>
-        </div>
-        <div className="grid gap-4">
-          {items.map((item) => (
-            <NavLink
-              key={item.title}
-              to={item.url}
-              className={({ isActive }) =>
-                `flex items-center space-x-2 rounded-md p-2 text-sm font-medium hover:underline ${
-                  isActive ? "bg-secondary text-foreground" : "text-muted-foreground"
-                }`
-              }
-              onClick={() => setOpen(false)}
-            >
-              <item.icon className="h-4 w-4" />
-              <span>{item.title}</span>
-            </NavLink>
-          ))}
-        </div>
-      </SheetContent>
-    </Sheet>
+        {!isCollapsed && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="mt-2 w-full justify-start"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sair
+          </Button>
+        )}
+      </SidebarFooter>
+    </Sidebar>
   );
-};
-
-export default AppSidebar;
-
-import {
-  MoreHorizontal,
-  User,
-} from "lucide-react";
+}
