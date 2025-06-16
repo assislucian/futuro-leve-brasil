@@ -37,27 +37,27 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="flex flex-col gap-8 min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="space-y-3">
-            <Skeleton className="h-10 w-96" />
-            <Skeleton className="h-6 w-[480px]" />
+      <div className="flex flex-col gap-10 min-h-screen bg-gradient-to-br from-slate-50/70 via-white to-blue-50/40 p-6 md:p-8">
+        <div className="flex items-center justify-between flex-wrap gap-6">
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-96" />
+            <Skeleton className="h-5 w-[480px]" />
           </div>
-          <div className="flex gap-3">
-            <Skeleton className="h-10 w-36" />
-            <Skeleton className="h-10 w-36" />
-            <Skeleton className="h-10 w-48" />
+          <div className="flex gap-4">
+            <Skeleton className="h-11 w-40" />
+            <Skeleton className="h-11 w-40" />
+            <Skeleton className="h-11 w-52" />
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <Skeleton className="h-48 w-full rounded-xl" />
-            <Skeleton className="h-96 w-full rounded-xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-8">
+            <Skeleton className="h-56 w-full rounded-2xl" />
+            <Skeleton className="h-[600px] w-full rounded-2xl" />
           </div>
-          <div className="lg:col-span-1 space-y-6">
-            <Skeleton className="h-64 w-full rounded-xl" />
-            <Skeleton className="h-48 w-full rounded-xl" />
-            <Skeleton className="h-64 w-full rounded-xl" />
+          <div className="lg:col-span-4 space-y-6">
+            <Skeleton className="h-72 w-full rounded-2xl" />
+            <Skeleton className="h-52 w-full rounded-2xl" />
+            <Skeleton className="h-72 w-full rounded-2xl" />
           </div>
         </div>
       </div>
@@ -71,47 +71,47 @@ const DashboardPage = () => {
   return (
     <>
       <GoalCompletionCelebration />
-      <div className="flex flex-col gap-8 min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-        {/* Header mais humanizado e moderno */}
-        <div className="flex items-start justify-between flex-wrap gap-6">
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent">
+      <div className="flex flex-col gap-10 min-h-screen bg-gradient-to-br from-slate-50/70 via-white to-blue-50/40 p-6 md:p-8">
+        {/* Header Premium com melhor hierarquia */}
+        <div className="flex items-start justify-between flex-wrap gap-8">
+          <div className="space-y-5">
+            <div className="flex items-center gap-5 flex-wrap">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent leading-tight">
                 {getGreeting()}, {firstName}! {getGreetingEmoji()}
               </h1>
               <Badge 
                 variant="secondary" 
-                className="bg-emerald-50 text-emerald-700 border-emerald-200 font-medium px-3 py-1 shadow-sm"
+                className="bg-gradient-to-r from-emerald-50 to-blue-50 text-slate-700 border-emerald-200/50 font-medium px-4 py-2 shadow-sm text-sm"
               >
                 ✨ Versão Gratuita
               </Badge>
             </div>
-            <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
+            <p className="text-xl text-slate-600 leading-relaxed max-w-3xl font-light">
               Aqui está um resumo da sua jornada financeira hoje. Continue construindo seus sonhos! 🚀
             </p>
           </div>
           
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-4 flex-wrap">
             <AddRecurringTransactionDialog />
             <AddInstallmentPlanDialog />
             <AddTransactionDialog />
           </div>
         </div>
 
-        {/* Layout otimizado para clareza com novo spacing */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Coluna principal - informações essenciais */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200">
+        {/* Layout Premium com grid otimizado */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Coluna principal - 2/3 da tela */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300 p-1">
               <FinancialSummary />
             </div>
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300 p-1">
               <TransactionList />
             </div>
           </div>
           
-          {/* Sidebar - ações e insights com cards mais modernos */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* Sidebar - 1/3 da tela com cards bem espaçados */}
+          <div className="lg:col-span-4 space-y-7">
             <SmartInsightsCard />
             <NextActionCard />
             <GoalsSummary />
