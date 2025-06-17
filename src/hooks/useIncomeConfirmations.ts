@@ -31,7 +31,7 @@ export const useIncomeConfirmations = () => {
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        return (data || []) as unknown as IncomeConfirmation[];
+        return (data || []) as IncomeConfirmation[];
       } catch (error) {
         console.log("Tabela income_confirmations ainda não existe:", error);
         return [];
@@ -70,9 +70,10 @@ export const useConfirmIncome = () => {
             .eq("id", confirmationId)
             .single();
 
-          if (!selectError && confirmation && typeof confirmation === 'object' && 'transaction_id' in confirmation) {
-            const confirmationData = confirmation as { transaction_id: string };
-            if (confirmationData.transaction_id) {
+          if (!selectError && confirmation !== null) {
+            // More explicit type check and null safety
+            const confirmationData = confirmation as Record<string, any>;
+            if (confirmationData && 'transaction_id' in confirmationData && confirmationData.transaction_id) {
               await supabase
                 .from("transactions")
                 .delete()
