@@ -122,18 +122,25 @@ const DashboardPage = () => {
         {/* CSS Grid Layout de 12 colunas */}
         <div className="grid grid-cols-12 gap-6">
           {/* Cards laterais - 4 colunas (span 1-4) */}
-          <div className="col-span-12 lg:col-span-4 space-y-6">
-            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
-              <SmartInsightsCard />
-            </div>
-            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
-              <NextActionCard />
-            </div>
-            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
-              <GoalsSummary />
-            </div>
-            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
-              <BudgetsSummary />
+          <div className="col-span-12 lg:col-span-4">
+            <div className="sidebar-cards" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '24px',
+              alignItems: 'start'
+            }}>
+              <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+                <SmartInsightsCard />
+              </div>
+              <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+                <NextActionCard />
+              </div>
+              <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+                <GoalsSummary />
+              </div>
+              <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+                <BudgetsSummary />
+              </div>
             </div>
           </div>
           
