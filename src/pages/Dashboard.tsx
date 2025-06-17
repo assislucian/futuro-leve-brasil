@@ -93,7 +93,7 @@ const DashboardPage = () => {
       />
       <GoalCompletionCelebration />
       <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
-        {/* Header usando variáveis semânticas */}
+        {/* Header */}
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
@@ -119,24 +119,33 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Layout com grid usando variáveis semânticas */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Coluna principal */}
-          <div className="lg:col-span-8 space-y-4">
-            <div className="bg-card rounded-lg border border-border shadow-sm">
-              <FinancialSummary />
-            </div>
-            <div className="bg-card rounded-lg border border-border shadow-sm">
-              <TransactionList />
-            </div>
+        {/* Layout com grid responsivo melhorado */}
+        <div className="grid grid-cols-1 gap-6">
+          {/* Resumo financeiro */}
+          <div className="bg-card rounded-lg border border-border shadow-sm">
+            <FinancialSummary />
           </div>
           
-          {/* Sidebar usando variáveis semânticas */}
-          <div className="lg:col-span-4 space-y-4">
-            <SmartInsightsCard />
-            <NextActionCard />
-            <GoalsSummary />
-            <BudgetsSummary />
+          {/* Grid para o restante do conteúdo */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Coluna principal - Transações */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="bg-card rounded-lg border border-border shadow-sm">
+                <TransactionList />
+              </div>
+            </div>
+            
+            {/* Coluna lateral direita - Cards informativos */}
+            <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+              <SmartInsightsCard />
+              <NextActionCard />
+              
+              {/* Grid para Goals e Budgets lado a lado em telas médias */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <GoalsSummary />
+                <BudgetsSummary />
+              </div>
+            </div>
           </div>
         </div>
       </div>
