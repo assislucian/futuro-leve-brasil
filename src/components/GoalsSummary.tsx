@@ -3,15 +3,17 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Target, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
+import { Target, TrendingUp, AlertCircle, CheckCircle, Shield } from "lucide-react";
 import { useGoals } from "@/hooks/useGoals";
-import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
+import { useEmergencyFundCalculator } from "@/hooks/useEmergencyFundCalculator";
+import { useCreateEmergencyFundGoal } from "@/hooks/useCreateEmergencyFundGoal";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const GoalsSummary = () => {
   const { data: goals, isLoading: goalsLoading } = useGoals();
-  const { data: financialData, isLoading: financialLoading } = useFinancialSummaryData();
+  const { data: emergencyData, isLoading: emergencyLoading } = useEmergencyFundCalculator();
+  const createEmergencyGoal = useCreateEmergencyFundGoal();
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString("pt-BR", {
@@ -20,77 +22,67 @@ const GoalsSummary = () => {
     });
   };
 
-  // Calcular métricas inteligentes baseadas em princípios financeiros
-  const calculateFinancialHealth = () => {
-    if (!financialData || !goals) return null;
-
-    const { totalIncome, totalExpense, balance } = financialData;
-    const totalSaved = goals.reduce((sum, goal) => sum + goal.current_amount, 0);
-    
-    // Conceito Dave Ramsey: Reserva de emergência (3-6 meses de gastos)
-    const monthlyExpenses = totalExpense;
-    const emergencyFundTarget = monthlyExpenses * 3; // 3 meses mínimo
-    const hasEmergencyFund = totalSaved >= emergencyFundTarget;
-    
-    // Taxa de poupança ideal: 20% da renda (Warren Buffett)
-    const savingsRate = totalIncome > 0 ? (balance / totalIncome) * 100 : 0;
-    const idealSavingsRate = 20;
-    
-    return {
-      hasEmergencyFund,
-      emergencyFundTarget,
-      savingsRate,
-      idealSavingsRate,
-      totalSaved,
-      monthlyExpenses
-    };
-  };
-
-  const financialHealth = calculateFinancialHealth();
-  
-  // Priorização inteligente de ações
+  // Calcular recomendação inteligente
   const getSmartRecommendation = () => {
-    if (!financialHealth || !goals) return null;
+    if (!emergencyData || !goals) return null;
 
-    const { hasEmergencyFund, savingsRate, idealSavingsRate, totalSaved, emergencyFundTarget } = financialHealth;
+    const { 
+      hasEmergencyFund, 
+      missingAmount, 
+      monthlyEssentialExpenses,
+      monthsOfSecurity,
+      recommendedAmount 
+    } = emergencyData;
 
-    // 1ª Prioridade: Reserva de emergência
-    if (!hasEmergencyFund && totalSaved < emergencyFundTarget) {
-      return {
-        type: "emergency",
-        title: "🚨 Prioridade: Reserva de Emergência",
-        description: `Você precisa de ${formatCurrency(emergencyFundTarget - totalSaved)} para ter 3 meses de segurança.`,
-        action: "Criar Meta de Emergência",
-        priority: "high"
-      };
+    // 1ª Prioridade: Criar reserva de emergência se não existe
+    if (!hasEmergencyFund && monthlyEssentialExpenses > 0) {
+      const hasEmergencyGoal = goals.some(goal => 
+        goal.name.toLowerCase().includes('emergência') || 
+        goal.name.toLowerCase().includes('reserva')
+      );
+
+      if (!hasEmergencyGoal) {
+        return {
+          type: "create_emergency",
+          title: "🚨 Prioridade: Crie sua Reserva",
+          description: `Baseado nos seus gastos de ${formatCurrency(monthlyEssentialExpenses)}/mês, você precisa de ${formatCurrency(recommendedAmount)} para ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses de segurança.`,
+          action: "Criar Automaticamente",
+          priority: "high"
+        };
+      }
     }
 
-    // 2ª Prioridade: Taxa de poupança baixa
-    if (savingsRate < idealSavingsRate) {
+    // 2ª Prioridade: Completar reserva existente
+    if (!hasEmergencyFund && monthsOfSecurity > 0) {
       return {
-        type: "savings",
-        title: "💡 Melhore sua Taxa de Poupança",
-        description: `Sua taxa atual é ${savingsRate.toFixed(1)}%. Meta ideal: ${idealSavingsRate}%.`,
-        action: "Otimizar Orçamento",
+        type: "complete_emergency",
+        title: "💪 Continue sua Reserva",
+        description: `Você tem ${monthsOfSecurity.toFixed(1)} meses de segurança. Faltam ${formatCurrency(missingAmount)} para completar.`,
+        action: "Contribuir Agora",
         priority: "medium"
       };
     }
 
-    // 3ª Prioridade: Acelerar metas existentes
-    if (goals.length > 0) {
-      const nearestGoal = goals.sort((a, b) => {
-        const progressA = (a.current_amount / a.target_amount) * 100;
-        const progressB = (b.current_amount / b.target_amount) * 100;
-        return progressB - progressA; // Maior progresso primeiro
-      })[0];
+    // 3ª Prioridade: Acelerar outras metas
+    if (hasEmergencyFund && goals.length > 0) {
+      const activeGoals = goals.filter(goal => goal.current_amount < goal.target_amount);
+      if (activeGoals.length > 0) {
+        const nearestGoal = activeGoals.sort((a, b) => {
+          const progressA = (a.current_amount / a.target_amount) * 100;
+          const progressB = (b.current_amount / b.target_amount) * 100;
+          return progressB - progressA;
+        })[0];
 
-      return {
-        type: "accelerate",
-        title: "🚀 Acelere seu Sonho",
-        description: `"${nearestGoal.name}" está ${((nearestGoal.current_amount / nearestGoal.target_amount) * 100).toFixed(0)}% completa!`,
-        action: "Contribuir Agora",
-        priority: "low"
-      };
+        const progress = (nearestGoal.current_amount / nearestGoal.target_amount) * 100;
+        
+        return {
+          type: "accelerate",
+          title: "🚀 Acelere seu Sonho",
+          description: `"${nearestGoal.name}" está ${progress.toFixed(0)}% completa!`,
+          action: "Contribuir",
+          priority: "low"
+        };
+      }
     }
 
     return null;
@@ -98,7 +90,7 @@ const GoalsSummary = () => {
 
   const smartRecommendation = getSmartRecommendation();
 
-  if (goalsLoading || financialLoading) {
+  if (goalsLoading || emergencyLoading) {
     return (
       <Card className="h-fit">
         <CardHeader>
@@ -126,10 +118,13 @@ const GoalsSummary = () => {
         <CardContent className="space-y-4">
           <div className="text-center space-y-3">
             <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-              <Target className="h-6 w-6 text-emerald-600" />
+              {smartRecommendation?.type === "create_emergency" ? 
+                <Shield className="h-6 w-6 text-orange-600" /> :
+                <Target className="h-6 w-6 text-emerald-600" />
+              }
             </div>
             
-            {smartRecommendation?.type === "emergency" ? (
+            {smartRecommendation?.type === "create_emergency" ? (
               <div className="space-y-2">
                 <Badge variant="destructive" className="mb-2">
                   Ação Urgente
@@ -153,12 +148,28 @@ const GoalsSummary = () => {
             )}
           </div>
 
-          <Button asChild size="sm" className="w-full bg-emerald-500 hover:bg-emerald-600">
-            <Link to="/goals">
-              <Target className="h-4 w-4 mr-2" />
-              {smartRecommendation?.type === "emergency" ? "Criar Reserva de Emergência" : "Criar Primeira Meta"}
-            </Link>
-          </Button>
+          {smartRecommendation?.type === "create_emergency" ? (
+            <Button 
+              onClick={() => emergencyData && createEmergencyGoal.mutate({
+                targetAmount: emergencyData.recommendedAmount,
+                monthsOfSecurity: Math.ceil(emergencyData.recommendedAmount / emergencyData.monthlyEssentialExpenses),
+                monthlyExpenses: emergencyData.monthlyEssentialExpenses
+              })}
+              disabled={createEmergencyGoal.isPending}
+              size="sm" 
+              className="w-full bg-orange-500 hover:bg-orange-600"
+            >
+              <Shield className="h-4 w-4 mr-2" />
+              {createEmergencyGoal.isPending ? "Criando..." : "Criar Reserva de Emergência"}
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="w-full bg-emerald-500 hover:bg-emerald-600">
+              <Link to="/goals">
+                <Target className="h-4 w-4 mr-2" />
+                Criar Primeira Meta
+              </Link>
+            </Button>
+          )}
         </CardContent>
       </Card>
     );
@@ -200,7 +211,7 @@ const GoalsSummary = () => {
           </p>
         </div>
 
-        {/* Recomendação Inteligente */}
+        {/* Recomendação Inteligente baseada em análise real */}
         {smartRecommendation && (
           <div className={cn(
             "p-3 rounded-lg border text-center space-y-2",
@@ -222,13 +233,20 @@ const GoalsSummary = () => {
           </div>
         )}
 
-        {/* Motivação */}
-        <div className="text-center space-y-2">
-          <p className="text-xs font-medium text-slate-700">Parabéns!</p>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Você está construindo seu futuro financeiro! Cada real economizado é um passo mais perto dos seus sonhos. 🚀
-          </p>
-        </div>
+        {/* Status da Reserva de Emergência */}
+        {emergencyData && (
+          <div className="text-center space-y-2">
+            <p className="text-xs font-medium text-slate-700">
+              {emergencyData.hasEmergencyFund ? "✅ Reserva Completa!" : "🛡️ Segurança Financeira"}
+            </p>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              {emergencyData.hasEmergencyFund 
+                ? `Você tem ${emergencyData.monthsOfSecurity.toFixed(1)} meses de segurança. Agora pode focar em seus outros sonhos! 🚀`
+                : `Você tem ${emergencyData.monthsOfSecurity.toFixed(1)} meses de segurança. Continue construindo sua tranquilidade financeira.`
+              }
+            </p>
+          </div>
+        )}
 
         <Button asChild variant="outline" size="sm" className="w-full">
           <Link to="/goals">

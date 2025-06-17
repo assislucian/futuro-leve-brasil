@@ -3,10 +3,11 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Lightbulb, ArrowRight, Target, DollarSign, PiggyBank, AlertTriangle } from "lucide-react";
+import { Lightbulb, ArrowRight, Target, DollarSign, PiggyBank, AlertTriangle, Shield } from "lucide-react";
 import { useGoals } from "@/hooks/useGoals";
 import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
-import { useBudgetsSummary } from "@/hooks/useBudgetsSummary";
+import { useEmergencyFundCalculator } from "@/hooks/useEmergencyFundCalculator";
+import { useCreateEmergencyFundGoal } from "@/hooks/useCreateEmergencyFundGoal";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,8 @@ interface SmartAction {
   title: string;
   description: string;
   actionText: string;
-  actionPath: string;
+  actionPath?: string;
+  onAction?: () => void;
   priority: ActionPriority;
   impact: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -26,7 +28,8 @@ interface SmartAction {
 export function NextActionCard() {
   const { data: goals, isLoading: goalsLoading } = useGoals();
   const { data: financialData, isLoading: financialLoading } = useFinancialSummaryData();
-  const { data: budgetData, isLoading: budgetLoading } = useBudgetsSummary();
+  const { data: emergencyData, isLoading: emergencyLoading } = useEmergencyFundCalculator();
+  const createEmergencyGoal = useCreateEmergencyFundGoal();
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString("pt-BR", {
@@ -35,16 +38,22 @@ export function NextActionCard() {
     });
   };
 
-  // Lógica de priorização baseada em princípios de Dave Ramsey e Warren Buffett
+  // Lógica inteligente baseada em dados reais
   const calculateSmartActions = (): SmartAction[] => {
-    if (!financialData || goalsLoading || financialLoading || budgetLoading) return [];
+    if (!financialData || !emergencyData || goalsLoading || financialLoading || emergencyLoading) return [];
 
     const actions: SmartAction[] = [];
-    const { totalIncome, totalExpense, balance } = financialData;
-    const currentGoals = goals || [];
-    const totalSaved = currentGoals.reduce((sum, goal) => sum + goal.current_amount, 0);
+    const { balance } = financialData;
+    const { 
+      hasEmergencyFund, 
+      missingAmount, 
+      monthlyEssentialExpenses,
+      monthsOfSecurity,
+      riskProfile,
+      recommendedAmount 
+    } = emergencyData;
 
-    // 1. CRÍTICO: Fluxo de caixa negativo (Dave Ramsey - Baby Step 0)
+    // 1. CRÍTICO: Fluxo de caixa negativo
     if (balance < 0) {
       actions.push({
         id: "negative-cashflow",
@@ -58,35 +67,55 @@ export function NextActionCard() {
       });
     }
 
-    // 2. CRÍTICO: Sem reserva de emergência (Dave Ramsey - Baby Step 1)
-    const monthlyExpenses = totalExpense;
-    const emergencyFundTarget = monthlyExpenses * 3; // Mínimo 3 meses
-    const hasEmergencyFund = totalSaved >= emergencyFundTarget;
+    // 2. ALTA PRIORIDADE: Reserva de emergência (com lógica inteligente)
+    if (!hasEmergencyFund && balance >= 0 && monthlyEssentialExpenses > 0) {
+      const hasExistingEmergencyGoal = goals?.some(goal => 
+        goal.name.toLowerCase().includes('emergência') || 
+        goal.name.toLowerCase().includes('reserva')
+      );
 
-    if (!hasEmergencyFund && balance >= 0) {
-      const remaining = emergencyFundTarget - totalSaved;
-      actions.push({
-        id: "emergency-fund",
-        title: "🛡️ Prioridade: Reserva de Emergência",
-        description: `Você precisa de ${formatCurrency(remaining)} para ter 3 meses de segurança financeira.`,
-        actionText: "Criar Meta de Emergência",
-        actionPath: "/goals",
-        priority: "high",
-        impact: "Segurança financeira",
-        icon: PiggyBank
-      });
+      if (!hasExistingEmergencyGoal) {
+        actions.push({
+          id: "create-emergency-fund",
+          title: "🛡️ Prioridade: Reserva de Emergência",
+          description: `Baseado nos seus gastos essenciais de ${formatCurrency(monthlyEssentialExpenses)}/mês, você precisa de ${formatCurrency(missingAmount)} para ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses de segurança.`,
+          actionText: "Criar Meta Automaticamente",
+          onAction: () => {
+            createEmergencyGoal.mutate({
+              targetAmount: recommendedAmount,
+              monthsOfSecurity: Math.ceil(recommendedAmount / monthlyEssentialExpenses),
+              monthlyExpenses: monthlyEssentialExpenses
+            });
+          },
+          priority: "high",
+          impact: "Segurança financeira",
+          icon: Shield
+        });
+      } else {
+        // Se já tem meta, sugerir contribuição
+        actions.push({
+          id: "contribute-emergency",
+          title: "💪 Continue Sua Reserva",
+          description: `Você tem ${monthsOfSecurity.toFixed(1)} meses de segurança. Meta: ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses.`,
+          actionText: "Contribuir para Emergência",
+          actionPath: "/goals",
+          priority: "high",
+          impact: "Aumenta segurança",
+          icon: PiggyBank
+        });
+      }
     }
 
-    // 3. ALTO: Taxa de poupança baixa (Warren Buffett - 20% rule)
-    if (hasEmergencyFund && totalIncome > 0) {
-      const savingsRate = (balance / totalIncome) * 100;
-      const idealSavingsRate = 20;
+    // 3. MÉDIO: Otimizar taxa de poupança
+    if (hasEmergencyFund && financialData.totalIncome > 0) {
+      const savingsRate = (balance / financialData.totalIncome) * 100;
+      const idealRate = riskProfile === 'conservative' ? 15 : riskProfile === 'moderate' ? 20 : 25;
 
-      if (savingsRate < idealSavingsRate) {
+      if (savingsRate < idealRate) {
         actions.push({
           id: "improve-savings-rate",
-          title: "📈 Aumente sua Taxa de Poupança",
-          description: `Sua taxa atual é ${savingsRate.toFixed(1)}%. Meta ideal: ${idealSavingsRate}% da renda.`,
+          title: "📈 Acelere Seus Objetivos",
+          description: `Sua taxa de poupança é ${savingsRate.toFixed(1)}%. Para seu perfil ${riskProfile === 'conservative' ? 'conservador' : riskProfile === 'moderate' ? 'moderado' : 'arrojado'}, ideal seria ${idealRate}%.`,
           actionText: "Otimizar Orçamento",
           actionPath: "/budgets",
           priority: "medium",
@@ -96,47 +125,31 @@ export function NextActionCard() {
       }
     }
 
-    // 4. MÉDIO: Acelerar meta mais próxima da conclusão
-    if (hasEmergencyFund && currentGoals.length > 0) {
-      const nearestGoal = currentGoals
-        .filter(goal => goal.current_amount < goal.target_amount)
-        .sort((a, b) => {
+    // 4. BAIXO: Acelerar meta mais próxima
+    if (hasEmergencyFund && goals && goals.length > 0) {
+      const activeGoals = goals.filter(goal => goal.current_amount < goal.target_amount);
+      if (activeGoals.length > 0) {
+        const nearestGoal = activeGoals.sort((a, b) => {
           const progressA = (a.current_amount / a.target_amount) * 100;
           const progressB = (b.current_amount / b.target_amount) * 100;
           return progressB - progressA;
         })[0];
 
-      if (nearestGoal) {
         const progress = (nearestGoal.current_amount / nearestGoal.target_amount) * 100;
-        const remaining = nearestGoal.target_amount - nearestGoal.current_amount;
-
-        if (progress >= 80) {
+        
+        if (progress >= 70) {
           actions.push({
-            id: "accelerate-near-goal",
+            id: "accelerate-goal",
             title: "🎯 Finalize seu Sonho!",
-            description: `"${nearestGoal.name}" está ${progress.toFixed(0)}% completa. Faltam apenas ${formatCurrency(remaining)}.`,
+            description: `"${nearestGoal.name}" está ${progress.toFixed(0)}% completa. Está quase lá!`,
             actionText: "Contribuir Agora",
             actionPath: "/goals",
-            priority: "medium",
+            priority: "low",
             impact: "Realização de sonho",
             icon: Target
           });
         }
       }
-    }
-
-    // 5. BAIXO: Criar primeira meta (se tudo estiver ok)
-    if (hasEmergencyFund && currentGoals.length === 0) {
-      actions.push({
-        id: "create-first-goal",
-        title: "🌟 Defina seu Próximo Sonho",
-        description: "Com sua reserva de emergência pronta, é hora de planejar seus objetivos de vida.",
-        actionText: "Criar Meta",
-        actionPath: "/goals",
-        priority: "low",
-        impact: "Crescimento pessoal",
-        icon: Target
-      });
     }
 
     // Ordenar por prioridade
@@ -149,35 +162,25 @@ export function NextActionCard() {
 
   const getPriorityColor = (priority: ActionPriority) => {
     switch (priority) {
-      case "critical":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "high":
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case "medium":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "low":
-        return "bg-green-100 text-green-800 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+      case "critical": return "bg-red-100 text-red-800 border-red-200";
+      case "high": return "bg-orange-100 text-orange-800 border-orange-200";
+      case "medium": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "low": return "bg-green-100 text-green-800 border-green-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getPriorityText = (priority: ActionPriority) => {
     switch (priority) {
-      case "critical":
-        return "CRÍTICO";
-      case "high":
-        return "ALTA";
-      case "medium":
-        return "MÉDIA";
-      case "low":
-        return "BAIXA";
-      default:
-        return "NORMAL";
+      case "critical": return "CRÍTICO";
+      case "high": return "ALTA";
+      case "medium": return "MÉDIA";
+      case "low": return "BAIXA";
+      default: return "NORMAL";
     }
   };
 
-  if (goalsLoading || financialLoading || budgetLoading) {
+  if (goalsLoading || financialLoading || emergencyLoading) {
     return (
       <Card className="h-fit">
         <CardHeader>
@@ -200,7 +203,7 @@ export function NextActionCard() {
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-yellow-500" />
-            Próxima Ação
+            Próxima Ação Inteligente
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
@@ -267,12 +270,24 @@ export function NextActionCard() {
             </div>
           </div>
 
-          <Button asChild size="sm" className="w-full bg-emerald-500 hover:bg-emerald-600">
-            <Link to={topAction.actionPath}>
-              {topAction.actionText}
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Link>
-          </Button>
+          {topAction.onAction ? (
+            <Button 
+              onClick={topAction.onAction}
+              disabled={createEmergencyGoal.isPending}
+              size="sm" 
+              className="w-full bg-emerald-500 hover:bg-emerald-600"
+            >
+              {createEmergencyGoal.isPending ? "Criando..." : topAction.actionText}
+              {!createEmergencyGoal.isPending && <ArrowRight className="h-4 w-4 ml-2" />}
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="w-full bg-emerald-500 hover:bg-emerald-600">
+              <Link to={topAction.actionPath!}>
+                {topAction.actionText}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Link>
+            </Button>
+          )}
         </div>
 
         {/* Informação Adicional */}
