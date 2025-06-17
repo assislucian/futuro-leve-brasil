@@ -110,12 +110,20 @@ const DashboardPage = () => {
             </div>
           </div>
           
-          {/* Sidebar usando variáveis semânticas */}
-          <div className="lg:col-span-4 space-y-4">
-            <SmartInsightsCard />
-            <NextActionCard />
-            <GoalsSummary />
-            <BudgetsSummary />
+          {/* Sidebar com grid layout para cards */}
+          <div className="lg:col-span-4">
+            <div 
+              className="sidebar-cards grid gap-6"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                alignItems: 'start'
+              }}
+            >
+              <SmartInsightsCard />
+              <NextActionCard />
+              <GoalsSummary />
+              <BudgetsSummary />
+            </div>
           </div>
         </div>
       </div>
