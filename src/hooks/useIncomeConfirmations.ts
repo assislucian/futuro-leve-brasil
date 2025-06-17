@@ -31,7 +31,7 @@ export const useIncomeConfirmations = () => {
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        return (data || []) as IncomeConfirmation[];
+        return (data || []) as unknown as IncomeConfirmation[];
       } catch (error) {
         console.log("Tabela income_confirmations ainda não existe:", error);
         return [];
