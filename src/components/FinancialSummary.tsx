@@ -1,12 +1,10 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ArrowUp, ArrowDown, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
+import { DollarSign, ArrowUp, ArrowDown, TrendingUp } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 const FinancialSummary = () => {
@@ -46,41 +44,6 @@ const FinancialSummary = () => {
     balance: 0 
   };
 
-  const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
-  const isHealthy = savingsRate >= 20;
-  const needsAttention = savingsRate < 10 && totalIncome > 0;
-
-  const getHealthStatus = () => {
-    if (needsAttention) {
-      return {
-        icon: AlertTriangle,
-        text: "Atenção Necessária",
-        color: "text-amber-600",
-        bgColor: "bg-amber-50 dark:bg-amber-950/20",
-        borderColor: "border-amber-200 dark:border-amber-800"
-      };
-    }
-    if (isHealthy) {
-      return {
-        icon: CheckCircle,
-        text: "Saúde Financeira Excelente",
-        color: "text-emerald-600",
-        bgColor: "bg-emerald-50 dark:bg-emerald-950/20",
-        borderColor: "border-emerald-200 dark:border-emerald-800"
-      };
-    }
-    return {
-      icon: TrendingUp,
-      text: "Progredindo Bem",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50 dark:bg-blue-950/20",
-      borderColor: "border-blue-200 dark:border-blue-800"
-    };
-  };
-
-  const healthStatus = getHealthStatus();
-  const HealthIcon = healthStatus.icon;
-
   const cards = [
     {
       title: "Receita Total",
@@ -102,7 +65,7 @@ const FinancialSummary = () => {
       title: "Saldo Atual",
       value: balance,
       icon: DollarSign,
-      description: `${savingsRate.toFixed(1)}% de economia`,
+      description: "Resultado do período",
       color: balance >= 0 ? "blue" : "red",
       trend: balance >= 0 ? "positive" : "negative"
     }
@@ -134,37 +97,6 @@ const FinancialSummary = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Status de Saúde Financeira */}
-      {totalIncome > 0 && (
-        <div className={cn(
-          "p-4 rounded-lg border transition-all",
-          healthStatus.bgColor,
-          healthStatus.borderColor
-        )}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className={cn("p-2 rounded-lg", healthStatus.bgColor)}>
-              <HealthIcon className={cn("h-4 w-4", healthStatus.color)} />
-            </div>
-            <div className="flex-1">
-              <h3 className={cn("font-medium", healthStatus.color)}>
-                {healthStatus.text}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Taxa de economia: {savingsRate.toFixed(1)}% • Meta: 20%
-              </p>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Progresso da Meta</span>
-              <span className="font-medium">{Math.min(savingsRate, 100).toFixed(1)}%</span>
-            </div>
-            <Progress value={Math.min(savingsRate, 100)} className="h-2" />
-          </div>
-        </div>
-      )}
-
       {/* Cards de Métricas Simplificados */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, index) => {
@@ -200,26 +132,16 @@ const FinancialSummary = () => {
         })}
       </div>
 
-      {/* Insight Discreto */}
-      {totalIncome > 0 && (
+      {/* Insight Discreto - apenas quando há dados relevantes */}
+      {totalIncome > 0 && balance >= 0 && (
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 border">
           <h4 className="font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             Insight Rápido
           </h4>
-          {needsAttention ? (
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>Oportunidade:</strong> Reduzindo pequenos gastos, você pode acelerar suas metas significativamente.
-            </p>
-          ) : isHealthy ? (
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>Parabéns!</strong> Você está no caminho certo para realizar seus sonhos.
-            </p>
-          ) : (
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              <strong>Progresso:</strong> Com pequenos ajustes, você pode otimizar ainda mais sua economia.
-            </p>
-          )}
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            <strong>Progresso:</strong> Continue registrando suas transações para acompanhar melhor seus hábitos financeiros.
+          </p>
         </div>
       )}
     </div>

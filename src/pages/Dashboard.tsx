@@ -141,12 +141,19 @@ const DashboardPage = () => {
               </div>
             </div>
             
-            {/* Sidebar */}
-            <div className="xl:col-span-1 space-y-6">
-              <SmartInsightsCard />
-              <NextActionCard />
-              <GoalsSummary />
-              <BudgetsSummary />
+            {/* Sidebar com Grid Layout */}
+            <div className="xl:col-span-1">
+              <div className="sidebar-cards" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                gap: '24px',
+                alignItems: 'start'
+              }}>
+                <SmartInsightsCard />
+                <NextActionCard />
+                <GoalsSummary />
+                <BudgetsSummary />
+              </div>
             </div>
           </div>
         </div>
