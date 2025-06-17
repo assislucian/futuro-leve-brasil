@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type Language = 'pt' | 'de';
@@ -458,8 +457,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Set HTML lang attribute for accessibility and SEO
     document.documentElement.lang = language;
     
-    // Set direction attribute (for future RTL support)
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    // Set direction attribute (always LTR for pt and de)
+    document.documentElement.dir = 'ltr';
   }, [language]);
 
   const setLanguage = (lang: Language) => {
@@ -565,7 +564,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return t(pluralKey, { count });
   };
 
-  const isRTL = language === 'ar'; // For future RTL language support
+  // Always false for current supported languages (pt and de)
+  const isRTL = false;
 
   return (
     <LanguageContext.Provider value={{ 
