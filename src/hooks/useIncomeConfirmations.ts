@@ -22,15 +22,20 @@ export const useIncomeConfirmations = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      const { data, error } = await supabase
-        .from("income_confirmations" as any)
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("status", "pending")
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("income_confirmations" as any)
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("status", "pending")
+          .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data as IncomeConfirmation[];
+        if (error) throw error;
+        return (data || []) as IncomeConfirmation[];
+      } catch (error) {
+        console.log("Tabela income_confirmations ainda não existe:", error);
+        return [];
+      }
     },
     enabled: !!user,
     refetchInterval: 1000 * 60 * 5, // Verificar a cada 5 minutos
@@ -47,33 +52,38 @@ export const useConfirmIncome = () => {
 
       const status = confirmed ? 'confirmed' : 'cancelled';
       
-      // Atualizar status da confirmação
-      const { error: updateError } = await supabase
-        .from("income_confirmations" as any)
-        .update({ status })
-        .eq("id", confirmationId)
-        .eq("user_id", user.id);
-
-      if (updateError) throw updateError;
-
-      // Se foi cancelada, remover a transação automática
-      if (!confirmed) {
-        const { data: confirmation } = await supabase
+      try {
+        // Atualizar status da confirmação
+        const { error: updateError } = await supabase
           .from("income_confirmations" as any)
-          .select("transaction_id")
+          .update({ status })
           .eq("id", confirmationId)
-          .single();
+          .eq("user_id", user.id);
 
-        if (confirmation?.transaction_id) {
-          await supabase
-            .from("transactions")
-            .delete()
-            .eq("id", confirmation.transaction_id)
-            .eq("user_id", user.id);
+        if (updateError) throw updateError;
+
+        // Se foi cancelada, remover a transação automática
+        if (!confirmed) {
+          const { data: confirmation, error: selectError } = await supabase
+            .from("income_confirmations" as any)
+            .select("transaction_id")
+            .eq("id", confirmationId)
+            .single();
+
+          if (!selectError && confirmation?.transaction_id) {
+            await supabase
+              .from("transactions")
+              .delete()
+              .eq("id", confirmation.transaction_id)
+              .eq("user_id", user.id);
+          }
         }
-      }
 
-      return { confirmed, status };
+        return { confirmed, status };
+      } catch (error) {
+        console.log("Erro ao processar confirmação:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["income-confirmations"] });

@@ -8,15 +8,17 @@ import { Sparkles } from "lucide-react";
 import { IncomeConfirmationToast } from "@/components/IncomeConfirmationToast";
 import { 
   SidebarInset, 
-  SidebarTrigger, 
-  Separator, 
+  SidebarTrigger
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { 
   Breadcrumb, 
   BreadcrumbList, 
   BreadcrumbItem, 
   BreadcrumbLink, 
   BreadcrumbSeparator, 
   BreadcrumbPage 
-} from "@/components/ui/sidebar";
+} from "@/components/ui/breadcrumb";
 import { UserNav } from "@/components/UserNav";
 import { TrialBanner } from "@/components/TrialBanner";
 
