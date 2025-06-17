@@ -10,13 +10,24 @@ import { Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const GoalsPage = () => {
-  const { profile, loading: authLoading } = useAuth();
+  const { profile, loading: authLoading, isTrialing } = useAuth();
   const { data: goalsSummary, isLoading: goalsLoading } = useGoalsSummary();
 
   const isLoading = authLoading || goalsLoading;
   const goalCount = goalsSummary?.count || 0;
-  const hasAccess = profile?.plan === 'premium';
+  
+  // Durante o trial ou com plano premium, o usuário tem acesso completo
+  const hasAccess = profile?.plan === 'premium' || isTrialing;
   const limitReached = !hasAccess && goalCount >= 2;
+
+  console.log("GoalsPage: Debug trial status", {
+    plan: profile?.plan,
+    isTrialing,
+    hasAccess,
+    goalCount,
+    limitReached,
+    trialEndsAt: profile?.trial_ends_at
+  });
 
   return (
     <div className="flex flex-col gap-8">

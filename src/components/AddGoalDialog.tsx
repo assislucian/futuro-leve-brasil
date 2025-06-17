@@ -63,6 +63,8 @@ export function AddGoalDialog({ disabled = false }: { disabled?: boolean }) {
     mutationFn: async (data: GoalFormValues) => {
       if (!user) throw new Error("Usuário não autenticado.");
 
+      console.log("AddGoalDialog: Tentando criar meta", data);
+
       const { error } = await supabase.from("goals").insert({
         user_id: user.id,
         name: data.name,
@@ -70,7 +72,12 @@ export function AddGoalDialog({ disabled = false }: { disabled?: boolean }) {
         target_date: data.target_date ? format(data.target_date, "yyyy-MM-dd") : null,
       });
 
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error("AddGoalDialog: Erro ao criar meta", error);
+        throw new Error(error.message);
+      }
+
+      console.log("AddGoalDialog: Meta criada com sucesso");
     },
     onSuccess: () => {
       toast.success("Meta criada com sucesso! ✨");
@@ -80,10 +87,11 @@ export function AddGoalDialog({ disabled = false }: { disabled?: boolean }) {
       setOpen(false);
     },
     onError: (error) => {
-      if (error.message.includes('Limite de 2 metas atingido')) {
+      console.error("AddGoalDialog: Erro na mutation", error);
+      if (error.message.includes('período de teste Premium terminou') || error.message.includes('Limite de 2 metas atingido')) {
         toast.error("Limite de metas atingido", {
           description: "Você atingiu o limite de 2 metas do plano gratuito. Faça o upgrade para criar metas ilimitadas!",
-          action: { label: "Fazer Upgrade", onClick: () => console.log('Navigate to pricing') }
+          action: { label: "Fazer Upgrade", onClick: () => window.open('/#pricing', '_blank') }
         });
       } else {
         toast.error("Houve um erro ao criar sua meta.", {
@@ -94,6 +102,7 @@ export function AddGoalDialog({ disabled = false }: { disabled?: boolean }) {
   });
 
   const onSubmit = (data: GoalFormValues) => {
+    console.log("AddGoalDialog: Submetendo formulário", data);
     mutate(data);
   };
 

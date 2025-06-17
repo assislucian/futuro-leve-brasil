@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     hasUser: !!user, 
     hasProfile: !!profile, 
     loading, 
-    error 
+    error,
+    profilePlan: profile?.plan,
+    trialEndsAt: profile?.trial_ends_at
   });
 
   /**
@@ -178,6 +180,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const trialDaysLeft = profile?.trial_ends_at 
     ? Math.max(0, Math.ceil((new Date(profile.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
+
+  console.log("AuthProvider: Trial status calculado", {
+    isTrialing,
+    trialDaysLeft,
+    trialEndsAt: profile?.trial_ends_at,
+    now: new Date().toISOString()
+  });
 
   const contextValue: AuthContextType = {
     user,

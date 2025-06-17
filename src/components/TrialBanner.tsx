@@ -9,6 +9,13 @@ import { Link } from "react-router-dom";
 export const TrialBanner = () => {
   const { isTrialing, trialDaysLeft, profile } = useAuth();
 
+  console.log("TrialBanner: Debug", {
+    isTrialing,
+    trialDaysLeft,
+    plan: profile?.plan,
+    trialEndsAt: profile?.trial_ends_at
+  });
+
   // Não mostrar banner se não estiver em trial ou se já for premium
   if (!isTrialing || profile?.plan === 'premium') {
     return null;

@@ -103,6 +103,13 @@ const BudgetsPageContent = () => {
 const BudgetsPage = () => {
   const { profile, loading, isTrialing } = useAuth();
   
+  console.log("BudgetsPage: Debug trial status", {
+    plan: profile?.plan,
+    isTrialing,
+    loading,
+    trialEndsAt: profile?.trial_ends_at
+  });
+  
   if (loading) {
     return (
        <div className="flex flex-col gap-8">
@@ -125,6 +132,7 @@ const BudgetsPage = () => {
     );
   }
 
+  // Durante o trial ou com plano premium, o usuário tem acesso completo
   const hasAccess = profile?.plan === 'premium' || isTrialing;
 
   return (
