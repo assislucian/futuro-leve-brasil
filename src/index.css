@@ -1,36 +1,88 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Cores do Sistema Plenus */
-  --plenus-primary: #0D9488;
-  --plenus-primary-light: #14B8A6;
-  --plenus-primary-dark: #0F766E;
-  
-  --plenus-secondary: #3B82F6;
-  --plenus-secondary-light: #60A5FA;
-  --plenus-secondary-dark: #2563EB;
-  
-  --plenus-accent: #8B5CF6;
-  --plenus-accent-light: #A78BFA;
-  --plenus-accent-dark: #7C3AED;
-  
-  --plenus-success: #10B981;
-  --plenus-warning: #F59E0B;
-  --plenus-error: #EF4444;
-  
-  /* Gradientes Plenus */
-  --plenus-gradient-primary: linear-gradient(135deg, #0D9488 0%, #14B8A6 50%, #3B82F6 100%);
-  --plenus-gradient-secondary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-  --plenus-gradient-accent: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-  --plenus-gradient-bg: linear-gradient(135deg, #F0FDFA 0%, #F0F9FF 50%, #FAF5FF 100%);
-}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 20% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 20% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 20% 25%;
+    --primary: 168 70% 48%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 215 20% 25%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 13% 55%;
+    --accent: 210 40% 95%;
+    --accent-foreground: 215 20% 25%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 168 70% 48%;
+    --radius: 0.75rem;
+    --success: 168 70% 48%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    
+    /* Paleta Plenus - Cores principais */
+    --plenus-teal: 168 70% 48%;
+    --plenus-teal-light: 168 60% 85%;
+    --plenus-teal-dark: 168 80% 35%;
+    --plenus-blue: 210 80% 65%;
+    --plenus-blue-light: 210 70% 88%;
+    --plenus-purple: 250 60% 70%;
+    --plenus-purple-light: 250 50% 90%;
+    --plenus-green: 140 60% 60%;
+    --plenus-green-light: 140 50% 88%;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, hsl(168 70% 48%) 0%, hsl(168 80% 35%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(210 80% 65%) 0%, hsl(250 60% 70%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(140 60% 60%) 0%, hsl(168 70% 48%) 100%);
+  }
 
-[data-theme="dark"] {
-  --plenus-gradient-bg: linear-gradient(135deg, #0F1419 0%, #1E293B 50%, #2D1B69 100%);
+  .dark {
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 168 70% 48%;
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 168 70% 48%;
+    --success: 168 70% 48%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    
+    /* Paleta Plenus Dark */
+    --plenus-teal: 168 70% 48%;
+    --plenus-teal-light: 168 60% 25%;
+    --plenus-teal-dark: 168 80% 65%;
+    --plenus-blue: 210 80% 65%;
+    --plenus-blue-light: 210 70% 28%;
+    --plenus-purple: 250 60% 70%;
+    --plenus-purple-light: 250 50% 30%;
+    --plenus-green: 140 60% 60%;
+    --plenus-green-light: 140 50% 28%;
+  }
 }
 
 @layer base {
@@ -39,132 +91,165 @@
   }
   
   body {
-    @apply bg-background text-foreground font-['Inter'];
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight text-foreground;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  
+  h1 { @apply text-3xl md:text-4xl; }
+  h2 { @apply text-2xl md:text-3xl; }
+  h3 { @apply text-xl md:text-2xl; }
+  h4 { @apply text-lg md:text-xl; }
+  h5 { @apply text-base md:text-lg; }
+  h6 { @apply text-sm md:text-base; }
 }
 
 @layer components {
-  /* Sistema de Cores Plenus */
+  /* Containers com ícones coloridos - Estilo Plenus */
+  .plenus-icon-container {
+    @apply w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm;
+  }
+  
+  .plenus-icon-teal {
+    background: linear-gradient(135deg, hsl(var(--plenus-teal)) 0%, hsl(var(--plenus-teal-dark)) 100%);
+    @apply text-white;
+  }
+  
+  .plenus-icon-blue {
+    background: linear-gradient(135deg, hsl(var(--plenus-blue)) 0%, hsl(210 90% 55%) 100%);
+    @apply text-white;
+  }
+  
+  .plenus-icon-purple {
+    background: linear-gradient(135deg, hsl(var(--plenus-purple)) 0%, hsl(260 70% 60%) 100%);
+    @apply text-white;
+  }
+  
+  .plenus-icon-green {
+    background: linear-gradient(135deg, hsl(var(--plenus-green)) 0%, hsl(150 70% 50%) 100%);
+    @apply text-white;
+  }
+  
+  /* Cards com estilo Plenus */
+  .plenus-card {
+    @apply bg-white dark:bg-card border border-gray-100 dark:border-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .plenus-card-highlighted {
+    @apply bg-gradient-to-br from-white to-gray-50/50 dark:from-card dark:to-muted/20 border border-gray-100 dark:border-border rounded-2xl shadow-md hover:shadow-lg transition-all duration-200;
+  }
+  
+  /* Botões com gradientes Plenus */
+  .plenus-btn-primary {
+    background: linear-gradient(135deg, hsl(var(--plenus-teal)) 0%, hsl(var(--plenus-teal-dark)) 100%);
+    @apply text-white border-0 shadow-sm hover:shadow-md transition-all duration-200 font-medium;
+  }
+  
+  .plenus-btn-secondary {
+    @apply bg-gray-50 dark:bg-muted hover:bg-gray-100 dark:hover:bg-muted/80 text-gray-700 dark:text-muted-foreground border border-gray-200 dark:border-border shadow-sm hover:shadow transition-all duration-200 font-medium;
+  }
+  
+  .plenus-btn-outline-teal {
+    @apply bg-transparent hover:bg-teal-50 dark:hover:bg-teal-950/20 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800 shadow-sm hover:shadow transition-all duration-200 font-medium;
+  }
+  
+  .plenus-btn-outline-blue {
+    @apply bg-transparent hover:bg-blue-50 dark:hover:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 shadow-sm hover:shadow transition-all duration-200 font-medium;
+  }
+  
+  .plenus-btn-outline-purple {
+    @apply bg-transparent hover:bg-purple-50 dark:hover:bg-purple-950/20 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 shadow-sm hover:shadow transition-all duration-200 font-medium;
+  }
+  
+  /* Badges Plenus */
+  .plenus-badge-teal {
+    @apply bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 font-medium text-xs px-2.5 py-1 rounded-full;
+  }
+  
+  .plenus-badge-blue {
+    @apply bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-medium text-xs px-2.5 py-1 rounded-full;
+  }
+  
+  .plenus-badge-purple {
+    @apply bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-medium text-xs px-2.5 py-1 rounded-full;
+  }
+  
+  .plenus-badge-green {
+    @apply bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800 font-medium text-xs px-2.5 py-1 rounded-full;
+  }
+  
+  /* Fundos com gradientes sutis */
+  .plenus-bg-gradient {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
+  }
+  
+  .plenus-bg-teal-gradient {
+    background: linear-gradient(135deg, hsl(var(--plenus-teal-light)) 0%, hsl(var(--background)) 100%);
+  }
+  
+  /* Spacing System Plenus */
+  .plenus-spacing { @apply space-y-6; }
+  .plenus-spacing-lg { @apply space-y-8; }
+  .plenus-spacing-xl { @apply space-y-12; }
+  
+  .plenus-gap { @apply gap-4; }
+  .plenus-gap-lg { @apply gap-6; }
+  .plenus-gap-xl { @apply gap-8; }
+  
+  /* Container System */
+  .plenus-container {
+    @apply max-w-7xl mx-auto px-4 md:px-6;
+  }
+  
+  /* Text utilities com cores Plenus */
+  .text-plenus-teal { color: hsl(var(--plenus-teal)); }
+  .text-plenus-blue { color: hsl(var(--plenus-blue)); }
+  .text-plenus-purple { color: hsl(var(--plenus-purple)); }
+  .text-plenus-green { color: hsl(var(--plenus-green)); }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Sombras profissionais Plenus */
+  .plenus-shadow {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  }
+  
+  .plenus-shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  }
+  
+  .plenus-shadow-xl {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Gradientes de texto */
   .plenus-text-gradient {
-    background: var(--plenus-gradient-primary);
+    background: linear-gradient(135deg, hsl(var(--plenus-teal)) 0%, hsl(var(--plenus-blue)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
-  .plenus-bg-gradient {
-    background: var(--plenus-gradient-bg);
+  /* Animações suaves */
+  .plenus-transition {
+    @apply transition-all duration-200 ease-out;
   }
   
-  /* Botões Plenus */
-  .plenus-btn-primary {
-    @apply bg-gradient-to-r from-teal-600 to-teal-500 text-white font-medium shadow-lg shadow-teal-500/25 border-0;
-  }
-  
-  .plenus-btn-outline-teal {
-    @apply border-2 border-teal-200 bg-teal-50 text-teal-700 font-medium hover:bg-teal-100 hover:border-teal-300;
-  }
-  
-  .plenus-btn-outline-blue {
-    @apply border-2 border-blue-200 bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 hover:border-blue-300;
-  }
-  
-  .plenus-btn-outline-purple {
-    @apply border-2 border-purple-200 bg-purple-50 text-purple-700 font-medium hover:bg-purple-100 hover:border-purple-300;
-  }
-  
-  /* Cards Plenus */
-  .plenus-card {
-    @apply bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg shadow-black/5;
-  }
-  
-  .plenus-card-highlighted {
-    @apply bg-gradient-to-br from-white to-teal-50/50 backdrop-blur-sm border border-teal-100 rounded-2xl shadow-xl shadow-teal-500/10;
-  }
-  
-  /* Badges Plenus */
-  .plenus-badge-teal {
-    @apply bg-gradient-to-r from-teal-100 to-teal-50 text-teal-800 border border-teal-200 font-medium;
-  }
-  
-  .plenus-badge-blue {
-    @apply bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 border border-blue-200 font-medium;
-  }
-  
-  .plenus-badge-purple {
-    @apply bg-gradient-to-r from-purple-100 to-purple-50 text-purple-800 border border-purple-200 font-medium;
-  }
-  
-  .plenus-badge-amber {
-    @apply bg-gradient-to-r from-amber-100 to-amber-50 text-amber-800 border border-amber-200 font-medium;
-  }
-  
-  .plenus-badge-gold {
-    @apply bg-gradient-to-r from-yellow-100 to-amber-50 text-amber-900 border border-amber-200 font-semibold;
-  }
-  
-  /* Espaçamentos Plenus */
-  .plenus-gap {
-    @apply gap-3;
-  }
-  
-  .plenus-gap-lg {
-    @apply gap-8;
-  }
-  
-  .plenus-spacing-lg {
-    @apply space-y-8;
-  }
-  
-  .plenus-container {
-    @apply container mx-auto px-4 max-w-7xl;
-  }
-  
-  /* Efeitos Plenus */
   .plenus-hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+    @apply hover:-translate-y-0.5 transition-transform duration-200;
   }
-  
-  .plenus-hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
-  }
-  
-  /* Layout Responsivo Plenus */
-  .sidebar-cards > * {
-    @apply min-h-[200px];
-  }
-  
-  @media (max-width: 1279px) {
-    .sidebar-cards {
-      @apply grid-cols-2;
-    }
-  }
-  
-  @media (max-width: 767px) {
-    .sidebar-cards {
-      @apply grid-cols-1;
-    }
-  }
-}
-
-/* Estados Dark Mode */
-[data-theme="dark"] .plenus-card {
-  @apply bg-slate-900/80 border-slate-700/50;
-}
-
-[data-theme="dark"] .plenus-card-highlighted {
-  @apply bg-gradient-to-br from-slate-900 to-slate-800/50 border-slate-700/50;
-}
-
-[data-theme="dark"] .plenus-btn-outline-teal {
-  @apply border-teal-600 bg-teal-950 text-teal-300 hover:bg-teal-900;
-}
-
-[data-theme="dark"] .plenus-btn-outline-blue {
-  @apply border-blue-600 bg-blue-950 text-blue-300 hover:bg-blue-900;
-}
-
-[data-theme="dark"] .plenus-btn-outline-purple {
-  @apply border-purple-600 bg-purple-950 text-purple-300 hover:bg-purple-900;
 }

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -49,13 +50,11 @@ type RecurringTransactionFormValues = z.infer<typeof recurringTransactionSchema>
 interface AddRecurringTransactionDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  children?: React.ReactNode; // ADICIONADO
 }
 
 export function AddRecurringTransactionDialog({ 
   open: controlledOpen, 
-  onOpenChange: controlledOnOpenChange,
-  children // ADICIONADO
+  onOpenChange: controlledOnOpenChange 
 }: AddRecurringTransactionDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const createRecurringTransaction = useCreateRecurringTransaction();
@@ -101,16 +100,16 @@ export function AddRecurringTransactionDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children || (
+      {!isControlled && (
+        <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 gap-1 border-dashed">
             <Repeat className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Recorrente
             </span>
           </Button>
-        )}
-      </DialogTrigger>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

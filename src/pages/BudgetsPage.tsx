@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { AddBudgetDialog } from "@/components/AddBudgetDialog";
 import { BudgetList } from "@/components/BudgetList";
@@ -10,40 +9,26 @@ import { BudgetSummaryLoading } from "@/components/BudgetSummaryLoading";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrialBanner } from "@/components/TrialBanner";
 
-const PremiumFeatureLock = ({ isTrialExpired }: { isTrialExpired: boolean }) => (
+const PremiumFeatureLock = () => (
   <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-8">
-    {isTrialExpired && (
-      <div className="mb-6 w-full max-w-2xl">
-        <TrialBanner variant="urgent" />
-      </div>
-    )}
-    <Card className="max-w-md w-full">
-      <CardHeader>
-        <div className="mx-auto bg-primary/10 p-3 rounded-full">
-          <Sparkles className="h-8 w-8 text-primary" />
-        </div>
-        <CardTitle className="mt-4">
-          {isTrialExpired 
-            ? "Continue Controlando seus Orçamentos" 
-            : "Desbloqueie o Poder dos Orçamentos"
-          }
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">
-          {isTrialExpired 
-            ? "Você experimentou o controle total dos seus gastos! Continue recebendo alertas inteligentes e acelerando a conquista dos seus sonhos com orçamentos ilimitados."
-            : "A criação de orçamentos é um recurso exclusivo do plano Premium. Tenha controle total sobre seus gastos, receba alertas inteligentes e acelere a conquista dos seus sonhos."
-          }
-        </p>
-        <Button className="mt-6 w-full" disabled>
-          <Lock className="mr-2 h-4 w-4" />
-          {isTrialExpired ? "🚀 Continue com Premium" : "Fazer Upgrade para Premium"}
-        </Button>
-      </CardContent>
-    </Card>
+      <Card className="max-w-md w-full">
+        <CardHeader>
+          <div className="mx-auto bg-primary/10 p-3 rounded-full">
+            <Sparkles className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="mt-4">Desbloqueie o Poder dos Orçamentos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            A criação de orçamentos é um recurso exclusivo do plano Premium. Tenha controle total sobre seus gastos, receba alertas inteligentes e acelere a conquista dos seus sonhos.
+          </p>
+          <Button className="mt-6 w-full" disabled>
+            <Lock className="mr-2 h-4 w-4" />
+            Fazer Upgrade para Premium
+          </Button>
+        </CardContent>
+      </Card>
   </div>
 );
 
@@ -112,7 +97,7 @@ const BudgetsPageContent = () => {
 }
 
 const BudgetsPage = () => {
-  const { profile, loading, hasTrialAccess, isTrialExpired } = useAuth();
+  const { profile, loading, isTrialing } = useAuth();
   
   if (loading) {
     return (
@@ -136,9 +121,11 @@ const BudgetsPage = () => {
     );
   }
 
+  const hasAccess = profile?.plan === 'premium' || isTrialing;
+
   return (
     <div className="flex flex-col gap-8 h-full">
-      {hasTrialAccess ? <BudgetsPageContent /> : <PremiumFeatureLock isTrialExpired={isTrialExpired} />}
+      {hasAccess ? <BudgetsPageContent /> : <PremiumFeatureLock />}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -57,13 +58,11 @@ const INSTALLMENT_CATEGORIES = [
 interface AddInstallmentPlanDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  children?: React.ReactNode; // ADICIONADO
 }
 
 export function AddInstallmentPlanDialog({ 
   open: controlledOpen, 
-  onOpenChange: controlledOnOpenChange,
-  children // ADICIONADO
+  onOpenChange: controlledOnOpenChange 
 }: AddInstallmentPlanDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const createInstallmentPlan = useCreateInstallmentPlan();
@@ -105,16 +104,16 @@ export function AddInstallmentPlanDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children || (
+      {!isControlled && (
+        <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 gap-1 border-dashed">
             <CreditCard className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Parcelas
             </span>
           </Button>
-        )}
-      </DialogTrigger>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
