@@ -34,26 +34,40 @@ const GoalsSummary = () => {
       recommendedAmount 
     } = emergencyData;
 
-    // 1ª Prioridade: Criar reserva de emergência se não existe
-    if (!hasEmergencyFund && monthlyEssentialExpenses > 0) {
-      const hasEmergencyGoal = goals.some(goal => 
-        goal.name.toLowerCase().includes('emergência') || 
-        goal.name.toLowerCase().includes('reserva')
-      );
+    // Detectar se já existe meta de emergência
+    const hasEmergencyGoal = goals.some(goal => {
+      const name = goal.name.toLowerCase();
+      return name.includes('emergência') || 
+             name.includes('emergencia') || 
+             name.includes('reserva') ||
+             name.includes('segurança') ||
+             name.includes('seguranca') ||
+             name.includes('🛡️') ||
+             name.includes('colchão') ||
+             name.includes('colchao');
+    });
 
-      if (!hasEmergencyGoal) {
-        return {
-          type: "create_emergency",
-          title: "🚨 Prioridade: Crie sua Reserva",
-          description: `Baseado nos seus gastos de ${formatCurrency(monthlyEssentialExpenses)}/mês, você precisa de ${formatCurrency(recommendedAmount)} para ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses de segurança.`,
-          action: "Criar Automaticamente",
-          priority: "high"
-        };
-      }
+    console.log("GoalsSummary - Status da reserva:", {
+      hasEmergencyFund,
+      hasEmergencyGoal,
+      monthsOfSecurity,
+      missingAmount,
+      monthlyEssentialExpenses
+    });
+
+    // 1ª Prioridade: Criar reserva de emergência se não existe E ainda não tem meta
+    if (!hasEmergencyFund && !hasEmergencyGoal && monthlyEssentialExpenses > 0) {
+      return {
+        type: "create_emergency",
+        title: "🚨 Prioridade: Crie sua Reserva",
+        description: `Baseado nos seus gastos de ${formatCurrency(monthlyEssentialExpenses)}/mês, você precisa de ${formatCurrency(recommendedAmount)} para ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses de segurança.`,
+        action: "Criar Automaticamente",
+        priority: "high"
+      };
     }
 
-    // 2ª Prioridade: Completar reserva existente
-    if (!hasEmergencyFund && monthsOfSecurity > 0) {
+    // 2ª Prioridade: Completar reserva existente (tem meta mas não completou)
+    if (!hasEmergencyFund && hasEmergencyGoal && monthsOfSecurity > 0) {
       return {
         type: "complete_emergency",
         title: "💪 Continue sua Reserva",
@@ -63,7 +77,7 @@ const GoalsSummary = () => {
       };
     }
 
-    // 3ª Prioridade: Acelerar outras metas
+    // 3ª Prioridade: Acelerar outras metas (reserva completa)
     if (hasEmergencyFund && goals.length > 0) {
       const activeGoals = goals.filter(goal => goal.current_amount < goal.target_amount);
       if (activeGoals.length > 0) {
@@ -233,7 +247,7 @@ const GoalsSummary = () => {
           </div>
         )}
 
-        {/* Status da Reserva de Emergência */}
+        {/* Status da Reserva de Emergência - Mais Preciso */}
         {emergencyData && (
           <div className="text-center space-y-2">
             <p className="text-xs font-medium text-slate-700">

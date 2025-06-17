@@ -53,6 +53,27 @@ export function NextActionCard() {
       recommendedAmount 
     } = emergencyData;
 
+    // Detectar se já existe meta de emergência
+    const hasEmergencyGoal = goals?.some(goal => {
+      const name = goal.name.toLowerCase();
+      return name.includes('emergência') || 
+             name.includes('emergencia') || 
+             name.includes('reserva') ||
+             name.includes('segurança') ||
+             name.includes('seguranca') ||
+             name.includes('🛡️') ||
+             name.includes('colchão') ||
+             name.includes('colchao');
+    }) || false;
+
+    console.log("NextActionCard - Status atual:", {
+      hasEmergencyFund,
+      hasEmergencyGoal,
+      monthsOfSecurity,
+      balance,
+      monthlyEssentialExpenses
+    });
+
     // 1. CRÍTICO: Fluxo de caixa negativo
     if (balance < 0) {
       actions.push({
@@ -67,18 +88,13 @@ export function NextActionCard() {
       });
     }
 
-    // 2. ALTA PRIORIDADE: Reserva de emergência (com lógica inteligente)
+    // 2. ALTA PRIORIDADE: Reserva de emergência (lógica corrigida)
     if (!hasEmergencyFund && balance >= 0 && monthlyEssentialExpenses > 0) {
-      const hasExistingEmergencyGoal = goals?.some(goal => 
-        goal.name.toLowerCase().includes('emergência') || 
-        goal.name.toLowerCase().includes('reserva')
-      );
-
-      if (!hasExistingEmergencyGoal) {
+      if (!hasEmergencyGoal) {
         actions.push({
           id: "create-emergency-fund",
           title: "🛡️ Prioridade: Reserva de Emergência",
-          description: `Baseado nos seus gastos essenciais de ${formatCurrency(monthlyEssentialExpenses)}/mês, você precisa de ${formatCurrency(missingAmount)} para ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses de segurança.`,
+          description: `Baseado nos seus gastos essenciais de ${formatCurrency(monthlyEssentialExpenses)}/mês, você precisa de ${formatCurrency(recommendedAmount)} para ${Math.ceil(recommendedAmount / monthlyEssentialExpenses)} meses de segurança.`,
           actionText: "Criar Meta Automaticamente",
           onAction: () => {
             createEmergencyGoal.mutate({
@@ -106,7 +122,7 @@ export function NextActionCard() {
       }
     }
 
-    // 3. MÉDIO: Otimizar taxa de poupança
+    // 3. MÉDIO: Otimizar taxa de poupança (só depois da reserva completa)
     if (hasEmergencyFund && financialData.totalIncome > 0) {
       const savingsRate = (balance / financialData.totalIncome) * 100;
       const idealRate = riskProfile === 'conservative' ? 15 : riskProfile === 'moderate' ? 20 : 25;
@@ -125,7 +141,7 @@ export function NextActionCard() {
       }
     }
 
-    // 4. BAIXO: Acelerar meta mais próxima
+    // 4. BAIXO: Acelerar meta mais próxima (só com reserva completa)
     if (hasEmergencyFund && goals && goals.length > 0) {
       const activeGoals = goals.filter(goal => goal.current_amount < goal.target_amount);
       if (activeGoals.length > 0) {

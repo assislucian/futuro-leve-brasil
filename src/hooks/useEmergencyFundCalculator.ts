@@ -55,35 +55,57 @@ export function useEmergencyFundCalculator() {
         throw transactionsError;
       }
 
-      // 2. Buscar metas de reserva de emergência existentes
-      const { data: emergencyGoals, error: goalsError } = await supabase
+      // 2. Buscar TODAS as metas para detectar reserva de emergência
+      const { data: allGoals, error: goalsError } = await supabase
         .from('goals')
         .select('current_amount, target_amount, name')
-        .eq('user_id', user.id)
-        .ilike('name', '%emergência%');
+        .eq('user_id', user.id);
 
       if (goalsError) {
-        console.error("Erro ao buscar metas de emergência:", goalsError);
+        console.error("Erro ao buscar metas:", goalsError);
       }
 
       const transactions = recentTransactions || [];
-      const currentEmergencyAmount = emergencyGoals?.reduce((sum, goal) => sum + goal.current_amount, 0) || 0;
+      
+      // 3. Detectar metas de emergência de forma mais inteligente
+      const emergencyGoals = allGoals?.filter(goal => {
+        const name = goal.name.toLowerCase();
+        return name.includes('emergência') || 
+               name.includes('emergencia') || 
+               name.includes('reserva') ||
+               name.includes('segurança') ||
+               name.includes('seguranca') ||
+               name.includes('🛡️') ||
+               name.includes('colchão') ||
+               name.includes('colchao');
+      }) || [];
 
-      // 3. Categorizar gastos em essenciais vs não-essenciais
+      const currentEmergencyAmount = emergencyGoals.reduce((sum, goal) => sum + goal.current_amount, 0);
+
+      console.log("Metas de emergência encontradas:", emergencyGoals);
+      console.log("Valor atual da reserva:", currentEmergencyAmount);
+
+      // 4. Categorizar gastos em essenciais vs não-essenciais de forma mais precisa
       const essentialCategories = [
         'Moradia', 'Alimentação', 'Transporte', 'Saúde', 
         'Seguros', 'Financiamento', 'Educação'
       ];
 
+      // Calcular média mensal baseada nos últimos 3 meses (ou período disponível)
+      const monthsOfData = Math.max(1, Math.min(3, transactions.length > 0 ? 3 : 1));
+      
       const monthlyEssentialExpenses = transactions
         .filter(t => essentialCategories.includes(t.category) || t.classification === 'fixed')
-        .reduce((sum, t) => sum + t.amount, 0) / 3; // Média dos 3 meses
+        .reduce((sum, t) => sum + t.amount, 0) / monthsOfData;
 
       const monthlyTotalExpenses = transactions
-        .reduce((sum, t) => sum + t.amount, 0) / 3; // Média dos 3 meses
+        .reduce((sum, t) => sum + t.amount, 0) / monthsOfData;
 
-      // 4. Determinar perfil de risco baseado nos gastos
-      const essentialRatio = monthlyEssentialExpenses / monthlyTotalExpenses;
+      console.log("Gastos essenciais mensais:", monthlyEssentialExpenses);
+      console.log("Gastos totais mensais:", monthlyTotalExpenses);
+
+      // 5. Determinar perfil de risco baseado nos gastos
+      const essentialRatio = monthlyTotalExpenses > 0 ? monthlyEssentialExpenses / monthlyTotalExpenses : 0;
       let riskProfile: 'conservative' | 'moderate' | 'aggressive' = 'moderate';
       
       if (essentialRatio > 0.8) {
@@ -92,7 +114,7 @@ export function useEmergencyFundCalculator() {
         riskProfile = 'aggressive'; // Muitos gastos variáveis
       }
 
-      // 5. Calcular recomendação baseada no perfil de risco
+      // 6. Calcular recomendação baseada no perfil de risco
       let monthsRecommended = 3; // Padrão Dave Ramsey para iniciantes
       
       if (riskProfile === 'conservative') {
@@ -102,10 +124,11 @@ export function useEmergencyFundCalculator() {
       }
 
       // Usar gastos essenciais como base (mais realista que gastos totais)
-      const recommendedAmount = monthlyEssentialExpenses * monthsRecommended;
+      const baseExpense = monthlyEssentialExpenses > 0 ? monthlyEssentialExpenses : monthlyTotalExpenses;
+      const recommendedAmount = baseExpense * monthsRecommended;
       const missingAmount = Math.max(0, recommendedAmount - currentEmergencyAmount);
       const hasEmergencyFund = currentEmergencyAmount >= recommendedAmount;
-      const monthsOfSecurity = monthlyEssentialExpenses > 0 ? currentEmergencyAmount / monthlyEssentialExpenses : 0;
+      const monthsOfSecurity = baseExpense > 0 ? currentEmergencyAmount / baseExpense : 0;
 
       console.log("useEmergencyFundCalculator: Resultado calculado:", {
         monthlyEssentialExpenses,
@@ -113,7 +136,9 @@ export function useEmergencyFundCalculator() {
         recommendedAmount,
         currentEmergencyAmount,
         riskProfile,
-        monthsRecommended
+        monthsRecommended,
+        monthsOfSecurity,
+        hasEmergencyFund
       });
 
       return {
@@ -128,7 +153,9 @@ export function useEmergencyFundCalculator() {
       };
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutos
-    gcTime: 1000 * 60 * 10, // 10 minutos
+    staleTime: 1000 * 60 * 2, // 2 minutos
+    gcTime: 1000 * 60 * 5, // 5 minutos
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 }
