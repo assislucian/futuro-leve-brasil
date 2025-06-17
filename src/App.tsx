@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import { AuthProvider } from "@/contexts/AuthProvider";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
@@ -53,20 +54,41 @@ function App() {
           <ThemeProvider defaultTheme="light" storageKey="plenus-ui-theme">
             <AuthProvider>
               <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
+                {/* Rotas Públicas - Redireciona se logado */}
+                <Route path="/" element={
+                  <ProtectedRoute requireAuth={false}>
+                    <Index />
+                  </ProtectedRoute>
+                } />
+                <Route path="/auth" element={
+                  <ProtectedRoute requireAuth={false}>
+                    <Auth />
+                  </ProtectedRoute>
+                } />
                 <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/forgot-password" element={
+                  <ProtectedRoute requireAuth={false}>
+                    <ForgotPasswordPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="/update-password" element={<UpdatePasswordPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
-                <Route element={<AppLayout />}>
+                
+                {/* Rotas Protegidas - Requer autenticação */}
+                <Route element={
+                  <ProtectedRoute requireAuth={true}>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/budgets" element={<BudgetsPage />} />
                   <Route path="/goals" element={<GoalsPage />} />
                   <Route path="/analytics" element={<AnalyticsPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                 </Route>
+                
+                {/* 404 */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />

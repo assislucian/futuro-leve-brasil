@@ -1,26 +1,33 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/LoginForm";
 import { SignUpForm } from "@/components/SignUpForm";
 import { Sparkles } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 
 const AuthPage = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Pegar a rota de onde o usuário veio, ou dashboard como padrão
+  const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/dashboard');
+      console.log("Auth: Redirecionando usuário autenticado para:", from);
+      navigate(from, { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, from]);
 
   if (loading || (!loading && user)) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+        <p className="text-muted-foreground">Redirecionando...</p>
       </div>
     );
   }

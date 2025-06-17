@@ -20,6 +20,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 
 const mainItems = [
   { title: "Visão Geral", url: "/dashboard", icon: Home },
@@ -102,13 +103,15 @@ export default function AppSidebar() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <div className="px-3 py-2">
-                  <Button 
-                    size="sm" 
-                    className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-sm"
-                  >
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Nova Transação
-                  </Button>
+                  <AddTransactionDialog>
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-sm"
+                    >
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Nova Transação
+                    </Button>
+                  </AddTransactionDialog>
                 </div>
               </SidebarGroupContent>
             </SidebarGroup>
