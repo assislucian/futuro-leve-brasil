@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/LoginForm";
@@ -36,15 +37,15 @@ const AuthPage = () => {
         </div>
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Entrar</TabsTrigger>
-            <TabsTrigger value="signup">Criar Conta</TabsTrigger>
+            <TabsTrigger value="login">Anmelden</TabsTrigger>
+            <TabsTrigger value="signup">Konto erstellen</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <Card>
               <CardHeader>
-                <CardTitle>Bem-vindo(a) de volta!</CardTitle>
+                <CardTitle>Willkommen zurück!</CardTitle>
                 <CardDescription>
-                  Acesse sua conta para continuar sua jornada financeira.
+                  Melden Sie sich in Ihrem Konto an, um Ihre Finanzreise fortzusetzen.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -55,9 +56,9 @@ const AuthPage = () => {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>Crie sua conta</CardTitle>
+                <CardTitle>Erstellen Sie Ihr Konto</CardTitle>
                 <CardDescription>
-                  Comece a transformar sua relação com o dinheiro hoje mesmo.
+                  Beginnen Sie noch heute damit, Ihre Beziehung zum Geld zu transformieren.
                 </CardDescription>
               </CardHeader>
               <CardContent>

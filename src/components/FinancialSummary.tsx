@@ -7,16 +7,16 @@ import { ErrorState } from "@/components/ui/error-state";
 import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
 
 /**
- * Componente do resumo financeiro
- * Exibe as principais métricas financeiras do usuário
+ * Komponente für die Finanzübersicht
+ * Zeigt die wichtigsten Finanzkennzahlen des Benutzers an
  */
 const FinancialSummary = () => {
   const { data: summary, isLoading, error, refetch } = useFinancialSummaryData();
 
   const formatCurrency = (value: number) => {
-    return value.toLocaleString("pt-BR", {
+    return value.toLocaleString("de-DE", {
       style: "currency",
-      currency: "BRL",
+      currency: "EUR",
     });
   };
 
@@ -32,8 +32,8 @@ const FinancialSummary = () => {
     return (
       <div className="p-5">
         <ErrorState
-          title="Erro ao Carregar Resumo"
-          description="Não foi possível calcular seu resumo financeiro. Tente novamente mais tarde."
+          title="Fehler beim Laden der Übersicht"
+          description="Ihre Finanzübersicht konnte nicht berechnet werden. Versuchen Sie es später erneut."
           onRetry={refetch}
           variant="destructive"
         />
@@ -49,24 +49,24 @@ const FinancialSummary = () => {
 
   const cards = [
     {
-      title: "Receita Total",
+      title: "Gesamteinkommen",
       value: totalIncome,
       icon: ArrowUp,
-      description: "Total de entradas registradas",
+      description: "Summe aller registrierten Einnahmen",
       color: "green"
     },
     {
-      title: "Despesa Total",
+      title: "Gesamtausgaben",
       value: totalExpense,
       icon: ArrowDown,
-      description: "Total de saídas registradas",
+      description: "Summe aller registrierten Ausgaben",
       color: "red"
     },
     {
-      title: "Saldo Atual",
+      title: "Aktueller Saldo",
       value: balance,
       icon: DollarSign,
-      description: "Seu balanço financeiro atual",
+      description: "Ihr aktueller Finanzstatus",
       color: balance >= 0 ? "gray" : "red"
     }
   ];

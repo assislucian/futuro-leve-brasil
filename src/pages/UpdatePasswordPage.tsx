@@ -1,60 +1,116 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
 import { Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const formSchema = z.object({
-  password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres." }),
+  password: z.string().min(6, { message: "Das Passwort muss mindestens 6 Zeichen lang sein." }),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwörter stimmen nicht überein",
+  path: ["confirmPassword"],
 });
 
-const UpdatePasswordPage = () => {
+function UpdatePasswordForm() {
   const navigate = useNavigate();
-  const { session, loading } = useAuth();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { password: "" },
+    defaultValues: { 
+      password: "",
+      confirmPassword: "" 
+    },
   });
-
-  useEffect(() => {
-    if (!loading && !session) {
-      toast.error("Link de redefinição inválido ou expirado. Por favor, tente novamente.");
-      navigate("/forgot-password");
-    }
-  }, [session, loading, navigate]);
-
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { error } = await supabase.auth.updateUser({
-      password: values.password,
+      password: values.password
     });
 
     if (error) {
-      toast.error(`Erro ao atualizar a senha: ${error.message}`);
+      toast.error(error.message);
     } else {
-      toast.success("Sua senha foi atualizada com sucesso!");
+      toast.success("Passwort erfolgreich aktualisiert!");
       navigate("/dashboard");
     }
   }
 
-  if (loading || !session) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
-        <Sparkles className="h-10 w-10 animate-pulse text-primary" />
-        <p className="text-muted-foreground">Verificando seu link...</p>
-      </div>
-    );
-  }
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Neues Passwort erstellen</CardTitle>
+        <CardDescription>
+          Geben Sie Ihr neues Passwort ein, um Ihr Konto zu sichern.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Neues Passwort</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Mindestens 6 Zeichen" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Passwort bestätigen</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Passwort erneut eingeben" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Wird aktualisiert..." : "Passwort aktualisieren"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
+
+const UpdatePasswordPage = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Prüfen, ob der Benutzer von einem gültigen Passwort-Reset-Link kommt
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
+    const type = hashParams.get('type');
+    
+    if (!accessToken || type !== 'recovery') {
+      toast.error("Ungültiger oder abgelaufener Link");
+      navigate("/forgot-password");
+    }
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -65,36 +121,7 @@ const UpdatePasswordPage = () => {
             <h1 className="text-3xl font-bold text-foreground">Plenus</h1>
           </Link>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Crie sua nova senha</CardTitle>
-            <CardDescription>
-              Escolha uma senha forte e segura para proteger sua conta.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nova Senha</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Sua nova senha" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "Salvando..." : "Salvar nova senha"}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+        <UpdatePasswordForm />
       </div>
     </div>
   );

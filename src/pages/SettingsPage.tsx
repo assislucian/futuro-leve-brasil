@@ -1,3 +1,4 @@
+
 import { ProfileForm } from '@/components/ProfileForm';
 import { DeleteAccountDialog } from '@/components/DeleteAccountDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -7,24 +8,24 @@ const SettingsPage = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Einstellungen</h1>
         <p className="text-muted-foreground">
-          Gerencie as configurações da sua conta e seu perfil.
+          Verwalten Sie Ihre Kontoeinstellungen und Ihr Profil.
         </p>
       </div>
       <div className="w-full border-b"></div>
       
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight">Meu Perfil</h2>
+        <h2 className="text-xl font-semibold tracking-tight">Mein Profil</h2>
         <ProfileForm />
       </div>
 
       <div className="w-full border-b"></div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight">Aparência</h2>
+        <h2 className="text-xl font-semibold tracking-tight">Erscheinungsbild</h2>
         <div className="flex items-center space-x-4 rounded-md border p-4">
-          <Label htmlFor="theme">Tema do aplicativo</Label>
+          <Label htmlFor="theme">App-Design</Label>
           <div className="flex-grow" />
           <ThemeToggle />
         </div>
@@ -33,9 +34,9 @@ const SettingsPage = () => {
       <div className="w-full border-b"></div>
 
       <div className="space-y-4 rounded-lg border border-destructive p-4">
-        <h2 className="text-xl font-semibold tracking-tight text-destructive">Zona de Perigo</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-destructive">Gefahrenbereich</h2>
         <p className="text-sm text-muted-foreground">
-          As ações abaixo são destrutivas e não podem ser revertidas. Por favor, tenha certeza antes de prosseguir.
+          Die unten stehenden Aktionen sind destruktiv und können nicht rückgängig gemacht werden. Bitte seien Sie vorsichtig, bevor Sie fortfahren.
         </p>
         <div className="flex justify-start">
             <DeleteAccountDialog />

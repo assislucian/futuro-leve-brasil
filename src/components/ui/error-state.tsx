@@ -14,12 +14,12 @@ interface ErrorStateProps {
 }
 
 /**
- * Componente padronizado para estados de erro
- * Oferece uma experiência consistente para tratamento de erros
+ * Standardisierte Komponente für Fehlerzustände
+ * Bietet eine konsistente Erfahrung für die Fehlerbehandlung
  */
 export function ErrorState({
-  title = "Algo deu errado",
-  description = "Ocorreu um erro inesperado. Tente novamente mais tarde.",
+  title = "Etwas ist schiefgelaufen",
+  description = "Ein unerwarteter Fehler ist aufgetreten. Versuchen Sie es später erneut.",
   onRetry,
   className,
   variant = "destructive"
@@ -88,7 +88,7 @@ export function ErrorState({
             className="gap-2"
           >
             <RefreshCw className="h-4 w-4" />
-            Tentar Novamente
+            Erneut versuchen
           </Button>
         </div>
       )}

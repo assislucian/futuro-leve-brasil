@@ -12,12 +12,12 @@ export function BudgetTable({ budgets }: BudgetTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[25%]">Categoria</TableHead>
-          <TableHead className="w-[35%]">Progresso</TableHead>
-          <TableHead className="w-[20%] text-right">Gasto</TableHead>
-          <TableHead className="w-[15%] text-right">Restante</TableHead>
+          <TableHead className="w-[25%]">Kategorie</TableHead>
+          <TableHead className="w-[35%]">Fortschritt</TableHead>
+          <TableHead className="w-[20%] text-right">Ausgegeben</TableHead>
+          <TableHead className="w-[15%] text-right">Verbleibt</TableHead>
           <TableHead className="w-[5%] text-right">
-            <span className="sr-only">Ações</span>
+            <span className="sr-only">Aktionen</span>
           </TableHead>
         </TableRow>
       </TableHeader>

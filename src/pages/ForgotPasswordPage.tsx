@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -18,7 +19,7 @@ import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Por favor, insira um email válido." }),
+  email: z.string().email({ message: "Bitte geben Sie eine gültige E-Mail-Adresse ein." }),
 });
 
 function ForgotPasswordForm() {
@@ -35,7 +36,7 @@ function ForgotPasswordForm() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Se o email estiver correto, enviamos um link para redefinir sua senha.");
+      toast.success("Wenn die E-Mail korrekt ist, haben wir einen Link zum Zurücksetzen Ihres Passworts gesendet.");
       form.reset();
     }
   }
@@ -43,9 +44,9 @@ function ForgotPasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Esqueceu sua senha?</CardTitle>
+        <CardTitle>Passwort vergessen?</CardTitle>
         <CardDescription>
-          Sem problemas. Digite seu email e enviaremos um link para você criar uma nova senha.
+          Kein Problem. Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Erstellen eines neuen Passworts.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -56,16 +57,16 @@ function ForgotPasswordForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>E-Mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="seu@email.com" {...field} />
+                    <Input placeholder="ihre@email.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Enviando..." : "Enviar link de redefinição"}
+              {form.formState.isSubmitting ? "Wird gesendet..." : "Zurücksetzungslink senden"}
             </Button>
           </form>
         </Form>
@@ -86,9 +87,9 @@ const ForgotPasswordPage = () => {
         </div>
         <ForgotPasswordForm />
          <div className="mt-4 text-center text-sm">
-            Lembrou a senha?{" "}
+            Passwort wieder eingefallen?{" "}
             <Link to="/auth" className="underline hover:text-primary">
-              Voltar para o login
+              Zurück zur Anmeldung
             </Link>
           </div>
       </div>

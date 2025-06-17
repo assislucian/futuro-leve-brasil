@@ -22,10 +22,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const mainItems = [
-  { title: "Visão Geral", url: "/dashboard", icon: Home },
-  { title: "Metas", url: "/goals", icon: Target },
-  { title: "Orçamentos", url: "/budgets", icon: Wallet },
-  { title: "Relatórios", url: "/analytics", icon: TrendingUp },
+  { title: "Übersicht", url: "/dashboard", icon: Home },
+  { title: "Ziele", url: "/goals", icon: Target },
+  { title: "Budgets", url: "/budgets", icon: Wallet },
+  { title: "Berichte", url: "/analytics", icon: TrendingUp },
 ];
 
 export default function AppSidebar() {
@@ -42,15 +42,15 @@ export default function AppSidebar() {
       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900";
 
   const handleSignOut = async () => {
-    console.log("AppSidebar: Fazendo logout");
+    console.log("AppSidebar: Abmeldung");
     try {
       await supabase.auth.signOut();
     } catch (error) {
-      console.error("AppSidebar: Erro ao fazer logout:", error);
+      console.error("AppSidebar: Fehler bei der Abmeldung:", error);
     }
   };
 
-  const userName = user?.user_metadata?.full_name || profile?.full_name || "Usuário";
+  const userName = user?.user_metadata?.full_name || profile?.full_name || "Benutzer";
   const userEmail = user?.email || "";
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
@@ -66,7 +66,7 @@ export default function AppSidebar() {
               <span className="text-lg font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Plenus
               </span>
-              <p className="text-xs text-slate-500 -mt-1">Controle Financeiro</p>
+              <p className="text-xs text-slate-500 -mt-1">Finanzkontrolle</p>
             </div>
           )}
         </div>
@@ -75,7 +75,7 @@ export default function AppSidebar() {
       <SidebarContent className="px-2">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-3">
-            {!isCollapsed ? "Navegação Principal" : "Menu"}
+            {!isCollapsed ? "Hauptnavigation" : "Menü"}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
@@ -98,7 +98,7 @@ export default function AppSidebar() {
             <Separator className="my-4" />
             <SidebarGroup>
               <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wide px-3">
-                Ações Rápidas
+                Schnellaktionen
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <div className="px-3 py-2">
@@ -107,7 +107,7 @@ export default function AppSidebar() {
                     className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-sm"
                   >
                     <PlusCircle className="h-4 w-4 mr-2" />
-                    Nova Transação
+                    Neue Transaktion
                   </Button>
                 </div>
               </SidebarGroupContent>
@@ -139,7 +139,7 @@ export default function AppSidebar() {
             className="mt-3 w-full justify-start text-slate-600 hover:text-slate-900 hover:bg-slate-50"
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Sair da Conta
+            Konto verlassen
           </Button>
         )}
       </SidebarFooter>

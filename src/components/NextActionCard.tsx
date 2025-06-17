@@ -47,13 +47,13 @@ export function NextActionCard() {
     const IconComponent = iconMap[nextAction.icon as keyof typeof iconMap] || Lightbulb;
 
     const getPriorityBadge = () => {
-        if (nextAction.title.includes('Atenção') || nextAction.title.includes('ultrapassou')) {
-            return <Badge className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800 font-medium text-xs">Urgente</Badge>;
+        if (nextAction.title.includes('Achtung') || nextAction.title.includes('überschritten')) {
+            return <Badge className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800 font-medium text-xs">Dringend</Badge>;
         }
-        if (nextAction.title.includes('economia') || nextAction.title.includes('sobra')) {
-            return <Badge className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800 font-medium text-xs">Oportunidade</Badge>;
+        if (nextAction.title.includes('Ersparnis') || nextAction.title.includes('Überschuss')) {
+            return <Badge className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800 font-medium text-xs">Chance</Badge>;
         }
-        return <Badge className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-medium text-xs">Sugestão</Badge>;
+        return <Badge className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-medium text-xs">Vorschlag</Badge>;
     };
 
     return (
@@ -65,10 +65,10 @@ export function NextActionCard() {
                            <div className="p-1.5 bg-blue-50 dark:bg-blue-950 rounded-md">
                              <Lightbulb className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                            </div>
-                           Próxima Ação
+                           Nächste Aktion
                         </CardTitle>
                         <CardDescription className="text-sm text-muted-foreground">
-                          Recomendação personalizada
+                          Personalisierte Empfehlung
                         </CardDescription>
                     </div>
                     {getPriorityBadge()}

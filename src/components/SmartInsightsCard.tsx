@@ -49,9 +49,9 @@ const getPriorityStyles = (priority: SmartInsight['priority']) => {
 
 const getPriorityLabel = (priority: SmartInsight['priority']) => {
   switch (priority) {
-    case 'high': return '🔥 Urgente';
-    case 'medium': return '⚡ Importante';
-    case 'low': return '💡 Dica';
+    case 'high': return '🔥 Dringend';
+    case 'medium': return '⚡ Wichtig';
+    case 'low': return '💡 Tipp';
     default: return 'Info';
   }
 };
@@ -67,10 +67,10 @@ export function SmartInsightsCard() {
             <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
-            Insights Inteligentes
+            Intelligente Einblicke
           </CardTitle>
           <CardDescription>
-            Nossa IA está analisando suas finanças...
+            Unsere KI analysiert Ihre Finanzen...
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 p-3">
@@ -97,10 +97,10 @@ export function SmartInsightsCard() {
             <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
-            Insights Inteligentes
+            Intelligente Einblicke
           </CardTitle>
           <CardDescription>
-            {error ? 'Erro ao carregar insights' : 'Continue usando o Plenus para receber insights personalizados sobre suas finanças!'}
+            {error ? 'Fehler beim Laden der Einblicke' : 'Nutzen Sie Plenus weiter, um personalisierte Einblicke über Ihre Finanzen zu erhalten!'}
           </CardDescription>
         </CardHeader>
         {!error && (
@@ -108,10 +108,10 @@ export function SmartInsightsCard() {
             <div className="text-center py-4">
               <Brain className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground mb-3">
-                Nossa IA está aprendendo sobre seus hábitos financeiros.
+                Unsere KI lernt über Ihre Finanzgewohnheiten.
               </p>
               <p className="text-xs text-muted-foreground">
-                Adicione mais transações para receber insights personalizados!
+                Fügen Sie mehr Transaktionen hinzu, um personalisierte Einblicke zu erhalten!
               </p>
             </div>
           </CardContent>
@@ -120,7 +120,7 @@ export function SmartInsightsCard() {
     );
   }
 
-  // Mostrar apenas os 3 insights mais importantes
+  // Nur die 3 wichtigsten Einblicke anzeigen
   const topInsights = insights.slice(0, 3);
 
   return (
@@ -130,10 +130,10 @@ export function SmartInsightsCard() {
           <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
             <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </div>
-          Insights Inteligentes
+          Intelligente Einblicke
         </CardTitle>
         <CardDescription className="text-muted-foreground text-sm">
-          🚀 Nossa IA descobriu oportunidades para acelerar seus sonhos!
+          🚀 Unsere KI hat Möglichkeiten entdeckt, Ihre Träume zu beschleunigen!
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2 p-3">
@@ -178,7 +178,7 @@ export function SmartInsightsCard() {
                 </div>
               </div>
               
-              {/* Efeito visual sutil de prioridade */}
+              {/* Subtiler visueller Prioritätseffekt */}
               {index === 0 && insight.priority === 'high' && (
                 <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
               )}
@@ -191,7 +191,7 @@ export function SmartInsightsCard() {
             <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-card-foreground">
               <Link to="/insights" className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
-                Ver todos os insights ({insights.length})
+                Alle Einblicke anzeigen ({insights.length})
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

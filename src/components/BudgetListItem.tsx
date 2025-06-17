@@ -11,9 +11,9 @@ import { TransactionBadge } from "./ui/transaction-badge";
 
 const formatCurrency = (amount: number) => {
   if (typeof amount !== 'number') return '';
-  return new Intl.NumberFormat("pt-BR", {
+  return new Intl.NumberFormat("de-DE", {
     style: "currency",
-    currency: "BRL",
+    currency: "EUR",
   }).format(amount);
 };
 
@@ -52,7 +52,7 @@ export function BudgetListItem({ budget }: BudgetListItemProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menu</span>
+              <span className="sr-only">Menü öffnen</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -60,13 +60,13 @@ export function BudgetListItem({ budget }: BudgetListItemProps) {
             <EditBudgetDialog budget={budget}>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <Pencil className="mr-2 h-4 w-4" />
-                <span>Editar</span>
+                <span>Bearbeiten</span>
               </DropdownMenuItem>
             </EditBudgetDialog>
             <DeleteBudgetAlert budgetId={budget.id} category={budget.category}>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                   <Trash2 className="mr-2 h-4 w-4" />
-                  <span>Excluir</span>
+                  <span>Löschen</span>
               </DropdownMenuItem>
             </DeleteBudgetAlert>
           </DropdownMenuContent>

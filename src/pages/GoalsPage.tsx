@@ -1,3 +1,4 @@
+
 import React from "react";
 import { AddGoalDialog } from "@/components/AddGoalDialog";
 import GoalList from "@/components/GoalList";
@@ -21,9 +22,9 @@ const GoalsPage = () => {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Suas Metas Financeiras 🎯</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Ihre Finanzziele 🎯</h1>
           <p className="text-muted-foreground">
-            Conecte seu dinheiro aos seus sonhos. Acompanhe seu progresso aqui.
+            Verbinden Sie Ihr Geld mit Ihren Träumen. Verfolgen Sie hier Ihren Fortschritt.
           </p>
         </div>
         {isLoading ? (
@@ -33,9 +34,9 @@ const GoalsPage = () => {
             {limitReached && (
                 <Alert variant="default" className="border-amber-500/50 text-amber-700 dark:text-amber-400 [&>svg]:text-amber-500 bg-amber-500/5 dark:bg-amber-500/10 p-3 rounded-lg max-w-xs">
                   <Rocket className="h-4 w-4" />
-                  <AlertTitle className="font-semibold text-sm mb-1">Acelere seus Sonhos!</AlertTitle>
+                  <AlertTitle className="font-semibold text-sm mb-1">Beschleunigen Sie Ihre Träume!</AlertTitle>
                   <AlertDescription className="text-xs">
-                    O plano gratuito permite 2 metas. <Link to="/#pricing" className="font-bold underline hover:text-amber-500">Faça upgrade</Link> para metas ilimitadas.
+                    Der kostenlose Plan erlaubt 2 Ziele. <Link to="/#pricing" className="font-bold underline hover:text-amber-500">Upgraden Sie</Link> für unbegrenzte Ziele.
                   </AlertDescription>
                 </Alert>
             )}
