@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -20,23 +21,24 @@ export function DemoDataPopulator() {
 
     setIsLoading(true);
     try {
-      // Verificar se já existem dados para evitar duplicação
-      const { data: existingTransactions } = await supabase
-        .from('transactions')
-        .select('id')
-        .eq('user_id', user.id)
-        .limit(1);
+      // Limpar todos os dados existentes primeiro para evitar duplicações
+      console.log("Limpando dados existentes...");
+      
+      // Deletar em ordem para respeitar foreign keys
+      await supabase.from('goal_contributions').delete().eq('user_id', user.id);
+      await supabase.from('goals').delete().eq('user_id', user.id);
+      await supabase.from('installment_payments').delete().eq('installment_plan_id', 
+        (await supabase.from('installment_plans').select('id').eq('user_id', user.id)).data?.map(p => p.id) || []
+      );
+      await supabase.from('installment_plans').delete().eq('user_id', user.id);
+      await supabase.from('recurring_transactions').delete().eq('user_id', user.id);
+      await supabase.from('budgets').delete().eq('user_id', user.id);
+      await supabase.from('classification_patterns').delete().eq('user_id', user.id);
+      await supabase.from('transactions').delete().eq('user_id', user.id);
 
-      if (existingTransactions && existingTransactions.length > 0) {
-        toast.error("Dados de demonstração já existem", {
-          description: "Você já possui dados em sua conta."
-        });
-        setIsOpen(false);
-        setIsLoading(false);
-        return;
-      }
+      console.log("Dados existentes limpos. Criando novos dados...");
 
-      // 1. Criar transações de exemplo com tipos corretos
+      // 1. Criar transações de exemplo
       const transactions = [
         // Receitas
         { amount: 5500.00, type: 'income' as const, category: 'Salário', description: 'Salário mensal', date: '2025-06-01', classification: null, planning_status: null },
@@ -77,7 +79,7 @@ export function DemoDataPopulator() {
 
       if (transactionsError) throw transactionsError;
 
-      // 2. Criar metas financeiras
+      // 2. Criar metas financeiras (apenas uma vez cada)
       const goals = [
         { name: 'Reserva de Emergência', target_amount: 20000.00, target_date: '2025-12-31' },
         { name: 'Viagem para Europa', target_amount: 15000.00, target_date: '2025-11-30' },
@@ -100,44 +102,44 @@ export function DemoDataPopulator() {
 
       if (goalsError) throw goalsError;
 
-      // 3. Criar contribuições para as metas (ajustadas para não completar metas imediatamente)
-      if (goalsData) {
+      // 3. Criar contribuições para as metas (valores que não completam imediatamente)
+      if (goalsData && goalsData.length > 0) {
         const contributions = [];
         
-        // Reserva de Emergência - 40% do valor alvo
+        // Reserva de Emergência - 42.5% do valor alvo
         const reservaGoal = goalsData.find(g => g.name === 'Reserva de Emergência');
         if (reservaGoal) {
           contributions.push(
             { goal_id: reservaGoal.id, amount: 2000.00, date: '2025-05-01' },
             { goal_id: reservaGoal.id, amount: 1500.00, date: '2025-05-15' },
             { goal_id: reservaGoal.id, amount: 2000.00, date: '2025-06-01' },
-            { goal_id: reservaGoal.id, amount: 2500.00, date: '2025-06-10' }
+            { goal_id: reservaGoal.id, amount: 3000.00, date: '2025-06-10' }
           );
         }
 
-        // Viagem para Europa - 30% do valor alvo
+        // Viagem para Europa - 28% do valor alvo
         const viagemGoal = goalsData.find(g => g.name === 'Viagem para Europa');
         if (viagemGoal) {
           contributions.push(
             { goal_id: viagemGoal.id, amount: 1000.00, date: '2025-05-05' },
             { goal_id: viagemGoal.id, amount: 800.00, date: '2025-05-20' },
             { goal_id: viagemGoal.id, amount: 1200.00, date: '2025-06-05' },
-            { goal_id: viagemGoal.id, amount: 1500.00, date: '2025-06-12' }
+            { goal_id: viagemGoal.id, amount: 1200.00, date: '2025-06-12' }
           );
         }
 
-        // Entrada do Apartamento - 25% do valor alvo
+        // Entrada do Apartamento - 24% do valor alvo
         const apartamentoGoal = goalsData.find(g => g.name === 'Entrada do Apartamento');
         if (apartamentoGoal) {
           contributions.push(
             { goal_id: apartamentoGoal.id, amount: 3000.00, date: '2025-05-01' },
             { goal_id: apartamentoGoal.id, amount: 2500.00, date: '2025-05-15' },
             { goal_id: apartamentoGoal.id, amount: 3000.00, date: '2025-06-01' },
-            { goal_id: apartamentoGoal.id, amount: 4000.00, date: '2025-06-10' }
+            { goal_id: apartamentoGoal.id, amount: 3500.00, date: '2025-06-10' }
           );
         }
 
-        // Curso de Especialização - 85% do valor alvo (próximo mas não completo)
+        // Curso de Especialização - 85.7% do valor alvo (próximo mas não completo)
         const cursoGoal = goalsData.find(g => g.name === 'Curso de Especialização');
         if (cursoGoal) {
           contributions.push(
@@ -189,7 +191,7 @@ export function DemoDataPopulator() {
 
       if (budgetsError) throw budgetsError;
 
-      // 5. Criar transações recorrentes com tipos corretos
+      // 5. Criar transações recorrentes
       const recurringTransactions = [
         { description: 'Salário mensal', amount: 5500.00, type: 'income' as const, category: 'Salário', frequency: 'monthly' as const },
         { description: 'Aluguel', amount: 1200.00, type: 'expense' as const, category: 'Moradia', frequency: 'monthly' as const },
@@ -241,7 +243,7 @@ export function DemoDataPopulator() {
 
       if (installmentError) throw installmentError;
 
-      // 7. Criar padrões de classificação com tipos corretos
+      // 7. Criar padrões de classificação
       const classificationPatterns = [
         { pattern_type: 'description', pattern_value: 'supermercado', classification: 'variable' as const, planning_status: 'planned' as const, confidence_score: 0.9 },
         { pattern_type: 'description', pattern_value: 'aluguel', classification: 'fixed' as const, planning_status: 'planned' as const, confidence_score: 0.95 },
