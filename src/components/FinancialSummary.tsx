@@ -5,20 +5,15 @@ import { DollarSign, ArrowUp, ArrowDown } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 /**
- * Komponente für die Finanzübersicht
- * Zeigt die wichtigsten Finanzkennzahlen des Benutzers an
+ * Componente para o resumo financeiro
+ * Mostra os principais indicadores financeiros do usuário
  */
 const FinancialSummary = () => {
   const { data: summary, isLoading, error, refetch } = useFinancialSummaryData();
-
-  const formatCurrency = (value: number) => {
-    return value.toLocaleString("de-DE", {
-      style: "currency",
-      currency: "EUR",
-    });
-  };
+  const { t, formatCurrency } = useLanguage();
 
   if (isLoading) {
     return (
@@ -32,8 +27,8 @@ const FinancialSummary = () => {
     return (
       <div className="p-5">
         <ErrorState
-          title="Fehler beim Laden der Übersicht"
-          description="Ihre Finanzübersicht konnte nicht berechnet werden. Versuchen Sie es später erneut."
+          title={t('common.error')}
+          description={t('common.error')}
           onRetry={refetch}
           variant="destructive"
         />
@@ -49,24 +44,24 @@ const FinancialSummary = () => {
 
   const cards = [
     {
-      title: "Gesamteinkommen",
+      title: t('financial.total_income'),
       value: totalIncome,
       icon: ArrowUp,
-      description: "Summe aller registrierten Einnahmen",
+      description: t('financial.total_income.description'),
       color: "green"
     },
     {
-      title: "Gesamtausgaben",
+      title: t('financial.total_expenses'),
       value: totalExpense,
       icon: ArrowDown,
-      description: "Summe aller registrierten Ausgaben",
+      description: t('financial.total_expenses.description'),
       color: "red"
     },
     {
-      title: "Aktueller Saldo",
+      title: t('financial.current_balance'),
       value: balance,
       icon: DollarSign,
-      description: "Ihr aktueller Finanzstatus",
+      description: t('financial.current_balance.description'),
       color: balance >= 0 ? "gray" : "red"
     }
   ];

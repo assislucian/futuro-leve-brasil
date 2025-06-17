@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { useNextAction } from "@/hooks/useNextAction";
 import { ArrowRight, Lightbulb, CircleDollarSign, Star, AlertTriangle, Target, Sparkles, Rocket, Plus } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const iconMap = {
   CircleDollarSign,
@@ -19,6 +20,7 @@ const iconMap = {
 
 export function NextActionCard() {
     const { nextAction, isLoading } = useNextAction();
+    const { t } = useLanguage();
 
     if (isLoading) {
         return (
@@ -48,12 +50,12 @@ export function NextActionCard() {
 
     const getPriorityBadge = () => {
         if (nextAction.title.includes('Achtung') || nextAction.title.includes('überschritten')) {
-            return <Badge className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800 font-medium text-xs">Dringend</Badge>;
+            return <Badge className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800 font-medium text-xs">{t('insights.priority.high')}</Badge>;
         }
         if (nextAction.title.includes('Ersparnis') || nextAction.title.includes('Überschuss')) {
             return <Badge className="bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800 font-medium text-xs">Chance</Badge>;
         }
-        return <Badge className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-medium text-xs">Vorschlag</Badge>;
+        return <Badge className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-medium text-xs">{t('insights.priority.low')}</Badge>;
     };
 
     return (
@@ -65,10 +67,10 @@ export function NextActionCard() {
                            <div className="p-1.5 bg-blue-50 dark:bg-blue-950 rounded-md">
                              <Lightbulb className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                            </div>
-                           Nächste Aktion
+                           {t('nextaction.title')}
                         </CardTitle>
                         <CardDescription className="text-sm text-muted-foreground">
-                          Personalisierte Empfehlung
+                          {t('nextaction.subtitle')}
                         </CardDescription>
                     </div>
                     {getPriorityBadge()}

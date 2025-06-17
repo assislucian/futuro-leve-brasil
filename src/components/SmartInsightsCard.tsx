@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { useSmartInsights, SmartInsight } from "@/hooks/useSmartInsights";
 import { AlertCircle, TrendingUp, Target, Sparkles, ArrowRight, Brain } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const getInsightIcon = (type: SmartInsight['type']) => {
   switch (type) {
@@ -47,17 +48,18 @@ const getPriorityStyles = (priority: SmartInsight['priority']) => {
   }
 };
 
-const getPriorityLabel = (priority: SmartInsight['priority']) => {
-  switch (priority) {
-    case 'high': return '🔥 Dringend';
-    case 'medium': return '⚡ Wichtig';
-    case 'low': return '💡 Tipp';
-    default: return 'Info';
-  }
-};
-
 export function SmartInsightsCard() {
   const { data: insights, isLoading, error } = useSmartInsights();
+  const { t } = useLanguage();
+
+  const getPriorityLabel = (priority: SmartInsight['priority']) => {
+    switch (priority) {
+      case 'high': return `🔥 ${t('insights.priority.high')}`;
+      case 'medium': return `⚡ ${t('insights.priority.medium')}`;
+      case 'low': return `💡 ${t('insights.priority.low')}`;
+      default: return 'Info';
+    }
+  };
 
   if (isLoading) {
     return (
@@ -67,10 +69,10 @@ export function SmartInsightsCard() {
             <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
-            Intelligente Einblicke
+            {t('insights.title')}
           </CardTitle>
           <CardDescription>
-            Unsere KI analysiert Ihre Finanzen...
+            {t('common.loading')}...
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 p-3">
@@ -97,10 +99,10 @@ export function SmartInsightsCard() {
             <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
-            Intelligente Einblicke
+            {t('insights.title')}
           </CardTitle>
           <CardDescription>
-            {error ? 'Fehler beim Laden der Einblicke' : 'Nutzen Sie Plenus weiter, um personalisierte Einblicke über Ihre Finanzen zu erhalten!'}
+            {error ? t('common.error') : t('insights.subtitle')}
           </CardDescription>
         </CardHeader>
         {!error && (
@@ -108,10 +110,10 @@ export function SmartInsightsCard() {
             <div className="text-center py-4">
               <Brain className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground mb-3">
-                Unsere KI lernt über Ihre Finanzgewohnheiten.
+                {t('common.loading')}...
               </p>
               <p className="text-xs text-muted-foreground">
-                Fügen Sie mehr Transaktionen hinzu, um personalisierte Einblicke zu erhalten!
+                {t('insights.subtitle')}
               </p>
             </div>
           </CardContent>
@@ -120,7 +122,7 @@ export function SmartInsightsCard() {
     );
   }
 
-  // Nur die 3 wichtigsten Einblicke anzeigen
+  // Só os 3 insights mais importantes
   const topInsights = insights.slice(0, 3);
 
   return (
@@ -130,10 +132,10 @@ export function SmartInsightsCard() {
           <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
             <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </div>
-          Intelligente Einblicke
+          {t('insights.title')}
         </CardTitle>
         <CardDescription className="text-muted-foreground text-sm">
-          🚀 Unsere KI hat Möglichkeiten entdeckt, Ihre Träume zu beschleunigen!
+          {t('insights.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2 p-3">
@@ -178,7 +180,7 @@ export function SmartInsightsCard() {
                 </div>
               </div>
               
-              {/* Subtiler visueller Prioritätseffekt */}
+              {/* Efeito visual sutil de prioridade */}
               {index === 0 && insight.priority === 'high' && (
                 <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
               )}
@@ -191,7 +193,7 @@ export function SmartInsightsCard() {
             <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-card-foreground">
               <Link to="/insights" className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
-                Alle Einblicke anzeigen ({insights.length})
+                {t('common.see_all')} ({insights.length})
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
