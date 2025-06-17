@@ -11,6 +11,8 @@ import { useSignUpForm } from "@/hooks/useSignUpForm";
 import { PasswordStrengthIndicator } from "@/components/PasswordStrengthIndicator";
 import { validatePasswordStrength } from "@/lib/validators/signup";
 import { cn } from "@/lib/utils";
+import { useAuthError } from "@/hooks/useAuthError";
+import { AuthErrorDisplay } from "@/components/AuthErrorDisplay";
 
 type SignUpState = 'idle' | 'checking' | 'creating' | 'success' | 'error';
 
@@ -21,6 +23,7 @@ export function SignUpForm() {
   const [signUpState, setSignUpState] = useState<SignUpState>('idle');
   const [intelligentFeedback, setIntelligentFeedback] = useState<string>("");
   const [suggestionMessage, setSuggestionMessage] = useState<string>("");
+  const { errorState, setError, clearError } = useAuthError();
 
   const watchedPassword = form.watch("password");
   const passwordValidation = validatePasswordStrength(watchedPassword || "");
@@ -37,17 +40,19 @@ export function SignUpForm() {
         setIntelligentFeedback("Perfeito! Todos os campos estão preenchidos corretamente.");
         setSuggestionMessage("Você está pronto para criar sua conta no Plenus.");
         setSignUpState('idle');
+        clearError();
       } else {
         setIntelligentFeedback("");
         setSuggestionMessage("");
       }
     }
-  }, [watchedEmail, watchedFullName, watchedPassword, watchedConfirmPassword, passwordValidation.isValid]);
+  }, [watchedEmail, watchedFullName, watchedPassword, watchedConfirmPassword, passwordValidation.isValid, clearError]);
 
   const handleSubmitWithFeedback = async (values: any) => {
     setSignUpState('checking');
     setIntelligentFeedback("Verificando disponibilidade do email...");
     setSuggestionMessage("Isso pode levar alguns segundos.");
+    clearError();
 
     try {
       setTimeout(() => {
@@ -65,8 +70,9 @@ export function SignUpForm() {
       setSuggestionMessage("Verifique seu email para ativar sua conta.");
     } catch (error) {
       setSignUpState('error');
-      setIntelligentFeedback("Algo deu errado durante o cadastro.");
-      setSuggestionMessage("Tente novamente ou verifique se o email já está em uso.");
+      setError(error as Error, 'signup');
+      setIntelligentFeedback("");
+      setSuggestionMessage("");
     }
   };
 
@@ -81,6 +87,17 @@ export function SignUpForm() {
 
   return (
     <form onSubmit={form.handleSubmit(handleSubmitWithFeedback)} className="space-y-6">
+      {/* Exibir erros de autenticação */}
+      {errorState && (
+        <AuthErrorDisplay
+          message={errorState.message}
+          suggestion={errorState.suggestion}
+          severity={errorState.severity}
+          action={errorState.action}
+          onClear={clearError}
+        />
+      )}
+
       {/* Campo Nome Completo */}
       <div className="space-y-2">
         <Label htmlFor="fullName">Nome completo</Label>
@@ -147,10 +164,7 @@ export function SignUpForm() {
         </div>
         
         {watchedPassword && (
-          <PasswordStrengthIndicator 
-            password={watchedPassword} 
-            validation={passwordValidation}
-          />
+          <PasswordStrengthIndicator password={watchedPassword} />
         )}
         
         {form.formState.errors.password && (
@@ -255,7 +269,7 @@ export function SignUpForm() {
       </div>
 
       {/* Feedback Inteligente */}
-      {intelligentFeedback && (
+      {intelligentFeedback && !errorState && (
         <Alert className={cn(
           "border-l-4",
           signUpState === 'success' ? "border-green-500 bg-green-50" :
