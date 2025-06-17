@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -21,6 +20,22 @@ export function DemoDataPopulator() {
 
     setIsLoading(true);
     try {
+      // Verificar se já existem dados para evitar duplicação
+      const { data: existingTransactions } = await supabase
+        .from('transactions')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1);
+
+      if (existingTransactions && existingTransactions.length > 0) {
+        toast.error("Dados de demonstração já existem", {
+          description: "Você já possui dados em sua conta."
+        });
+        setIsOpen(false);
+        setIsLoading(false);
+        return;
+      }
+
       // 1. Criar transações de exemplo com tipos corretos
       const transactions = [
         // Receitas
@@ -85,50 +100,49 @@ export function DemoDataPopulator() {
 
       if (goalsError) throw goalsError;
 
-      // 3. Criar contribuições para as metas
+      // 3. Criar contribuições para as metas (ajustadas para não completar metas imediatamente)
       if (goalsData) {
         const contributions = [];
         
-        // Reserva de Emergência
+        // Reserva de Emergência - 40% do valor alvo
         const reservaGoal = goalsData.find(g => g.name === 'Reserva de Emergência');
         if (reservaGoal) {
           contributions.push(
             { goal_id: reservaGoal.id, amount: 2000.00, date: '2025-05-01' },
             { goal_id: reservaGoal.id, amount: 1500.00, date: '2025-05-15' },
             { goal_id: reservaGoal.id, amount: 2000.00, date: '2025-06-01' },
-            { goal_id: reservaGoal.id, amount: 1500.00, date: '2025-06-10' },
-            { goal_id: reservaGoal.id, amount: 1500.00, date: '2025-06-15' }
+            { goal_id: reservaGoal.id, amount: 2500.00, date: '2025-06-10' }
           );
         }
 
-        // Viagem para Europa
+        // Viagem para Europa - 30% do valor alvo
         const viagemGoal = goalsData.find(g => g.name === 'Viagem para Europa');
         if (viagemGoal) {
           contributions.push(
             { goal_id: viagemGoal.id, amount: 1000.00, date: '2025-05-05' },
             { goal_id: viagemGoal.id, amount: 800.00, date: '2025-05-20' },
             { goal_id: viagemGoal.id, amount: 1200.00, date: '2025-06-05' },
-            { goal_id: viagemGoal.id, amount: 1200.00, date: '2025-06-12' }
+            { goal_id: viagemGoal.id, amount: 1500.00, date: '2025-06-12' }
           );
         }
 
-        // Entrada do Apartamento
+        // Entrada do Apartamento - 25% do valor alvo
         const apartamentoGoal = goalsData.find(g => g.name === 'Entrada do Apartamento');
         if (apartamentoGoal) {
           contributions.push(
             { goal_id: apartamentoGoal.id, amount: 3000.00, date: '2025-05-01' },
             { goal_id: apartamentoGoal.id, amount: 2500.00, date: '2025-05-15' },
             { goal_id: apartamentoGoal.id, amount: 3000.00, date: '2025-06-01' },
-            { goal_id: apartamentoGoal.id, amount: 3500.00, date: '2025-06-10' }
+            { goal_id: apartamentoGoal.id, amount: 4000.00, date: '2025-06-10' }
           );
         }
 
-        // Curso de Especialização
+        // Curso de Especialização - 85% do valor alvo (próximo mas não completo)
         const cursoGoal = goalsData.find(g => g.name === 'Curso de Especialização');
         if (cursoGoal) {
           contributions.push(
             { goal_id: cursoGoal.id, amount: 1500.00, date: '2025-05-01' },
-            { goal_id: cursoGoal.id, amount: 2000.00, date: '2025-05-20' }
+            { goal_id: cursoGoal.id, amount: 1500.00, date: '2025-05-20' }
           );
         }
 

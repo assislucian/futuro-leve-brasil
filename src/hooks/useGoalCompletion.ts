@@ -12,12 +12,16 @@ export function useGoalCompletion() {
     queryFn: async () => {
       if (!user) return null;
 
-      // Busca por metas que ainda não foram celebradas
+      // Busca por metas que ainda não foram celebradas e foram criadas há pelo menos 5 segundos
+      // Isso evita celebrações imediatas quando dados demo são criados
+      const fiveSecondsAgo = new Date(Date.now() - 5000).toISOString();
+      
       const { data, error } = await supabase
         .from('goals')
-        .select('id, name, current_amount, target_amount')
+        .select('id, name, current_amount, target_amount, created_at')
         .eq('user_id', user.id)
-        .is('celebrated_at', null);
+        .is('celebrated_at', null)
+        .lt('created_at', fiveSecondsAgo); // Só considera metas criadas há mais de 5 segundos
 
       if (error) {
         console.error("Erro ao buscar metas não celebradas:", error);
@@ -25,13 +29,16 @@ export function useGoalCompletion() {
       }
 
       // Encontra a primeira meta que foi concluída (valor atual >= valor alvo)
-      const completedGoal = data.find(goal => goal.current_amount >= goal.target_amount);
+      const completedGoal = data?.find(goal => 
+        goal.current_amount >= goal.target_amount && goal.target_amount > 0
+      );
 
       return completedGoal || null;
     },
     enabled: !!user,
-    // Garante que não vai buscar em cache para sempre e permite novas celebrações
-    staleTime: 1000 * 60, 
+    // Refetch periodicamente para detectar novas metas completadas
+    refetchInterval: 30000, // 30 segundos
+    staleTime: 1000 * 30, // 30 segundos
   });
 
   const { mutate: markAsCelebrated, isPending: isMarkingAsCelebrated } = useMutation({
@@ -52,6 +59,7 @@ export function useGoalCompletion() {
       // Invalida as queries para garantir que a UI seja atualizada
       queryClient.invalidateQueries({ queryKey: ['completableGoal', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['goals', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['goalsSummary', user?.id] });
     },
   });
 
