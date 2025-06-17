@@ -45,8 +45,8 @@ const DashboardPage = () => {
           title={t('nav.dashboard')}
           description={t('dashboard.subtitle')}
         />
-        <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="min-h-screen bg-background p-6">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div className="space-y-2">
               <Skeleton className="h-8 w-72" />
               <Skeleton className="h-4 w-80" />
@@ -57,15 +57,15 @@ const DashboardPage = () => {
               <Skeleton className="h-9 w-36" />
             </div>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-8 space-y-4">
-              <Skeleton className="h-40 w-full rounded-lg" />
-              <Skeleton className="h-80 w-full rounded-lg" />
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-4 space-y-6">
+              <Skeleton className="h-56 w-full rounded-xl" />
+              <Skeleton className="h-40 w-full rounded-xl" />
+              <Skeleton className="h-56 w-full rounded-xl" />
             </div>
-            <div className="lg:col-span-4 space-y-4">
-              <Skeleton className="h-56 w-full rounded-lg" />
-              <Skeleton className="h-40 w-full rounded-lg" />
-              <Skeleton className="h-56 w-full rounded-lg" />
+            <div className="col-span-8 space-y-6">
+              <Skeleton className="h-40 w-full rounded-xl" />
+              <Skeleton className="h-80 w-full rounded-xl" />
             </div>
           </div>
         </div>
@@ -92,9 +92,9 @@ const DashboardPage = () => {
         description={t('dashboard.subtitle')}
       />
       <GoalCompletionCelebration />
-      <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
+      <div className="min-h-screen bg-background p-6">
         {/* Header */}
-        <div className="flex items-start justify-between flex-wrap gap-4">
+        <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-semibold text-foreground leading-tight">
@@ -119,35 +119,34 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Layout otimizado com melhor distribuição do espaço */}
-        <div className="grid grid-cols-1 gap-6">
-          {/* Resumo financeiro - width completo */}
-          <div className="bg-card rounded-lg border border-border shadow-sm">
-            <FinancialSummary />
+        {/* CSS Grid Layout de 12 colunas */}
+        <div className="grid grid-cols-12 gap-6">
+          {/* Cards laterais - 4 colunas (span 1-4) */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+              <SmartInsightsCard />
+            </div>
+            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+              <NextActionCard />
+            </div>
+            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+              <GoalsSummary />
+            </div>
+            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+              <BudgetsSummary />
+            </div>
           </div>
           
-          {/* Grid principal com proporções melhoradas */}
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-            {/* Coluna principal - Transações (60% do espaço) */}
-            <div className="xl:col-span-3 space-y-6">
-              <div className="bg-card rounded-lg border border-border shadow-sm h-fit">
-                <TransactionList />
-              </div>
+          {/* Feed de transações centralizado - 8 colunas (span 5-12) */}
+          <div className="col-span-12 lg:col-span-8 space-y-6">
+            {/* Resumo financeiro - width completo */}
+            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+              <FinancialSummary />
             </div>
             
-            {/* Coluna lateral - Insights e resumos (40% do espaço) */}
-            <div className="xl:col-span-2 space-y-6">
-              {/* Cards de insights */}
-              <div className="space-y-4">
-                <SmartInsightsCard />
-                <NextActionCard />
-              </div>
-              
-              {/* Grid 2x1 para Goals e Budgets em telas grandes, stack em mobile */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4">
-                <GoalsSummary />
-                <BudgetsSummary />
-              </div>
+            {/* Lista de transações */}
+            <div className="w-full p-6 bg-card rounded-xl border border-border shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+              <TransactionList />
             </div>
           </div>
         </div>

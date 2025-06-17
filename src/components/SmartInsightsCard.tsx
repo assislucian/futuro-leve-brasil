@@ -1,5 +1,4 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,19 +62,19 @@ export function SmartInsightsCard() {
 
   if (isLoading) {
     return (
-      <Card className="border border-border shadow-sm bg-card">
-        <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
+      <div className="space-y-4">
+        <div className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 p-3 rounded-lg">
+          <h4 className="text-base font-bold flex items-center gap-2">
             <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
             {t('insights.title')}
-          </CardTitle>
-          <CardDescription>
+          </h4>
+          <p className="text-muted-foreground text-sm mt-1">
             {t('common.loading')}...
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3 p-3">
+          </p>
+        </div>
+        <div className="space-y-3">
           {[...Array(2)].map((_, i) => (
             <div key={i} className="space-y-2 p-3 rounded-md border bg-muted/50">
               <div className="flex items-start justify-between">
@@ -86,39 +85,37 @@ export function SmartInsightsCard() {
               <Skeleton className="h-7 w-20" />
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   if (error || !insights || insights.length === 0) {
     return (
-      <Card className="border border-border shadow-sm bg-card">
-        <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
+      <div className="space-y-4">
+        <div className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 p-3 rounded-lg">
+          <h4 className="text-base font-bold flex items-center gap-2">
             <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
               <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
             {t('insights.title')}
-          </CardTitle>
-          <CardDescription>
+          </h4>
+          <p className="text-muted-foreground text-sm mt-1">
             {error ? t('common.error') : t('insights.subtitle')}
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
         {!error && (
-          <CardContent className="p-3">
-            <div className="text-center py-4">
-              <Brain className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground mb-3">
-                {t('common.loading')}...
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('insights.subtitle')}
-              </p>
-            </div>
-          </CardContent>
+          <div className="text-center py-4">
+            <Brain className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground mb-3">
+              {t('common.loading')}...
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t('insights.subtitle')}
+            </p>
+          </div>
         )}
-      </Card>
+      </div>
     );
   }
 
@@ -126,19 +123,20 @@ export function SmartInsightsCard() {
   const topInsights = insights.slice(0, 3);
 
   return (
-    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
-      <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
+    <div className="space-y-4">
+      <div className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 p-3 rounded-lg">
+        <h4 className="text-base font-bold flex items-center gap-2">
           <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
             <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </div>
           {t('insights.title')}
-        </CardTitle>
-        <CardDescription className="text-muted-foreground text-sm">
+        </h4>
+        <p className="text-muted-foreground text-sm mt-1">
           {t('insights.subtitle')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2 p-3">
+        </p>
+      </div>
+      
+      <div className="space-y-2">
         {topInsights.map((insight, index) => {
           const styles = getPriorityStyles(insight.priority);
           return (
@@ -199,7 +197,7 @@ export function SmartInsightsCard() {
             </Button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

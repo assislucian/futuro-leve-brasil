@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ArrowUp, ArrowDown } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -16,23 +15,17 @@ const FinancialSummary = () => {
   const { t, formatCurrency } = useLanguage();
 
   if (isLoading) {
-    return (
-      <div className="p-5">
-        <LoadingState variant="dashboard" count={3} />
-      </div>
-    );
+    return <LoadingState variant="dashboard" count={3} />;
   }
 
   if (error) {
     return (
-      <div className="p-5">
-        <ErrorState
-          title={t('common.error')}
-          description={t('common.error')}
-          onRetry={refetch}
-          variant="destructive"
-        />
-      </div>
+      <ErrorState
+        title={t('common.error')}
+        description={t('common.error')}
+        onRetry={refetch}
+        variant="destructive"
+      />
     );
   }
 
@@ -88,34 +81,37 @@ const FinancialSummary = () => {
   };
 
   return (
-    <div className="p-5">
+    <div className="space-y-4">
+      <h4 className="text-base font-bold text-card-foreground">
+        {t('financial.summary_title')}
+      </h4>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, index) => {
           const styles = getCardStyles(card.color);
           const Icon = card.icon;
           
           return (
-            <Card 
+            <div 
               key={index}
-              className="border border-border shadow-sm bg-card hover:shadow-md transition-shadow duration-200"
+              className="p-4 border border-border rounded-lg bg-card shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow duration-200"
             >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+              <div className="flex items-center justify-between mb-2">
+                <h5 className="text-sm font-medium text-muted-foreground">
                   {card.title}
-                </CardTitle>
+                </h5>
                 <div className={`p-1.5 ${styles.iconBg} rounded-md`}>
                   <Icon className={`h-4 w-4 ${styles.iconColor}`} />
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-1">
+              </div>
+              <div className="space-y-1">
                 <div className={`text-xl font-semibold ${styles.valueColor}`}>
                   {formatCurrency(card.value)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {card.description}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           );
         })}
       </div>

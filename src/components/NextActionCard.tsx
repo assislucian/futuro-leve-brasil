@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 import { useNextAction } from "@/hooks/useNextAction";
@@ -24,8 +23,8 @@ export function NextActionCard() {
 
     if (isLoading) {
         return (
-            <Card className="border border-border shadow-sm bg-card">
-                <CardHeader className="pb-3 space-y-2">
+            <div className="space-y-4">
+                <div className="space-y-2">
                     <div className="flex items-start justify-between">
                         <div className="space-y-2 flex-1">
                             <Skeleton className="h-5 w-3/4" />
@@ -33,12 +32,12 @@ export function NextActionCard() {
                         </div>
                         <Skeleton className="h-5 w-14 rounded-full" />
                     </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
+                </div>
+                <div className="space-y-3">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-9 w-full rounded-md" />
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         );
     }
     
@@ -59,24 +58,25 @@ export function NextActionCard() {
     };
 
     return (
-        <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
-            <CardHeader className="pb-3 space-y-2">
+        <div className="space-y-4">
+            <div className="space-y-2">
                 <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0 space-y-1">
-                        <CardTitle className="text-base text-card-foreground flex items-center gap-2">
+                        <h4 className="text-base font-bold text-card-foreground flex items-center gap-2">
                            <div className="p-1.5 bg-blue-50 dark:bg-blue-950 rounded-md">
                              <Lightbulb className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                            </div>
                            {t('nextaction.title')}
-                        </CardTitle>
-                        <CardDescription className="text-sm text-muted-foreground">
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
                           {t('nextaction.subtitle')}
-                        </CardDescription>
+                        </p>
                     </div>
                     {getPriorityBadge()}
                 </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            </div>
+            
+            <div className="space-y-4">
                 <div className="flex items-start gap-2">
                     <div className="bg-muted p-2 rounded-md border border-border">
                        <IconComponent className="h-4 w-4 text-muted-foreground" />
@@ -94,7 +94,7 @@ export function NextActionCard() {
                         <ArrowRight className="h-4 w-4" />
                     </Link>
                 </Button>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
