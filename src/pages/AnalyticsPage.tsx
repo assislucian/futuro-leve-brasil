@@ -10,7 +10,7 @@ import { ExpenseClassificationChart } from "@/components/analytics/ExpenseClassi
 import { PlanningStatusChart } from "@/components/analytics/PlanningStatusChart";
 import { MonthlyTrendsChart } from "@/components/analytics/MonthlyTrendsChart";
 import { CategoryBreakdownTable } from "@/components/analytics/CategoryBreakdownTable";
-import { IntelligentInsightsCard } from "@/components/analytics/IntelligentInsightsCard";
+import { AdvancedInsightsCard } from "@/components/insights/AdvancedInsightsCard";
 
 const AnalyticsPage = () => {
   const currentDate = new Date();
@@ -59,14 +59,14 @@ const AnalyticsPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
             <Brain className="h-8 w-8 text-purple-600" />
             Analytics Inteligente
           </h1>
-          <p className="text-muted-foreground">Insights que transformam dados em oportunidades de crescimento</p>
+          <p className="text-muted-foreground mt-2">Insights que transformam dados em oportunidades de crescimento</p>
         </div>
         <div className="flex gap-4">
           <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
@@ -96,9 +96,9 @@ const AnalyticsPage = () => {
         </div>
       </div>
 
-      {/* Insights Inteligentes - Destaque principal */}
+      {/* Insights de IA Premium - Seção Principal */}
       <div className="mb-8">
-        <IntelligentInsightsCard />
+        <AdvancedInsightsCard />
       </div>
 
       {/* Cards de Resumo */}

@@ -12,7 +12,7 @@ import { NextActionCard } from "@/components/NextActionCard";
 import { GoalCompletionCelebration } from "@/components/GoalCompletionCelebration";
 import { useHasTransactions } from "@/hooks/useHasTransactions";
 import { WelcomeGuide } from "@/components/WelcomeGuide";
-import { SmartInsightsCard } from "@/components/SmartInsightsCard";
+import { AdvancedInsightsCard } from "@/components/insights/AdvancedInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle } from "lucide-react";
@@ -124,6 +124,9 @@ const DashboardPage = () => {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             {/* Coluna Principal (2/3 da tela) */}
             <div className="xl:col-span-2 space-y-6">
+              {/* Insights de IA Premium - Destaque Principal */}
+              <AdvancedInsightsCard />
+              
               {/* Resumo Financeiro */}
               <div className="bg-card rounded-lg border border-border shadow-sm">
                 <FinancialSummary />
@@ -138,7 +141,6 @@ const DashboardPage = () => {
             {/* Sidebar (1/3 da tela) */}
             <div className="xl:col-span-1">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6 sidebar-cards">
-                <SmartInsightsCard />
                 <NextActionCard />
                 <GoalsSummary />
                 <BudgetsSummary />
