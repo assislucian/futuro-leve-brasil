@@ -78,12 +78,12 @@
     line-height: 1.25;
   }
   
-  h1 { @apply text-3xl md:text-4xl font-semibold; }
-  h2 { @apply text-2xl md:text-3xl font-semibold; }
-  h3 { @apply text-xl md:text-2xl font-medium; }
-  h4 { @apply text-lg md:text-xl font-medium; }
-  h5 { @apply text-base md:text-lg font-medium; }
-  h6 { @apply text-sm md:text-base font-medium; }
+  h1 { @apply text-2xl sm:text-3xl md:text-4xl font-semibold; }
+  h2 { @apply text-xl sm:text-2xl md:text-3xl font-semibold; }
+  h3 { @apply text-lg sm:text-xl md:text-2xl font-medium; }
+  h4 { @apply text-base sm:text-lg md:text-xl font-medium; }
+  h5 { @apply text-sm sm:text-base md:text-lg font-medium; }
+  h6 { @apply text-xs sm:text-sm md:text-base font-medium; }
 }
 
 @layer components {
@@ -123,23 +123,23 @@
     @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
-  /* Spacing System Profissional */
-  .space-clean { @apply space-y-4; }
-  .space-clean-lg { @apply space-y-6; }
-  .space-clean-xl { @apply space-y-8; }
+  /* Mobile-First Spacing System */
+  .space-clean { @apply space-y-3 sm:space-y-4; }
+  .space-clean-lg { @apply space-y-4 sm:space-y-6; }
+  .space-clean-xl { @apply space-y-6 sm:space-y-8; }
   
-  .gap-clean { @apply gap-3; }
-  .gap-clean-lg { @apply gap-4; }
-  .gap-clean-xl { @apply gap-6; }
+  .gap-clean { @apply gap-2 sm:gap-3; }
+  .gap-clean-lg { @apply gap-3 sm:gap-4; }
+  .gap-clean-xl { @apply gap-4 sm:gap-6; }
   
-  /* Container usando variáveis semânticas */
+  /* Mobile-First Container */
   .container-clean {
-    @apply max-w-7xl mx-auto px-4 md:px-6;
+    @apply max-w-7xl mx-auto px-3 sm:px-4 md:px-6;
   }
   
-  /* Icon Container usando variáveis semânticas */
+  /* Mobile-Responsive Icon Container */
   .icon-container {
-    @apply p-2 rounded-md;
+    @apply p-1.5 sm:p-2 rounded-md;
   }
   
   .icon-container-primary {
@@ -153,6 +153,24 @@
   .icon-container-danger {
     @apply bg-destructive/10 text-destructive;
   }
+
+  /* Mobile Touch Targets */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  /* Mobile-Optimized Text Sizes */
+  .text-mobile-body {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-mobile-caption {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-mobile-heading {
+    @apply text-base sm:text-lg;
+  }
 }
 
 @layer utilities {
@@ -160,21 +178,75 @@
     text-wrap: balance;
   }
   
-  /* Professional Shadows */
+  /* Professional Shadows - Mobile Responsive */
   .shadow-clean {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   }
   
   .shadow-clean-lg {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
   
-  /* Professional Spacing */
-  .p-clean { @apply p-4; }
-  .px-clean { @apply px-4; }
-  .py-clean { @apply py-4; }
+  /* Mobile-First Spacing */
+  .p-clean { @apply p-3 sm:p-4; }
+  .px-clean { @apply px-3 sm:px-4; }
+  .py-clean { @apply py-3 sm:py-4; }
   
-  .m-clean { @apply m-4; }
-  .mx-clean { @apply mx-4; }
-  .my-clean { @apply my-4; }
+  .m-clean { @apply m-3 sm:m-4; }
+  .mx-clean { @apply mx-3 sm:mx-4; }
+  .my-clean { @apply my-3 sm:my-4; }
+
+  /* Mobile Overflow Handling */
+  .overflow-touch {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+  }
+  
+  /* Safe Area Support */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Mobile Viewport Units */
+  .h-mobile-screen {
+    height: 100vh;
+    height: 100dvh;
+  }
+  
+  .min-h-mobile-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
+
+/* Mobile-Specific Media Queries */
+@media (max-width: 640px) {
+  /* Reduce motion for better mobile performance */
+  .reduce-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Mobile focus styles */
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Optimize for high DPI displays */
+  .crisp-edges {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 }

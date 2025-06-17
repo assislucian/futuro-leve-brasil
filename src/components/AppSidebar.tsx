@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const mainItems = [
   { 
@@ -55,6 +56,7 @@ export default function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
   const { user, profile } = useAuth();
+  const isMobile = useIsMobile();
   
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
@@ -78,20 +80,24 @@ export default function AppSidebar() {
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarHeader className="p-6 border-b">
+    <Sidebar 
+      className={isCollapsed ? "w-16" : isMobile ? "w-72" : "w-64"} 
+      collapsible="icon"
+    >
+      {/* Header Mobile-Responsive */}
+      <SidebarHeader className="p-4 sm:p-6 border-b">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500 text-white font-bold text-sm">
             P
           </div>
           {!isCollapsed && (
-            <div className="space-y-1">
+            <div className="space-y-1 flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-foreground">
+                <span className="text-lg font-semibold text-foreground truncate">
                   Plenus
                 </span>
                 {isPremium && (
-                  <Badge className="bg-emerald-500 text-white text-xs px-2 py-0.5">
+                  <Badge className="bg-emerald-500 text-white text-xs px-2 py-0.5 flex-shrink-0">
                     Premium
                   </Badge>
                 )}
@@ -104,7 +110,8 @@ export default function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-4">
+      {/* Content Mobile-Optimized */}
+      <SidebarContent className="px-2 sm:px-3 py-4">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-3 mb-2">
             {!isCollapsed ? "Menu Principal" : "Menu"}
@@ -113,7 +120,7 @@ export default function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-11 rounded-lg transition-all">
+                  <SidebarMenuButton asChild className="h-12 sm:h-11 rounded-lg transition-all">
                     <NavLink to={item.url} end className={getNavClass}>
                       <div className="p-2 rounded-md">
                         <item.icon className="h-4 w-4" />
@@ -121,9 +128,9 @@ export default function AppSidebar() {
                       {!isCollapsed && (
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">{item.title}</span>
+                            <span className="font-medium truncate">{item.title}</span>
                             {item.premium && !isPremium && (
-                              <Zap className="h-3 w-3 text-amber-500" />
+                              <Zap className="h-3 w-3 text-amber-500 flex-shrink-0" />
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground truncate">
@@ -139,6 +146,7 @@ export default function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Premium Upgrade - Mobile Friendly */}
         {!isCollapsed && !isPremium && (
           <>
             <Separator className="my-4" />
@@ -165,9 +173,10 @@ export default function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t">
+      {/* Footer Mobile-Responsive */}
+      <SidebarFooter className="p-3 sm:p-4 border-t">
         <div className="flex items-center gap-3 mb-3">
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 flex-shrink-0">
             <AvatarImage src={profile?.avatar_url || undefined} />
             <AvatarFallback className="bg-emerald-500 text-white text-sm font-medium">
               {userInitials}

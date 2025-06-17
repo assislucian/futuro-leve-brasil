@@ -15,10 +15,16 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Target, TrendingUp } from "lucide-react";
+import { PlusCircle, Target, TrendingUp, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const DashboardPage = () => {
   const { user, profile, loading: authLoading } = useAuth();
@@ -44,20 +50,20 @@ const DashboardPage = () => {
   if (authLoading || isLoadingHasTransactions) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
-          <div className="flex items-center justify-between mb-8">
-            <div className="space-y-3">
-              <Skeleton className="h-8 w-72" />
-              <Skeleton className="h-4 w-96" />
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+            <div className="space-y-2 sm:space-y-3">
+              <Skeleton className="h-6 sm:h-8 w-56 sm:w-72" />
+              <Skeleton className="h-3 sm:h-4 w-72 sm:w-96" />
             </div>
-            <div className="flex gap-3">
-              <Skeleton className="h-10 w-32" />
-              <Skeleton className="h-10 w-40" />
+            <div className="flex gap-2 sm:gap-3">
+              <Skeleton className="h-8 sm:h-10 w-24 sm:w-32" />
+              <Skeleton className="h-8 sm:h-10 w-28 sm:w-40" />
             </div>
           </div>
-          <div className="space-y-6">
-            <Skeleton className="h-40 w-full" />
-            <Skeleton className="h-96 w-full" />
+          <div className="space-y-4 sm:space-y-6">
+            <Skeleton className="h-32 sm:h-40 w-full" />
+            <Skeleton className="h-64 sm:h-96 w-full" />
           </div>
         </div>
       </div>
@@ -74,63 +80,98 @@ const DashboardPage = () => {
     <>
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
-          {/* Header Otimizado */}
-          <header className="flex items-start justify-between mb-8 bg-card rounded-lg border p-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-semibold text-foreground">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 max-w-7xl">
+          {/* Header Otimizado para Mobile */}
+          <header className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 sm:mb-8 bg-card rounded-lg border p-4 sm:p-6">
+            <div className="space-y-2 flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <h1 className="text-xl sm:text-2xl font-semibold text-foreground leading-tight">
                   {getGreeting()}, {firstName}!
                 </h1>
-                <span className={cn("text-xs font-medium px-2 py-1 rounded-full", planBadge.className)}>
+                <span className={cn("text-xs font-medium px-2 py-1 rounded-full w-fit", planBadge.className)}>
                   {planBadge.text}
                 </span>
               </div>
-              <p className="text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Acompanhe seus progressos e continue construindo seus objetivos
               </p>
             </div>
             
-            {/* Ações Centralizadas */}
-            <div className="flex flex-col gap-3">
-              <div className="text-xs font-medium text-muted-foreground uppercase">
-                Ações Rápidas
-              </div>
-              <div className="flex items-center gap-2">
+            {/* Ações Mobile-First */}
+            <div className="flex flex-col gap-3 sm:min-w-0">
+              {/* Mobile: Botão Principal + Menu */}
+              <div className="flex items-center gap-2 sm:hidden">
                 <AddTransactionDialog>
-                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white flex-1">
                     <PlusCircle className="h-4 w-4 mr-2" />
                     Nova Transação
                   </Button>
                 </AddTransactionDialog>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline" className="px-3">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem asChild>
+                      <Link to="/goals" className="flex items-center">
+                        <Target className="h-4 w-4 mr-2" />
+                        Nova Meta
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/analytics" className="flex items-center">
+                        <TrendingUp className="h-4 w-4 mr-2" />
+                        Ver Insights
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
 
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/goals">
-                    <Target className="h-4 w-4 mr-2" />
-                    Nova Meta
-                  </Link>
-                </Button>
+              {/* Desktop: Todas as ações visíveis */}
+              <div className="hidden sm:block">
+                <div className="text-xs font-medium text-muted-foreground uppercase mb-2">
+                  Ações Rápidas
+                </div>
+                <div className="flex items-center gap-2">
+                  <AddTransactionDialog>
+                    <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Nova Transação
+                    </Button>
+                  </AddTransactionDialog>
 
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/analytics">
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Insights
-                  </Link>
-                </Button>
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/goals">
+                      <Target className="h-4 w-4 mr-2" />
+                      Nova Meta
+                    </Link>
+                  </Button>
+
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/analytics">
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      Insights
+                    </Link>
+                  </Button>
+                </div>
               </div>
               
-              {/* Ações Secundárias */}
-              <div className="flex gap-2">
+              {/* Ações Secundárias - Mobile: Horizontal, Desktop: Original */}
+              <div className="flex gap-2 justify-center sm:justify-start">
                 <AddRecurringTransactionDialog />
                 <AddInstallmentPlanDialog />
               </div>
             </div>
           </header>
 
-          {/* Layout Principal Otimizado */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Layout Principal Responsivo */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
             {/* Coluna Principal */}
-            <div className="xl:col-span-2 space-y-6">
+            <div className="xl:col-span-2 space-y-4 sm:space-y-6">
               {/* Resumo Financeiro */}
               <div className="bg-card rounded-lg border">
                 <FinancialSummary />
@@ -142,12 +183,9 @@ const DashboardPage = () => {
               </div>
             </div>
             
-            {/* Sidebar com Grid Layout Otimizado */}
+            {/* Sidebar - Mobile: Cards empilhados, Desktop: Grid otimizado */}
             <div className="xl:col-span-1">
-              <div className="sidebar-cards" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                gap: '24px',
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6" style={{
                 alignItems: 'start'
               }}>
                 <SmartInsightsCard />
