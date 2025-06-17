@@ -24,7 +24,7 @@ const BudgetsSummary = () => {
 
   if (isLoading) {
     return (
-      <Card className="border border-border shadow-sm bg-card">
+      <Card className="border border-border shadow-sm bg-card h-[280px]">
         <CardHeader className="space-y-3">
           <LoadingState variant="card" count={1} />
         </CardHeader>
@@ -34,7 +34,7 @@ const BudgetsSummary = () => {
 
   if (error) {
     return (
-      <Card className="border border-border shadow-sm bg-card">
+      <Card className="border border-border shadow-sm bg-card h-[280px]">
         <CardHeader className="space-y-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
@@ -59,8 +59,8 @@ const BudgetsSummary = () => {
   }
 
   return (
-    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
-      <CardHeader className="pb-3">
+    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card h-[280px] flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <CardTitle className="text-lg text-card-foreground flex items-center gap-2">
@@ -76,13 +76,13 @@ const BudgetsSummary = () => {
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="flex-grow flex flex-col justify-between space-y-3">
         {hasBudgets ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
+              <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-muted-foreground">{t('budgets.total_expenses')}</span>
-                <span className={`text-xl font-semibold ${remaining < 0 ? 'text-destructive' : 'text-card-foreground'}`}>
+                <span className={`text-lg font-semibold ${remaining < 0 ? 'text-destructive' : 'text-card-foreground'}`}>
                   {formatCurrency(totalSpent)}
                 </span>
               </div>
@@ -91,7 +91,7 @@ const BudgetsSummary = () => {
                   value={Math.min(progress, 100)} 
                   className={`h-2 ${progress > 100 ? 'bg-red-200 dark:bg-red-950' : ''}`}
                 />
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
                     {t('budgets.of')} {formatCurrency(totalBudgeted)}
                   </span>
@@ -103,21 +103,41 @@ const BudgetsSummary = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Status visual */}
+            <div className={`p-3 rounded-lg border ${
+              remaining < 0 
+                ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800/50' 
+                : 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800/50'
+            }`}>
+              <p className={`text-sm font-medium ${
+                remaining < 0 
+                  ? 'text-red-800 dark:text-red-200' 
+                  : 'text-green-800 dark:text-green-200'
+              }`}>
+                {remaining < 0 ? '⚠️ Orçamento ultrapassado' : '✅ Dentro do orçamento'}
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="text-center space-y-3 py-4">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto">
+          <div className="text-center space-y-3 py-2 flex flex-col items-center justify-center flex-grow">
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
               <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {t('budgets.subtitle')}
-            </p>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-card-foreground">
+                {t('budgets.title')}
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {t('budgets.subtitle')}
+              </p>
+            </div>
           </div>
         )}
       </CardContent>
       
-      <CardFooter className="pt-0">
-        <Button asChild className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
+      <CardFooter className="pt-0 flex-shrink-0">
+        <Button asChild className="w-full h-9 bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
           <Link to="/budgets" className="flex items-center justify-center gap-2">
             {t('budgets.manage')}
             <ArrowRight className="h-4 w-4" />

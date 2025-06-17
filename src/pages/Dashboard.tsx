@@ -119,29 +119,32 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Layout com grid responsivo melhorado */}
+        {/* Layout otimizado com melhor distribuição do espaço */}
         <div className="grid grid-cols-1 gap-6">
-          {/* Resumo financeiro */}
+          {/* Resumo financeiro - width completo */}
           <div className="bg-card rounded-lg border border-border shadow-sm">
             <FinancialSummary />
           </div>
           
-          {/* Grid para o restante do conteúdo */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Coluna principal - Transações */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="bg-card rounded-lg border border-border shadow-sm">
+          {/* Grid principal com proporções melhoradas */}
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+            {/* Coluna principal - Transações (60% do espaço) */}
+            <div className="xl:col-span-3 space-y-6">
+              <div className="bg-card rounded-lg border border-border shadow-sm h-fit">
                 <TransactionList />
               </div>
             </div>
             
-            {/* Coluna lateral direita - Cards informativos */}
-            <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-              <SmartInsightsCard />
-              <NextActionCard />
+            {/* Coluna lateral - Insights e resumos (40% do espaço) */}
+            <div className="xl:col-span-2 space-y-6">
+              {/* Cards de insights */}
+              <div className="space-y-4">
+                <SmartInsightsCard />
+                <NextActionCard />
+              </div>
               
-              {/* Grid para Goals e Budgets lado a lado em telas médias */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              {/* Grid 2x1 para Goals e Budgets em telas grandes, stack em mobile */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4">
                 <GoalsSummary />
                 <BudgetsSummary />
               </div>

@@ -21,7 +21,7 @@ const GoalsSummary = () => {
 
   if (isLoading) {
     return (
-      <Card className="border border-border shadow-sm bg-card">
+      <Card className="border border-border shadow-sm bg-card h-[280px]">
         <CardHeader className="space-y-3">
           <LoadingState variant="card" count={1} />
         </CardHeader>
@@ -31,7 +31,7 @@ const GoalsSummary = () => {
 
   if (error) {
     return (
-      <Card className="border border-border shadow-sm bg-card">
+      <Card className="border border-border shadow-sm bg-card h-[280px]">
         <CardHeader className="space-y-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
@@ -56,8 +56,8 @@ const GoalsSummary = () => {
   }
 
   return (
-    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
-      <CardHeader className="pb-3">
+    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card h-[280px] flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <CardTitle className="text-lg text-card-foreground flex items-center gap-2">
@@ -73,10 +73,10 @@ const GoalsSummary = () => {
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="flex-grow flex flex-col justify-between space-y-3">
         {hasGoals ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border/50">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span className="text-sm font-medium text-muted-foreground">
@@ -92,25 +92,25 @@ const GoalsSummary = () => {
               <p className="text-sm text-muted-foreground">
                 {t('goals.total_saved')}
               </p>
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
                 {formatCurrency(totalSaved)}
               </p>
             </div>
             
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
-              <div className="space-y-2">
-                <h4 className="font-semibold text-amber-800 dark:text-amber-200">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 p-3 rounded-lg border border-amber-200/50 dark:border-amber-800/50">
+              <div className="space-y-1">
+                <h4 className="font-medium text-amber-800 dark:text-amber-200 text-sm">
                   {t('goals.congratulations')}
                 </h4>
-                <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+                <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
                   {t('goals.building_future')}
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <div className="text-center space-y-3 py-4">
-            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center mx-auto">
+          <div className="text-center space-y-3 py-2 flex flex-col items-center justify-center flex-grow">
+            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center">
               <Target className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="space-y-1">
@@ -125,8 +125,8 @@ const GoalsSummary = () => {
         )}
       </CardContent>
       
-      <CardFooter className="pt-0">
-        <Button asChild className="w-full h-10 bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
+      <CardFooter className="pt-0 flex-shrink-0">
+        <Button asChild className="w-full h-9 bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
           <Link to="/goals" className="flex items-center justify-center gap-2">
             {t('goals.view_my_goals')}
             <ArrowRight className="h-4 w-4" />
