@@ -70,3 +70,35 @@ export const useCreateRecurringTransaction = () => {
     },
   });
 };
+
+export const useProcessRecurringTransactions = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      console.log("🔄 Executando processamento manual de recorrências...");
+      
+      const { data, error } = await supabase.functions.invoke('process-recurring-transactions', {
+        body: { manual: true }
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.invalidateQueries({ queryKey: ["income-confirmations"] });
+      
+      if (data?.processed > 0) {
+        toast.success(`🎯 ${data.processed} transação(ões) recorrente(s) processada(s)!`);
+      } else {
+        toast.info("✅ Nenhuma transação recorrente pendente para hoje.");
+      }
+    },
+    onError: (error: any) => {
+      console.error("Erro ao processar recorrências:", error);
+      toast.error(`Erro ao processar recorrências: ${error.message}`);
+    },
+  });
+};
