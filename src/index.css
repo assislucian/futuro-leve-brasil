@@ -74,7 +74,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
+    @apply tracking-tight text-foreground;
     line-height: 1.25;
   }
   
@@ -87,40 +87,40 @@
 }
 
 @layer components {
-  /* Card Styles Profissionais */
+  /* Card Styles usando variáveis semânticas */
   .card-modern {
-    @apply bg-white border border-gray-200 shadow-sm rounded-lg hover:shadow-md transition-shadow duration-200;
+    @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md transition-shadow duration-200;
   }
   
   .card-premium {
-    @apply bg-white border border-gray-200 shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200;
+    @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200;
   }
   
-  /* Text Utilities Profissionais */
+  /* Text Utilities usando variáveis semânticas */
   .text-success {
-    @apply text-green-600 dark:text-green-400;
+    @apply text-success;
   }
   
   .text-expense {
-    @apply text-red-600 dark:text-red-400;
+    @apply text-destructive;
   }
   
-  /* Background Utilities Profissionais */
+  /* Background Utilities usando variáveis semânticas */
   .bg-success {
-    @apply bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800;
+    @apply bg-success/10 text-success border-success/20;
   }
   
   .bg-expense {
-    @apply bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800;
+    @apply bg-destructive/10 text-destructive border-destructive/20;
   }
 
-  /* Button Styles Profissionais */
+  /* Button Styles usando variáveis semânticas */
   .btn-primary {
-    @apply bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md;
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow transition-all duration-200 rounded-md;
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
   /* Spacing System Profissional */
@@ -132,26 +132,26 @@
   .gap-clean-lg { @apply gap-4; }
   .gap-clean-xl { @apply gap-6; }
   
-  /* Container Profissional */
+  /* Container usando variáveis semânticas */
   .container-clean {
     @apply max-w-7xl mx-auto px-4 md:px-6;
   }
   
-  /* Icon Container Profissional */
+  /* Icon Container usando variáveis semânticas */
   .icon-container {
     @apply p-2 rounded-md;
   }
   
   .icon-container-primary {
-    @apply bg-blue-50 text-blue-600;
+    @apply bg-primary/10 text-primary;
   }
   
   .icon-container-success {
-    @apply bg-green-50 text-green-600;
+    @apply bg-success/10 text-success;
   }
   
   .icon-container-danger {
-    @apply bg-red-50 text-red-600;
+    @apply bg-destructive/10 text-destructive;
   }
 }
 

@@ -37,7 +37,7 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
+      <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="space-y-2">
             <Skeleton className="h-8 w-72" />
@@ -71,22 +71,22 @@ const DashboardPage = () => {
   return (
     <>
       <GoalCompletionCelebration />
-      <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
-        {/* Header mais limpo e profissional */}
+      <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
+        {/* Header usando variáveis semânticas */}
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight">
+              <h1 className="text-2xl md:text-3xl font-semibold text-foreground leading-tight">
                 {getGreeting()}, {firstName}! {getGreetingEmoji()}
               </h1>
               <Badge 
                 variant="secondary" 
-                className="bg-gray-100 text-gray-600 border-gray-200 font-medium px-2 py-1 text-xs"
+                className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
               >
                 Gratuito
               </Badge>
             </div>
-            <p className="text-base text-gray-600 leading-relaxed max-w-xl">
+            <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
               Acompanhe seus progressos e continue construindo seus sonhos
             </p>
           </div>
@@ -98,19 +98,19 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Layout com grid mais limpo */}
+        {/* Layout com grid usando variáveis semânticas */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Coluna principal */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg border border-border shadow-sm">
               <FinancialSummary />
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg border border-border shadow-sm">
               <TransactionList />
             </div>
           </div>
           
-          {/* Sidebar mais limpa */}
+          {/* Sidebar usando variáveis semânticas */}
           <div className="lg:col-span-4 space-y-4">
             <SmartInsightsCard />
             <NextActionCard />
