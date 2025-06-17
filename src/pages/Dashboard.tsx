@@ -15,7 +15,7 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Target, Calculator } from "lucide-react";
+import { PlusCircle, Target, Calculator, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -40,25 +40,25 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="min-h-screen plenus-bg-gradient">
+        <div className="plenus-container py-6">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-72" />
-              <Skeleton className="h-4 w-80" />
+            <div className="space-y-3">
+              <Skeleton className="h-8 w-72 rounded-xl" />
+              <Skeleton className="h-4 w-80 rounded-lg" />
             </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-9 w-32" />
-              <Skeleton className="h-9 w-32" />
-              <Skeleton className="h-9 w-36" />
+            <div className="flex gap-3">
+              <Skeleton className="h-10 w-36 rounded-xl" />
+              <Skeleton className="h-10 w-32 rounded-xl" />
+              <Skeleton className="h-10 w-32 rounded-xl" />
             </div>
           </div>
-          <div className="space-y-6">
-            <Skeleton className="h-40 w-full rounded-lg" />
-            <Skeleton className="h-80 w-full rounded-lg" />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="plenus-spacing-lg">
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-96 w-full rounded-2xl" />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 plenus-gap-lg">
               {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-64 w-full rounded-lg" />
+                <Skeleton key={i} className="h-80 w-full rounded-2xl" />
               ))}
             </div>
           </div>
@@ -74,92 +74,83 @@ const DashboardPage = () => {
   return (
     <>
       <GoalCompletionCelebration />
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
-          {/* Header */}
-          <header className="flex items-start justify-between flex-wrap gap-4 mb-8">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl md:text-3xl font-semibold text-foreground leading-tight">
+      <div className="min-h-screen plenus-bg-gradient">
+        <div className="plenus-container py-6">
+          {/* Header com estilo Plenus */}
+          <header className="flex items-start justify-between flex-wrap gap-6 mb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-4 flex-wrap">
+                <h1 className="text-3xl md:text-4xl font-semibold plenus-text-gradient leading-tight">
                   {getGreeting()}, {firstName}! {getGreetingEmoji()}
                 </h1>
-                <Badge 
-                  variant="secondary" 
-                  className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
-                >
+                <Badge className="plenus-badge-teal">
+                  <Sparkles className="h-3 w-3 mr-1" />
                   Gratuito
                 </Badge>
               </div>
-              <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
                 Acompanhe seus progressos e continue construindo seus sonhos
               </p>
             </div>
             
-            {/* Ações Rápidas Funcionais */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Nova Transação - Dialog Funcional */}
+            {/* Ações Rápidas com estilo Plenus */}
+            <div className="flex items-center plenus-gap flex-wrap">
+              {/* Nova Transação - Botão Principal */}
               <AddTransactionDialog>
-                <Button 
-                  size="sm" 
-                  className="h-9 gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-sm transition-all duration-200"
-                >
-                  <PlusCircle className="h-4 w-4" />
+                <Button className="plenus-btn-primary h-10 px-6 rounded-xl plenus-hover-lift">
+                  <PlusCircle className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Nova Transação</span>
                 </Button>
               </AddTransactionDialog>
 
-              {/* Nova Meta - Link para Página de Metas */}
+              {/* Nova Meta */}
               <Button 
                 asChild
-                size="sm" 
-                variant="outline"
-                className="h-9 gap-2 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200"
+                className="plenus-btn-outline-teal h-10 px-4 rounded-xl plenus-hover-lift"
               >
                 <Link to="/goals">
-                  <Target className="h-4 w-4 text-emerald-600" />
+                  <Target className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Nova Meta</span>
                 </Link>
               </Button>
 
-              {/* Transação Recorrente - Dialog Funcional */}
+              {/* Transação Recorrente */}
               <AddRecurringTransactionDialog />
 
-              {/* Parcelamento - Dialog Funcional */}
+              {/* Parcelamento */}
               <AddInstallmentPlanDialog />
 
-              {/* Novo Orçamento - Link para Página de Orçamentos */}
+              {/* Novo Orçamento */}
               <Button 
                 asChild
-                size="sm" 
-                variant="outline"
-                className="h-9 gap-2 border-orange-200 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
+                className="plenus-btn-outline-purple h-10 px-4 rounded-xl plenus-hover-lift"
               >
                 <Link to="/budgets">
-                  <Calculator className="h-4 w-4 text-orange-600" />
+                  <Calculator className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Orçamento</span>
                 </Link>
               </Button>
             </div>
           </header>
 
-          {/* Layout Principal */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Layout Principal com espaçamento Plenus */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 plenus-gap-lg">
             {/* Coluna Principal (2/3 da tela) */}
-            <div className="xl:col-span-2 space-y-6">
+            <div className="xl:col-span-2 plenus-spacing-lg">
               {/* Resumo Financeiro */}
-              <div className="bg-card rounded-lg border border-border shadow-sm">
+              <div className="plenus-card-highlighted">
                 <FinancialSummary />
               </div>
               
               {/* Transações */}
-              <div className="bg-card rounded-lg border border-border shadow-sm">
+              <div className="plenus-card">
                 <TransactionList />
               </div>
             </div>
             
             {/* Sidebar (1/3 da tela) */}
             <div className="xl:col-span-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6 sidebar-cards">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 plenus-gap-lg sidebar-cards">
                 <SmartInsightsCard />
                 <NextActionCard />
                 <GoalsSummary />
