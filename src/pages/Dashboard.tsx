@@ -1,3 +1,4 @@
+
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -40,8 +41,8 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="min-h-screen plenus-bg-gradient">
-        <div className="plenus-container py-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
             <div className="space-y-3">
               <Skeleton className="h-8 w-72 rounded-xl" />
@@ -53,10 +54,10 @@ const DashboardPage = () => {
               <Skeleton className="h-10 w-32 rounded-xl" />
             </div>
           </div>
-          <div className="plenus-spacing-lg">
+          <div className="space-y-8">
             <Skeleton className="h-48 w-full rounded-2xl" />
             <Skeleton className="h-96 w-full rounded-2xl" />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 plenus-gap-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
                 <Skeleton key={i} className="h-80 w-full rounded-2xl" />
               ))}
@@ -74,26 +75,28 @@ const DashboardPage = () => {
   return (
     <>
       <GoalCompletionCelebration />
-      <div className="min-h-screen plenus-bg-gradient">
-        <div className="plenus-container py-6">
-          {/* Trial Banner Estratégico */}
-          <div className="mb-6">
-            <TrialBanner variant={trialDaysLeft <= 2 ? "urgent" : "dashboard"} />
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
+          {/* Trial Banner - mais sutil */}
+          {(hasTrialAccess || isTrialing) && (
+            <div className="mb-6">
+              <TrialBanner variant={trialDaysLeft <= 2 ? "urgent" : "dashboard"} />
+            </div>
+          )}
 
-          {/* Header com estilo Plenus */}
+          {/* Header simplificado */}
           <header className="flex items-start justify-between flex-wrap gap-6 mb-8">
-            <div className="space-y-3">
-              <div className="flex items-center gap-4 flex-wrap">
-                <h1 className="text-3xl md:text-4xl font-semibold plenus-text-gradient leading-tight">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
                   {getGreeting()}, {firstName}! {getGreetingEmoji()}
                 </h1>
-                <Badge className={isTrialing ? "plenus-badge-gold" : "plenus-badge-teal"}>
+                <Badge className={isTrialing ? "bg-gradient-to-r from-yellow-100 to-amber-50 text-amber-900 border border-amber-200 font-semibold" : "bg-gradient-to-r from-teal-100 to-teal-50 text-teal-800 border border-teal-200 font-medium"}>
                   <Sparkles className="h-3 w-3 mr-1" />
                   {isTrialing ? `Premium Trial (${trialDaysLeft}d)` : "Gratuito"}
                 </Badge>
               </div>
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl">
                 {isTrialing 
                   ? `✨ Aproveitando todas as funcionalidades Premium! ${trialDaysLeft <= 2 ? 'Últimos dias para decidir!' : ''}` 
                   : "Acompanhe seus progressos e continue construindo seus sonhos"
@@ -101,74 +104,69 @@ const DashboardPage = () => {
               </p>
             </div>
             
-            {/* Ações Rápidas com estilo Plenus - CORRIGIDAS */}
-            <div className="flex items-center plenus-gap flex-wrap">
-              {/* Nova Transação - Botão Principal */}
+            {/* Ações mais clean */}
+            <div className="flex items-center gap-3 flex-wrap">
               <AddTransactionDialog>
-                <Button className="plenus-btn-primary h-10 px-6 rounded-xl plenus-hover-lift">
+                <Button className="bg-gradient-to-r from-teal-600 to-teal-500 text-white font-medium shadow-lg shadow-teal-500/25 border-0 h-10 px-6 rounded-xl hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
                   <PlusCircle className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Nova Transação</span>
+                  Nova Transação
                 </Button>
               </AddTransactionDialog>
 
-              {/* Nova Meta */}
               <Button 
                 asChild
-                className="plenus-btn-outline-teal h-10 px-4 rounded-xl plenus-hover-lift"
+                className="border-2 border-teal-200 bg-teal-50 text-teal-700 font-medium hover:bg-teal-100 hover:border-teal-300 h-10 px-4 rounded-xl transition-all duration-200"
               >
                 <Link to="/goals">
                   <Target className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Nova Meta</span>
+                  Nova Meta
                 </Link>
               </Button>
 
-              {/* Transação Recorrente - CORRIGIDO */}
               <AddRecurringTransactionDialog>
-                <Button className="plenus-btn-outline-blue h-10 px-4 rounded-xl plenus-hover-lift">
+                <Button className="border-2 border-blue-200 bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 hover:border-blue-300 h-10 px-4 rounded-xl transition-all duration-200">
                   <Repeat className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Recorrente</span>
+                  Recorrente
                 </Button>
               </AddRecurringTransactionDialog>
 
-              {/* Parcelamento - CORRIGIDO */}
               <AddInstallmentPlanDialog>
-                <Button className="plenus-btn-outline-purple h-10 px-4 rounded-xl plenus-hover-lift">
+                <Button className="border-2 border-purple-200 bg-purple-50 text-purple-700 font-medium hover:bg-purple-100 hover:border-purple-300 h-10 px-4 rounded-xl transition-all duration-200">
                   <CreditCard className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Parcelas</span>
+                  Parcelas
                 </Button>
               </AddInstallmentPlanDialog>
 
-              {/* Novo Orçamento */}
               <Button 
                 asChild
-                className="plenus-btn-outline-purple h-10 px-4 rounded-xl plenus-hover-lift"
+                className="border-2 border-purple-200 bg-purple-50 text-purple-700 font-medium hover:bg-purple-100 hover:border-purple-300 h-10 px-4 rounded-xl transition-all duration-200"
               >
                 <Link to="/budgets">
                   <Calculator className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Orçamento</span>
+                  Orçamento
                 </Link>
               </Button>
             </div>
           </header>
 
-          {/* Layout Principal com espaçamento Plenus */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 plenus-gap-lg">
-            {/* Coluna Principal (2/3 da tela) */}
-            <div className="xl:col-span-2 plenus-spacing-lg">
+          {/* Layout Principal mais clean */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            {/* Coluna Principal */}
+            <div className="xl:col-span-2 space-y-8">
               {/* Resumo Financeiro */}
-              <div className="plenus-card-highlighted">
+              <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg shadow-black/5">
                 <FinancialSummary />
               </div>
               
               {/* Transações */}
-              <div className="plenus-card">
+              <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg shadow-black/5">
                 <TransactionList />
               </div>
             </div>
             
-            {/* Sidebar (1/3 da tela) */}
+            {/* Sidebar */}
             <div className="xl:col-span-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 plenus-gap-lg sidebar-cards">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
                 <SmartInsightsCard />
                 <NextActionCard />
                 <GoalsSummary />
