@@ -49,14 +49,13 @@ const DashboardPage = () => {
             <Skeleton className="h-9 w-36" />
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-8 space-y-4">
-            <Skeleton className="h-40 w-full rounded-lg" />
-            <Skeleton className="h-80 w-full rounded-lg" />
-          </div>
-          <div className="lg:col-span-4 space-y-4">
+        <div className="space-y-6">
+          <Skeleton className="h-40 w-full rounded-lg" />
+          <Skeleton className="h-80 w-full rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Skeleton className="h-56 w-full rounded-lg" />
-            <Skeleton className="h-40 w-full rounded-lg" />
+            <Skeleton className="h-56 w-full rounded-lg" />
+            <Skeleton className="h-56 w-full rounded-lg" />
             <Skeleton className="h-56 w-full rounded-lg" />
           </div>
         </div>
@@ -72,7 +71,7 @@ const DashboardPage = () => {
     <>
       <GoalCompletionCelebration />
       <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
-        {/* Header usando variáveis semânticas */}
+        {/* Header */}
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
@@ -98,32 +97,24 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Layout com grid usando variáveis semânticas */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Coluna principal */}
-          <div className="lg:col-span-8 space-y-4">
-            <div className="bg-card rounded-lg border border-border shadow-sm">
-              <FinancialSummary />
-            </div>
-            <div className="bg-card rounded-lg border border-border shadow-sm">
-              <TransactionList />
-            </div>
+        {/* Layout principal optimizado */}
+        <div className="space-y-6">
+          {/* Resumo Financeiro */}
+          <div className="bg-card rounded-lg border border-border shadow-sm">
+            <FinancialSummary />
           </div>
           
-          {/* Sidebar com grid layout para cards */}
-          <div className="lg:col-span-4">
-            <div 
-              className="sidebar-cards grid gap-6"
-              style={{
-                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                alignItems: 'start'
-              }}
-            >
-              <SmartInsightsCard />
-              <NextActionCard />
-              <GoalsSummary />
-              <BudgetsSummary />
-            </div>
+          {/* Transações */}
+          <div className="bg-card rounded-lg border border-border shadow-sm">
+            <TransactionList />
+          </div>
+          
+          {/* Cards organizados em grid responsivo */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <SmartInsightsCard />
+            <NextActionCard />
+            <GoalsSummary />
+            <BudgetsSummary />
           </div>
         </div>
       </div>

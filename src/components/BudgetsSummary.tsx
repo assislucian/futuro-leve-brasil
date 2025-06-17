@@ -30,7 +30,7 @@ const BudgetsSummary = () => {
 
   if (isLoading) {
     return (
-      <Card className="h-full flex flex-col border border-gray-200 shadow-sm bg-white">
+      <Card className="h-full flex flex-col border border-border shadow-sm bg-card">
         <CardHeader className="space-y-3">
           <LoadingState variant="card" count={1} />
         </CardHeader>
@@ -40,15 +40,15 @@ const BudgetsSummary = () => {
 
   if (error) {
     return (
-      <Card className="h-full flex flex-col border border-gray-200 shadow-sm bg-white">
+      <Card className="h-full flex flex-col border border-border shadow-sm bg-card">
         <CardHeader className="space-y-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-lg text-gray-900">Seus Orçamentos</CardTitle>
-              <CardDescription className="text-sm text-gray-600">Resumo do seu plano de gastos.</CardDescription>
+              <CardTitle className="text-lg text-card-foreground">Seus Orçamentos</CardTitle>
+              <CardDescription className="text-sm text-muted-foreground">Resumo do seu plano de gastos.</CardDescription>
             </div>
-            <div className="p-2 bg-blue-50 rounded-md">
-              <Target className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-md">
+              <Target className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </CardHeader>
@@ -65,15 +65,15 @@ const BudgetsSummary = () => {
   }
 
   return (
-    <Card className="h-full flex flex-col border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 bg-white">
+    <Card className="h-full flex flex-col border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-lg text-gray-900">Seus Orçamentos</CardTitle>
-            <CardDescription className="text-sm text-gray-600">Resumo do seu plano de gastos.</CardDescription>
+            <CardTitle className="text-lg text-card-foreground">Seus Orçamentos</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">Resumo do seu plano de gastos.</CardDescription>
           </div>
-          <div className="p-2 bg-blue-50 rounded-md">
-            <Target className="h-5 w-5 text-blue-600" />
+          <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-md">
+            <Target className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </CardHeader>
@@ -83,16 +83,16 @@ const BudgetsSummary = () => {
           <div className="w-full space-y-4">
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
-                <span className="text-sm font-medium text-gray-600">Gasto Total</span>
-                <span className={`text-xl font-semibold ${remaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                <span className="text-sm font-medium text-muted-foreground">Gasto Total</span>
+                <span className={`text-xl font-semibold ${remaining < 0 ? 'text-red-600 dark:text-red-400' : 'text-card-foreground'}`}>
                   {formatCurrency(totalSpent)}
                 </span>
               </div>
               <div className="space-y-2">
                 <Progress value={Math.min(progress, 100)} className="h-2" />
                 <div className="flex justify-between items-baseline">
-                  <span className="text-sm text-gray-500">de {formatCurrency(totalBudgeted)}</span>
-                  <span className={`text-sm font-medium ${remaining < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                  <span className="text-sm text-muted-foreground">de {formatCurrency(totalBudgeted)}</span>
+                  <span className={`text-sm font-medium ${remaining < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
                     {remaining >= 0 ? `${formatCurrency(remaining)} restantes` : `${formatCurrency(Math.abs(remaining))} acima`}
                   </span>
                 </div>
@@ -101,7 +101,7 @@ const BudgetsSummary = () => {
           </div>
         ) : (
           <div className="text-center space-y-2">
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Defina limites de gastos para ganhar clareza sobre suas finanças.
             </p>
           </div>
@@ -109,7 +109,7 @@ const BudgetsSummary = () => {
       </CardContent>
       
       <CardFooter className="pt-4">
-        <Button asChild className="w-full h-10 bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
+        <Button asChild className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 rounded-md font-medium">
           <Link to="/budgets" className="flex items-center justify-center gap-2">
             Gerenciar Orçamentos
             <ArrowRight className="h-4 w-4" />
