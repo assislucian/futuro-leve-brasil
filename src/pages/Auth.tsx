@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/LoginForm";
@@ -7,12 +6,10 @@ import { Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageProvider";
 
 const AuthPage = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   useEffect(() => {
     if (!loading && user) {
@@ -39,15 +36,15 @@ const AuthPage = () => {
         </div>
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
-            <TabsTrigger value="signup">{t('auth.signup')}</TabsTrigger>
+            <TabsTrigger value="login">Entrar</TabsTrigger>
+            <TabsTrigger value="signup">Criar Conta</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <Card>
               <CardHeader>
-                <CardTitle>{t('auth.welcome_back')}</CardTitle>
+                <CardTitle>Bem-vindo(a) de volta!</CardTitle>
                 <CardDescription>
-                  {t('auth.welcome_back.subtitle')}
+                  Acesse sua conta para continuar sua jornada financeira.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -58,9 +55,9 @@ const AuthPage = () => {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>{t('auth.create_account')}</CardTitle>
+                <CardTitle>Crie sua conta</CardTitle>
                 <CardDescription>
-                  {t('auth.create_account.subtitle')}
+                  Comece a transformar sua relação com o dinheiro hoje mesmo.
                 </CardDescription>
               </CardHeader>
               <CardContent>

@@ -9,13 +9,10 @@ import Hero from "@/components/Hero";
 import Pricing from "@/components/Pricing";
 import { Sparkles } from "lucide-react";
 import { Faq } from "@/components/Faq";
-import { SEOHead } from "@/components/SEOHead";
-import { useLanguage } from "@/contexts/LanguageProvider";
 
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   useEffect(() => {
     console.log("Index: Verificando estado de auth - usuário:", !!user, "carregando:", loading);
@@ -31,15 +28,10 @@ const Index = () => {
   if (loading) {
     console.log("Index: Mostrando tela de carregamento");
     return (
-      <>
-        <SEOHead />
-        <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
-          <Sparkles className="h-10 w-10 animate-pulse text-primary" />
-          <p className="text-muted-foreground">
-            {t('common.loading')}...
-          </p>
-        </div>
-      </>
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+        <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+        <p className="text-muted-foreground">Carregando sua jornada financeira...</p>
+      </div>
     );
   }
 
@@ -47,34 +39,26 @@ const Index = () => {
   if (user) {
     console.log("Index: Usuário autenticado, redirecionando...");
     return (
-      <>
-        <SEOHead />
-        <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
-          <Sparkles className="h-10 w-10 animate-pulse text-primary" />
-          <p className="text-muted-foreground">
-            {t('dashboard.subtitle')}...
-          </p>
-        </div>
-      </>
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+        <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+        <p className="text-muted-foreground">Redirecionando para o dashboard...</p>
+      </div>
     );
   }
 
   // Usuário não autenticado - mostra landing page
   console.log("Index: Mostrando landing page para usuário não autenticado");
   return (
-    <>
-      <SEOHead />
-      <div className="flex min-h-screen flex-col bg-background font-sans text-foreground">
-        <Header />
-        <main className="flex-1">
-          <Hero />
-          <Features />
-          <Pricing />
-          <Faq />
-        </main>
-        <Footer />
-      </div>
-    </>
+    <div className="flex min-h-screen flex-col bg-background font-sans text-foreground">
+      <Header />
+      <main className="flex-1">
+        <Hero />
+        <Features />
+        <Pricing />
+        <Faq />
+      </main>
+      <Footer />
+    </div>
   );
 };
 

@@ -41,7 +41,7 @@ interface AddTransactionDialogProps {
 
 export function AddTransactionDialog({ open: controlledOpen, onOpenChange: controlledOnOpenChange, children }: AddTransactionDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const [selectedQuickAction, setSelectedQuickAction] = useState<{ goalId: string, amount: number } | null>(null);
+  const [showQuickActions, setShowQuickActions] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -51,7 +51,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
     setOpen: (newOpen) => {
       setOpen(newOpen);
       if (!newOpen) {
-        setSelectedQuickAction(null);
+        setShowQuickActions(false);
       }
     }
   });
@@ -67,22 +67,13 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
     (selectedType === "expense" && amount >= 20)
   );
 
-  const handleQuickActionSubmit = async (values: any) => {
-    console.log('Executando ação rápida:', selectedQuickAction);
-    
-    // Primeiro salva a transação
+  const handleSubmitWithActions = async (values: any, quickAction?: { type: 'goal_contribution', goalId: string, amount: number }) => {
     await onSubmit(values);
     
-    // Se há uma ação rápida selecionada, executa ela
-    if (selectedQuickAction) {
-      // Aqui você pode implementar a lógica de contribuição rápida para meta
-      console.log('Contribuindo para meta:', selectedQuickAction.goalId, 'valor:', selectedQuickAction.amount);
-      // TODO: Implementar contribuição automática para meta
+    if (quickAction && quickAction.type === 'goal_contribution') {
+      // Aqui você pode adicionar lógica para contribuir diretamente para a meta
+      console.log('Quick contribution:', quickAction);
     }
-  };
-
-  const handleQuickContribution = (goalId: string, contributionAmount: number) => {
-    setSelectedQuickAction({ goalId, amount: contributionAmount });
   };
 
   return (
@@ -101,7 +92,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             ✨ Adicionar Nova Transação
-            {selectedType === "income" && shouldShowQuickActions && (
+            {selectedType === "income" && amount && amount >= 50 && (
               <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 animate-pulse">
                 💡 Ação Rápida Disponível
               </Badge>
@@ -115,7 +106,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form className="space-y-4 py-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-3">
               <FormField
                 control={form.control}
@@ -241,7 +232,10 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
             {selectedType === "income" && shouldShowQuickActions && (
               <QuickGoalContribution 
                 amount={amount}
-                onContribute={handleQuickContribution}
+                onContribute={(goalId, contributionAmount) => {
+                  // Lógica para contribuir rapidamente
+                  console.log('Quick contribute:', goalId, contributionAmount);
+                }}
               />
             )}
 
@@ -249,30 +243,27 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
               {selectedType === "income" && shouldShowQuickActions ? (
                 <div className="flex gap-2 w-full">
                   <Button 
-                    type="button"
+                    type="submit" 
                     variant="outline"
                     disabled={form.formState.isSubmitting}
                     className="flex-1"
-                    onClick={form.handleSubmit(onSubmit)}
                   >
                     Apenas Salvar
                   </Button>
                   <Button 
-                    type="button"
-                    disabled={form.formState.isSubmitting || !selectedQuickAction}
+                    type="submit" 
+                    disabled={form.formState.isSubmitting}
                     className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-                    onClick={form.handleSubmit(handleQuickActionSubmit)}
                   >
                     <Target className="mr-2 h-4 w-4" />
-                    {selectedQuickAction ? "Salvar + Acelerar Sonho" : "Selecione uma Meta"}
+                    Salvar + Acelerar Sonho
                   </Button>
                 </div>
               ) : (
                 <Button 
-                  type="button"
+                  type="submit" 
                   disabled={form.formState.isSubmitting}
                   className="w-full h-11 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-                  onClick={form.handleSubmit(onSubmit)}
                 >
                   {form.formState.isSubmitting ? "Salvando..." : "💾 Salvar Transação"}
                 </Button>

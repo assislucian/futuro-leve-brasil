@@ -1,36 +1,33 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Lightbulb, Target } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageProvider";
+
+const features = [
+  {
+    icon: <Target className="h-8 w-8 text-primary" />,
+    title: "Transforme sonhos em planos",
+    description: "Crie metas para sua viagem, sua casa ou sua segurança. Nós te ajudamos a chegar lá, passo a passo.",
+  },
+  {
+    icon: <DollarSign className="h-8 w-8 text-primary" />,
+    title: "Entenda seu dinheiro, sem planilhas",
+    description: "Veja para onde vai cada real com um painel simples e visual. Chega de se sentir perdido(a) no fim do mês.",
+  },
+  {
+    icon: <Lightbulb className="h-8 w-8 text-primary" />,
+    title: "Decisões inteligentes, sem estresse",
+    description: "Receba dicas claras para fazer seu dinheiro render mais e alcançar seus objetivos mais rápido.",
+  },
+];
 
 const Features = () => {
-  const { t } = useLanguage();
-
-  const features = [
-    {
-      icon: <Target className="h-8 w-8 text-primary" />,
-      title: t('features.feature_1.title'),
-      description: t('features.feature_1.description'),
-    },
-    {
-      icon: <DollarSign className="h-8 w-8 text-primary" />,
-      title: t('features.feature_2.title'),
-      description: t('features.feature_2.description'),
-    },
-    {
-      icon: <Lightbulb className="h-8 w-8 text-primary" />,
-      title: t('features.feature_3.title'),
-      description: t('features.feature_3.description'),
-    },
-  ];
-
   return (
     <section id="features" className="py-20 sm:py-32">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('features.title')}</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Finanças com alma. Resultados reais.</h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            {t('features.subtitle')}
+            Descubra as ferramentas que vão revolucionar sua vida financeira.
           </p>
         </div>
         <div className="mt-16 grid gap-8 md:grid-cols-3">

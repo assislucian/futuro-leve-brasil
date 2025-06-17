@@ -18,21 +18,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useLanguage } from "@/contexts/LanguageProvider";
+
+const formSchema = z.object({
+  email: z.string()
+    .email({ message: "Por favor, insira um email válido" })
+    .toLowerCase(),
+  password: z.string().min(1, { message: "A senha é obrigatória" }),
+});
 
 export function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
-  const { t } = useLanguage();
-
-  const formSchema = z.object({
-    email: z.string()
-      .email({ message: t('validation.email.invalid') })
-      .toLowerCase(),
-    password: z.string().min(1, { message: t('validation.required') }),
-  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,25 +57,26 @@ export function LoginForm() {
       if (error) {
         console.error('Erro no login:', error);
         
+        // Tratamento específico de erros com mensagens user-friendly
         if (error.message.includes('Invalid login credentials')) {
           if (attemptCount >= 3) {
-            toast.error(t('auth.login.many_attempts'));
+            toast.error('Muitas tentativas incorretas. Verifique suas credenciais ou redefina sua senha.');
           } else {
-            toast.error(t('auth.login.invalid_credentials'));
+            toast.error('Email ou senha incorretos. Verifique e tente novamente.');
           }
         } else if (error.message.includes('Email not confirmed')) {
-          toast.error(t('auth.login.email_not_confirmed'));
+          toast.error('Email não confirmado. Verifique sua caixa de entrada.');
           localStorage.setItem('pendingEmailConfirmation', values.email);
           navigate('/email-confirmation');
           return;
         } else if (error.message.includes('Too many requests')) {
-          toast.error(t('auth.login.too_many_requests'));
+          toast.error('Muitas tentativas. Aguarde 5 minutos antes de tentar novamente.');
         } else if (error.message.includes('User not found')) {
-          toast.error(t('auth.login.user_not_found'));
+          toast.error('Conta não encontrada. Verifique o email ou crie uma nova conta.');
         } else if (error.message.includes('rate limit')) {
-          toast.error(t('auth.login.rate_limit'));
+          toast.error('Limite de tentativas excedido. Aguarde alguns minutos.');
         } else {
-          toast.error(t('auth.login.generic_error'));
+          toast.error('Erro no login. Tente novamente em alguns minutos.');
         }
         return;
       }
@@ -85,23 +84,25 @@ export function LoginForm() {
       if (data.user) {
         console.log('Login realizado com sucesso:', data.user.email);
         
+        // Verificar se o email foi confirmado
         if (!data.user.email_confirmed_at) {
-          toast.error(t('auth.login.email_not_confirmed'));
+          toast.error('Email não confirmado. Verifique sua caixa de entrada.');
           localStorage.setItem('pendingEmailConfirmation', values.email);
           navigate('/email-confirmation');
           return;
         }
         
-        toast.success(t('auth.login.success'), {
+        toast.success("Login realizado com sucesso! Bem-vindo(a) de volta.", {
           duration: 3000,
         });
         
+        // Reset attempt count on successful login
         setAttemptCount(0);
         navigate('/dashboard');
       }
     } catch (error) {
       console.error('Erro inesperado no login:', error);
-      toast.error(t('auth.login.system_error'));
+      toast.error("Erro no sistema. Tente novamente em alguns minutos.");
     } finally {
       setIsSubmitting(false);
     }
@@ -115,10 +116,10 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('auth.email')}</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder={t('auth.email_placeholder')}
+                  placeholder="seu@email.com" 
                   type="email"
                   {...field}
                   autoComplete="email"
@@ -134,12 +135,12 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('auth.password')}</FormLabel>
+              <FormLabel>Senha</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input 
                     type={showPassword ? "text" : "password"} 
-                    placeholder={t('auth.password_placeholder')}
+                    placeholder="Sua senha" 
                     {...field}
                     autoComplete="current-password"
                   />
@@ -168,19 +169,17 @@ export function LoginForm() {
             to="/forgot-password" 
             className="text-sm text-primary hover:underline"
           >
-            {t('auth.forgot_password')}
+            Esqueceu a senha?
           </Link>
         </div>
 
+        {/* Aviso após múltiplas tentativas */}
         {attemptCount >= 3 && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              {t('auth.login.help_text')}{' '}
-              <Link to="/forgot-password" className="underline">
-                {t('auth.login.reset_password')}
-              </Link>{' '}
-              {t('auth.login.contact_support')}
+              Problemas para acessar? Tente <Link to="/forgot-password" className="underline">redefinir sua senha</Link> ou 
+              entre em contato conosco se precisar de ajuda.
             </AlertDescription>
           </Alert>
         )}
@@ -190,7 +189,7 @@ export function LoginForm() {
           className="w-full btn-primary" 
           disabled={isSubmitting}
         >
-          {isSubmitting ? t('auth.login.logging_in') : t('auth.login')}
+          {isSubmitting ? "Entrando..." : "Entrar"}
         </Button>
       </form>
     </Form>

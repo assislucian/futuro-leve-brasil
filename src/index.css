@@ -74,7 +74,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight text-foreground;
+    @apply tracking-tight;
     line-height: 1.25;
   }
   
@@ -87,40 +87,40 @@
 }
 
 @layer components {
-  /* Card Styles usando variáveis semânticas */
+  /* Card Styles Profissionais */
   .card-modern {
-    @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md transition-shadow duration-200;
+    @apply bg-white border border-gray-200 shadow-sm rounded-lg hover:shadow-md transition-shadow duration-200;
   }
   
   .card-premium {
-    @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200;
+    @apply bg-white border border-gray-200 shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200;
   }
   
-  /* Text Utilities usando variáveis semânticas */
+  /* Text Utilities Profissionais */
   .text-success {
-    @apply text-success;
+    @apply text-green-600 dark:text-green-400;
   }
   
   .text-expense {
-    @apply text-destructive;
+    @apply text-red-600 dark:text-red-400;
   }
   
-  /* Background Utilities usando variáveis semânticas */
+  /* Background Utilities Profissionais */
   .bg-success {
-    @apply bg-success/10 text-success border-success/20;
+    @apply bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800;
   }
   
   .bg-expense {
-    @apply bg-destructive/10 text-destructive border-destructive/20;
+    @apply bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800;
   }
 
-  /* Button Styles usando variáveis semânticas */
+  /* Button Styles Profissionais */
   .btn-primary {
-    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 rounded-md;
+    @apply bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
   .btn-secondary {
-    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow transition-all duration-200 rounded-md;
+    @apply bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
   /* Spacing System Profissional */
@@ -132,26 +132,26 @@
   .gap-clean-lg { @apply gap-4; }
   .gap-clean-xl { @apply gap-6; }
   
-  /* Container usando variáveis semânticas */
+  /* Container Profissional */
   .container-clean {
     @apply max-w-7xl mx-auto px-4 md:px-6;
   }
   
-  /* Icon Container usando variáveis semânticas */
+  /* Icon Container Profissional */
   .icon-container {
     @apply p-2 rounded-md;
   }
   
   .icon-container-primary {
-    @apply bg-primary/10 text-primary;
+    @apply bg-blue-50 text-blue-600;
   }
   
   .icon-container-success {
-    @apply bg-success/10 text-success;
+    @apply bg-green-50 text-green-600;
   }
   
   .icon-container-danger {
-    @apply bg-destructive/10 text-destructive;
+    @apply bg-red-50 text-red-600;
   }
 }
 

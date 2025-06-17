@@ -36,7 +36,7 @@ export function BudgetList({
     return (
       <Card>
         <CardHeader>
-            <CardTitle>Fehler beim Laden der Budgets</CardTitle>
+            <CardTitle>Erro ao carregar orçamentos</CardTitle>
             <CardDescription>{error.message}</CardDescription>
         </CardHeader>
       </Card>
@@ -48,17 +48,17 @@ export function BudgetList({
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <CardTitle>Detailansicht</CardTitle>
+                <CardTitle>Visão Detalhada</CardTitle>
                 <CardDescription>
-                  Ihre Budgets für {monthName}.
+                  Seus orçamentos para {monthName}.
                 </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={onPreviousMonth} aria-label="Vorheriger Monat">
+                <Button variant="outline" size="icon" onClick={onPreviousMonth} aria-label="Mês anterior">
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <span className="text-base font-semibold w-40 text-center">{monthName}</span>
-                <Button variant="outline" size="icon" onClick={onNextMonth} aria-label="Nächster Monat">
+                <Button variant="outline" size="icon" onClick={onNextMonth} aria-label="Próximo mês">
                     <ChevronRight className="h-4 w-4" />
                 </Button>
             </div>

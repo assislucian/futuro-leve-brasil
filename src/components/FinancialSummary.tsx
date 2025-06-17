@@ -1,31 +1,43 @@
 
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ArrowUp, ArrowDown } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { useFinancialSummaryData } from "@/hooks/useFinancialSummaryData";
-import { useLanguage } from "@/contexts/LanguageProvider";
 
 /**
- * Componente para o resumo financeiro
- * Mostra os principais indicadores financeiros do usuário
+ * Componente do resumo financeiro
+ * Exibe as principais métricas financeiras do usuário
  */
 const FinancialSummary = () => {
   const { data: summary, isLoading, error, refetch } = useFinancialSummaryData();
-  const { t, formatCurrency } = useLanguage();
+
+  const formatCurrency = (value: number) => {
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
 
   if (isLoading) {
-    return <LoadingState variant="dashboard" count={3} />;
+    return (
+      <div className="p-5">
+        <LoadingState variant="dashboard" count={3} />
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <ErrorState
-        title={t('common.error')}
-        description={t('common.error')}
-        onRetry={refetch}
-        variant="destructive"
-      />
+      <div className="p-5">
+        <ErrorState
+          title="Erro ao Carregar Resumo"
+          description="Não foi possível calcular seu resumo financeiro. Tente novamente mais tarde."
+          onRetry={refetch}
+          variant="destructive"
+        />
+      </div>
     );
   }
 
@@ -37,24 +49,24 @@ const FinancialSummary = () => {
 
   const cards = [
     {
-      title: t('financial.total_income'),
+      title: "Receita Total",
       value: totalIncome,
       icon: ArrowUp,
-      description: t('financial.total_income.description'),
+      description: "Total de entradas registradas",
       color: "green"
     },
     {
-      title: t('financial.total_expenses'),
+      title: "Despesa Total",
       value: totalExpense,
       icon: ArrowDown,
-      description: t('financial.total_expenses.description'),
+      description: "Total de saídas registradas",
       color: "red"
     },
     {
-      title: t('financial.current_balance'),
+      title: "Saldo Atual",
       value: balance,
       icon: DollarSign,
-      description: t('financial.current_balance.description'),
+      description: "Seu balanço financeiro atual",
       color: balance >= 0 ? "gray" : "red"
     }
   ];
@@ -62,56 +74,53 @@ const FinancialSummary = () => {
   const getCardStyles = (color: string) => {
     const styles = {
       green: {
-        iconBg: "bg-green-50 dark:bg-green-950",
-        iconColor: "text-green-600 dark:text-green-400",
-        valueColor: "text-green-700 dark:text-green-300"
+        iconBg: "bg-green-50",
+        iconColor: "text-green-600",
+        valueColor: "text-green-700"
       },
       red: {
-        iconBg: "bg-red-50 dark:bg-red-950",
-        iconColor: "text-red-600 dark:text-red-400",
-        valueColor: "text-red-700 dark:text-red-300"
+        iconBg: "bg-red-50",
+        iconColor: "text-red-600",
+        valueColor: "text-red-700"
       },
       gray: {
-        iconBg: "bg-muted",
-        iconColor: "text-muted-foreground",
-        valueColor: "text-foreground"
+        iconBg: "bg-gray-50",
+        iconColor: "text-gray-600",
+        valueColor: "text-gray-900"
       }
     };
     return styles[color as keyof typeof styles] || styles.gray;
   };
 
   return (
-    <div className="space-y-4">
-      <h4 className="text-base font-bold text-card-foreground">
-        {t('financial.summary_title')}
-      </h4>
+    <div className="p-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, index) => {
           const styles = getCardStyles(card.color);
           const Icon = card.icon;
           
           return (
-            <div 
+            <Card 
               key={index}
-              className="p-4 border border-border rounded-lg bg-card shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow duration-200"
+              className="border border-gray-200 shadow-sm bg-white hover:shadow-md transition-shadow duration-200"
             >
-              <div className="flex items-center justify-between mb-2">
-                <h5 className="text-sm font-medium text-muted-foreground">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">
                   {card.title}
-                </h5>
+                </CardTitle>
                 <div className={`p-1.5 ${styles.iconBg} rounded-md`}>
                   <Icon className={`h-4 w-4 ${styles.iconColor}`} />
                 </div>
-              </div>
-              <div className="space-y-1">
+              </CardHeader>
+              <CardContent className="space-y-1">
                 <div className={`text-xl font-semibold ${styles.valueColor}`}>
                   {formatCurrency(card.value)}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   {card.description}
                 </p>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>

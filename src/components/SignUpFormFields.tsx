@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { useState } from "react";
+import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -11,73 +11,100 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Shield } from "lucide-react";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useLanguage } from "@/contexts/LanguageProvider";
+import { Eye, EyeOff, AlertCircle, CheckCircle, Shield } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
+import { SignUpFormData } from "@/lib/validators/signup";
 
 interface SignUpFormFieldsProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<SignUpFormData>;
   isSubmitting: boolean;
 }
 
+/**
+ * Componente que renderiza os campos do formulário de cadastro
+ * Inclui validação em tempo real e indicadores visuais de qualidade
+ */
 export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { t } = useLanguage();
+  
+  const password = form.watch("password");
+  const confirmPassword = form.watch("confirmPassword");
+  const terms = form.watch("terms");
+  
+  // Verificar se senhas coincidem
+  const passwordsMatch = password && confirmPassword && password === confirmPassword;
+  const showPasswordMismatch = confirmPassword && !passwordsMatch;
 
   return (
-    <>
+    <div className="space-y-6">
+      {/* Campo Nome Completo */}
       <FormField
         control={form.control}
         name="fullName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('auth.signup.full_name')}</FormLabel>
+            <FormLabel className="text-sm font-medium text-gray-700">
+              Nome Completo *
+            </FormLabel>
             <FormControl>
               <Input 
-                placeholder={t('auth.signup.full_name_placeholder')}
+                placeholder="Digite seu nome completo" 
                 {...field}
                 autoComplete="name"
+                className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                disabled={isSubmitting}
               />
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-sm text-red-600" />
           </FormItem>
         )}
       />
 
+      {/* Campo Email */}
       <FormField
         control={form.control}
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('auth.email')}</FormLabel>
+            <FormLabel className="text-sm font-medium text-gray-700">
+              Email *
+            </FormLabel>
             <FormControl>
               <Input 
-                placeholder={t('auth.email_placeholder')}
+                placeholder="seu@email.com" 
                 type="email"
                 {...field}
                 autoComplete="email"
+                className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                disabled={isSubmitting}
               />
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-sm text-red-600" />
           </FormItem>
         )}
       />
 
+      {/* Campo Senha */}
       <FormField
         control={form.control}
         name="password"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('auth.password')}</FormLabel>
+            <FormLabel className="text-sm font-medium text-gray-700">
+              Senha *
+            </FormLabel>
             <FormControl>
               <div className="relative">
                 <Input 
                   type={showPassword ? "text" : "password"} 
-                  placeholder={t('auth.signup.password_placeholder')}
+                  placeholder="Crie uma senha forte" 
                   {...field}
                   autoComplete="new-password"
+                  className="h-11 pr-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  disabled={isSubmitting}
                 />
                 <Button
                   type="button"
@@ -85,33 +112,46 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={isSubmitting}
+                  tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-4 w-4 text-gray-400" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 text-gray-400" />
                   )}
                 </Button>
               </div>
             </FormControl>
-            <FormMessage />
+            
+            {/* Indicador de força da senha */}
+            {password && <PasswordStrengthIndicator password={password} />}
+            
+            <FormMessage className="text-sm text-red-600" />
           </FormItem>
         )}
       />
 
+      {/* Campo Confirmar Senha */}
       <FormField
         control={form.control}
         name="confirmPassword"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('auth.signup.confirm_password')}</FormLabel>
+            <FormLabel className="text-sm font-medium text-gray-700">
+              Confirmar Senha *
+            </FormLabel>
             <FormControl>
               <div className="relative">
                 <Input 
                   type={showConfirmPassword ? "text" : "password"} 
-                  placeholder={t('auth.signup.confirm_password_placeholder')}
+                  placeholder="Digite a senha novamente" 
                   {...field}
                   autoComplete="new-password"
+                  className={`h-11 pr-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${
+                    showPasswordMismatch ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                  } ${passwordsMatch ? 'border-green-500 focus:border-green-500 focus:ring-green-500' : ''}`}
+                  disabled={isSubmitting}
                 />
                 <Button
                   type="button"
@@ -119,41 +159,74 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={isSubmitting}
+                  tabIndex={-1}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-4 w-4 text-gray-400" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 text-gray-400" />
                   )}
                 </Button>
+                
+                {/* Indicador visual de confirmação */}
+                {confirmPassword && (
+                  <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
+                    {passwordsMatch ? (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-red-500" />
+                    )}
+                  </div>
+                )}
               </div>
             </FormControl>
-            <FormMessage />
+            
+            {/* Mensagem de confirmação */}
+            {showPasswordMismatch && (
+              <p className="text-sm text-red-600 mt-1">
+                As senhas não coincidem
+              </p>
+            )}
+            
+            <FormMessage className="text-sm text-red-600" />
           </FormItem>
         )}
       />
 
+      {/* Campo Termos e Condições */}
       <FormField
         control={form.control}
-        name="acceptTerms"
+        name="terms"
         render={({ field }) => (
           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
             <FormControl>
               <Checkbox
                 checked={field.value}
                 onCheckedChange={field.onChange}
+                disabled={isSubmitting}
+                className="mt-1"
               />
             </FormControl>
             <div className="space-y-1 leading-none">
-              <FormLabel className="text-sm font-normal">
-                {t('auth.signup.terms_text')}{' '}
-                <Link to="/terms" className="text-primary hover:underline">
-                  {t('auth.signup.terms')}
+              <FormLabel className="text-sm font-normal text-gray-600 leading-relaxed">
+                Eu li e aceito os{' '}
+                <Link 
+                  to="/terms" 
+                  target="_blank" 
+                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  Termos de Serviço
                 </Link>{' '}
-                {t('auth.signup.and')}{' '}
-                <Link to="/privacy" className="text-primary hover:underline">
-                  {t('auth.signup.privacy')}
-                </Link>.
+                e a{' '}
+                <Link 
+                  to="/privacy" 
+                  target="_blank" 
+                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  Política de Privacidade
+                </Link>
+                . *
               </FormLabel>
               <FormMessage />
             </div>
@@ -161,33 +234,36 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
         )}
       />
 
-      <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-        <div className="flex items-start gap-3">
-          <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-blue-900 mb-1">
-              {t('auth.signup.security_title')}
-            </p>
-            <p className="text-blue-700 leading-relaxed">
-              {t('auth.signup.security_text')}
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Alerta de Segurança */}
+      <Alert className="border-blue-200 bg-blue-50">
+        <Shield className="h-4 w-4 text-blue-600" />
+        <AlertDescription className="text-sm text-blue-800">
+          <strong>100% Seguro:</strong> Seus dados são criptografados com protocolo TLS 1.3 
+          e protegidos por autenticação multifator. Nunca compartilhamos informações pessoais 
+          com terceiros.
+        </AlertDescription>
+      </Alert>
 
+      {/* Botão de Submissão */}
       <Button 
         type="submit" 
-        className="w-full btn-primary" 
-        disabled={isSubmitting}
+        className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200" 
+        disabled={isSubmitting || !form.formState.isValid || !terms}
       >
-        {isSubmitting ? t('auth.signup.creating') : t('auth.signup.create_account')}
+        {isSubmitting ? (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            Criando conta...
+          </div>
+        ) : (
+          "Criar Conta Gratuita"
+        )}
       </Button>
-
-      <div className="text-center">
-        <p className="text-sm text-muted-foreground">
-          {t('auth.signup.free_trial_text')}
-        </p>
-      </div>
-    </>
+      
+      {/* Texto informativo */}
+      <p className="text-xs text-gray-500 text-center leading-relaxed">
+        Ao criar sua conta, você terá acesso a 7 dias gratuitos de todas as funcionalidades Premium.
+      </p>
+    </div>
   );
 }
