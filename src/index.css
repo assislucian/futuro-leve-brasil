@@ -26,7 +26,7 @@
   --plenus-gradient-primary: linear-gradient(135deg, #0D9488 0%, #14B8A6 50%, #3B82F6 100%);
   --plenus-gradient-secondary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
   --plenus-gradient-accent: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-  --plenus-gradient-bg: linear-gradient(135deg, #F1F5F9 0%, #EBF4FF 50%, #E0E7FF 100%);
+  --plenus-gradient-bg: linear-gradient(135deg, #F0FDFA 0%, #F0F9FF 50%, #FAF5FF 100%);
 }
 
 [data-theme="dark"] {
@@ -102,28 +102,6 @@
   
   .plenus-badge-gold {
     @apply bg-gradient-to-r from-yellow-100 to-amber-50 text-amber-900 border border-amber-200 font-semibold;
-  }
-  
-  /* Ícones Plenus */
-  .plenus-icon-container {
-    @apply flex items-center justify-center w-10 h-10 rounded-xl shadow-sm;
-  }
-  
-  .plenus-icon-teal {
-    @apply bg-gradient-to-br from-teal-100 to-teal-50 text-teal-600 border border-teal-200/50;
-  }
-  
-  .plenus-icon-blue {
-    @apply bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 border border-blue-200/50;
-  }
-  
-  .plenus-icon-purple {
-    @apply bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 border border-purple-200/50;
-  }
-  
-  /* Transições Plenus */
-  .plenus-transition {
-    @apply transition-all duration-300;
   }
   
   /* Espaçamentos Plenus */
