@@ -9,9 +9,25 @@ interface LanguageContextType {
   t: (key: string, params?: Record<string, string | number>) => string;
   formatCurrency: (amount: number) => string;
   formatDate: (date: Date | string) => string;
+  formatNumber: (number: number) => string;
+  formatRelativeTime: (date: Date | string) => string;
+  plural: (count: number, key: string) => string;
+  isRTL: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+// Função para detectar idioma do navegador
+const detectBrowserLanguage = (): Language => {
+  if (typeof window === 'undefined') return 'pt';
+  
+  const browserLang = navigator.language.toLowerCase();
+  if (browserLang.startsWith('de')) return 'de';
+  if (browserLang.startsWith('pt')) return 'pt';
+  
+  // Fallback para português (mercado principal)
+  return 'pt';
+};
 
 const translations = {
   pt: {
@@ -164,6 +180,37 @@ const translations = {
     'auth.update_password.update': 'Atualizar Senha',
     'auth.update_password.success': 'Senha atualizada com sucesso!',
     'auth.update_password.invalid_link': 'Link inválido ou expirado',
+    
+    // Validation
+    'validation.required': 'Este campo é obrigatório',
+    'validation.email.invalid': 'Por favor, insira um email válido',
+    'validation.password.min': 'A senha deve ter pelo menos {min} caracteres',
+    'validation.password.mismatch': 'As senhas não coincidem',
+    'validation.number.min': 'O valor deve ser pelo menos {min}',
+    'validation.number.max': 'O valor deve ser no máximo {max}',
+    
+    // Time relative
+    'time.now': 'agora',
+    'time.minute_ago': 'há um minuto',
+    'time.minutes_ago': 'há {count} minutos',
+    'time.hour_ago': 'há uma hora',
+    'time.hours_ago': 'há {count} horas',
+    'time.day_ago': 'há um dia',
+    'time.days_ago': 'há {count} dias',
+    'time.week_ago': 'há uma semana',
+    'time.weeks_ago': 'há {count} semanas',
+    'time.month_ago': 'há um mês',
+    'time.months_ago': 'há {count} meses',
+    'time.year_ago': 'há um ano',
+    'time.years_ago': 'há {count} anos',
+    
+    // Plurals
+    'item.count': '{count} item',
+    'items.count': '{count} itens',
+    'goal.count': '{count} meta',
+    'goals.count': '{count} metas',
+    'transaction.count': '{count} transação',
+    'transactions.count': '{count} transações',
     
     // Common
     'common.loading': 'Carregando...',
@@ -340,6 +387,37 @@ const translations = {
     'auth.update_password.success': 'Passwort erfolgreich aktualisiert!',
     'auth.update_password.invalid_link': 'Ungültiger oder abgelaufener Link',
     
+    // Validation
+    'validation.required': 'Dieses Feld ist erforderlich',
+    'validation.email.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+    'validation.password.min': 'Das Passwort muss mindestens {min} Zeichen lang sein',
+    'validation.password.mismatch': 'Die Passwörter stimmen nicht überein',
+    'validation.number.min': 'Der Wert muss mindestens {min} sein',
+    'validation.number.max': 'Der Wert darf höchstens {max} sein',
+    
+    // Time relative
+    'time.now': 'jetzt',
+    'time.minute_ago': 'vor einer Minute',
+    'time.minutes_ago': 'vor {count} Minuten',
+    'time.hour_ago': 'vor einer Stunde',
+    'time.hours_ago': 'vor {count} Stunden',
+    'time.day_ago': 'vor einem Tag',
+    'time.days_ago': 'vor {count} Tagen',
+    'time.week_ago': 'vor einer Woche',
+    'time.weeks_ago': 'vor {count} Wochen',
+    'time.month_ago': 'vor einem Monat',
+    'time.months_ago': 'vor {count} Monaten',
+    'time.year_ago': 'vor einem Jahr',
+    'time.years_ago': 'vor {count} Jahren',
+    
+    // Plurals
+    'item.count': '{count} Element',
+    'items.count': '{count} Elemente',
+    'goal.count': '{count} Ziel',
+    'goals.count': '{count} Ziele',
+    'transaction.count': '{count} Transaktion',
+    'transactions.count': '{count} Transaktionen',
+    
     // Common
     'common.loading': 'Lädt...',
     'common.error': 'Fehler',
@@ -369,11 +447,19 @@ const translations = {
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('plenus-language');
-    return (saved as Language) || 'pt';
+    if (saved) return saved as Language;
+    
+    // Auto-detect browser language on first visit
+    return detectBrowserLanguage();
   });
 
   useEffect(() => {
     localStorage.setItem('plenus-language', language);
+    // Set HTML lang attribute for accessibility and SEO
+    document.documentElement.lang = language;
+    
+    // Set direction attribute (for future RTL support)
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
   const setLanguage = (lang: Language) => {
@@ -381,11 +467,24 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {
-    let text = translations[language][key as keyof typeof translations[typeof language]] || key;
+    const langTranslations = translations[language];
+    let text = langTranslations[key as keyof typeof langTranslations];
     
+    // Fallback to Portuguese if translation not found
+    if (!text && language !== 'pt') {
+      text = translations.pt[key as keyof typeof translations.pt];
+    }
+    
+    // Final fallback to key itself
+    if (!text) {
+      console.warn(`Translation missing for key: ${key}`);
+      text = key;
+    }
+    
+    // Replace parameters
     if (params) {
       Object.entries(params).forEach(([param, value]) => {
-        text = text.replace(`{${param}}`, String(value));
+        text = text.replace(new RegExp(`\\{${param}\\}`, 'g'), String(value));
       });
     }
     
@@ -405,6 +504,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }).format(amount);
   };
 
+  const formatNumber = (number: number): string => {
+    if (language === 'de') {
+      return new Intl.NumberFormat('de-DE').format(number);
+    }
+    return new Intl.NumberFormat('pt-BR').format(number);
+  };
+
   const formatDate = (date: Date | string): string => {
     const dateObj = typeof date === 'string' ? new Date(date + 'T00:00:00') : date;
     
@@ -422,8 +528,57 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
   };
 
+  const formatRelativeTime = (date: Date | string): string => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const now = new Date();
+    const diffInMs = now.getTime() - dateObj.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    const diffInMonths = Math.floor(diffInDays / 30);
+    const diffInYears = Math.floor(diffInDays / 365);
+
+    if (diffInMinutes < 1) return t('time.now');
+    if (diffInMinutes === 1) return t('time.minute_ago');
+    if (diffInMinutes < 60) return t('time.minutes_ago', { count: diffInMinutes });
+    if (diffInHours === 1) return t('time.hour_ago');
+    if (diffInHours < 24) return t('time.hours_ago', { count: diffInHours });
+    if (diffInDays === 1) return t('time.day_ago');
+    if (diffInWeeks < 1) return t('time.days_ago', { count: diffInDays });
+    if (diffInWeeks === 1) return t('time.week_ago');
+    if (diffInMonths < 1) return t('time.weeks_ago', { count: diffInWeeks });
+    if (diffInMonths === 1) return t('time.month_ago');
+    if (diffInYears < 1) return t('time.months_ago', { count: diffInMonths });
+    if (diffInYears === 1) return t('time.year_ago');
+    return t('time.years_ago', { count: diffInYears });
+  };
+
+  const plural = (count: number, key: string): string => {
+    // Simple pluralization logic
+    const singularKey = `${key}.count`;
+    const pluralKey = `${key}s.count`;
+    
+    if (count === 1) {
+      return t(singularKey, { count });
+    }
+    return t(pluralKey, { count });
+  };
+
+  const isRTL = language === 'ar'; // For future RTL language support
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, formatCurrency, formatDate }}>
+    <LanguageContext.Provider value={{ 
+      language, 
+      setLanguage, 
+      t, 
+      formatCurrency, 
+      formatDate, 
+      formatNumber,
+      formatRelativeTime,
+      plural,
+      isRTL
+    }}>
       {children}
     </LanguageContext.Provider>
   );

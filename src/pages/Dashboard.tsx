@@ -16,6 +16,7 @@ import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageProvider";
+import { SEOHead } from "@/components/SEOHead";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -39,39 +40,57 @@ const DashboardPage = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-72" />
-            <Skeleton className="h-4 w-80" />
+      <>
+        <SEOHead 
+          title={t('nav.dashboard')}
+          description={t('dashboard.subtitle')}
+        />
+        <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-72" />
+              <Skeleton className="h-4 w-80" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-32" />
+              <Skeleton className="h-9 w-32" />
+              <Skeleton className="h-9 w-36" />
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Skeleton className="h-9 w-32" />
-            <Skeleton className="h-9 w-32" />
-            <Skeleton className="h-9 w-36" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="lg:col-span-8 space-y-4">
+              <Skeleton className="h-40 w-full rounded-lg" />
+              <Skeleton className="h-80 w-full rounded-lg" />
+            </div>
+            <div className="lg:col-span-4 space-y-4">
+              <Skeleton className="h-56 w-full rounded-lg" />
+              <Skeleton className="h-40 w-full rounded-lg" />
+              <Skeleton className="h-56 w-full rounded-lg" />
+            </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-8 space-y-4">
-            <Skeleton className="h-40 w-full rounded-lg" />
-            <Skeleton className="h-80 w-full rounded-lg" />
-          </div>
-          <div className="lg:col-span-4 space-y-4">
-            <Skeleton className="h-56 w-full rounded-lg" />
-            <Skeleton className="h-40 w-full rounded-lg" />
-            <Skeleton className="h-56 w-full rounded-lg" />
-          </div>
-        </div>
-      </div>
+      </>
     );
   }
 
   if (!hasTransactions) {
-    return <WelcomeGuide />;
+    return (
+      <>
+        <SEOHead 
+          title={t('nav.dashboard')}
+          description={t('dashboard.subtitle')}
+        />
+        <WelcomeGuide />
+      </>
+    );
   }
 
   return (
     <>
+      <SEOHead 
+        title={t('nav.dashboard')}
+        description={t('dashboard.subtitle')}
+      />
       <GoalCompletionCelebration />
       <div className="flex flex-col gap-6 min-h-screen bg-background p-4 md:p-6">
         {/* Header usando variáveis semânticas */}
