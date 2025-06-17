@@ -1,5 +1,3 @@
-
-
 import type { Language } from '@/types/language';
 
 export const translations: Record<Language, Record<string, string>> = {
@@ -19,20 +17,25 @@ export const translations: Record<Language, Record<string, string>> = {
     'hero.card_1_value': '65% concluída',
     'hero.card_2_label': 'Economia este mês',
     'hero.card_2_value': '+R$ 1.247',
+    'hero.tagline': 'Sua jornada financeira',
 
-    // Dashboard
-    'dashboard.greeting.morning': 'Bom dia',
-    'dashboard.greeting.afternoon': 'Boa tarde',
-    'dashboard.greeting.evening': 'Boa noite',
-    'dashboard.subtitle': 'Acompanhe seus progressos e continue construindo seus sonhos',
-    'dashboard.plan.free': 'Gratuito',
-    
     // Navigation
     'nav.dashboard': 'Dashboard',
     'nav.goals': 'Metas',
     'nav.budgets': 'Orçamentos',
     'nav.analytics': 'Análises',
     'nav.settings': 'Configurações',
+    'nav.how_it_works': 'Como Funciona',
+    'nav.pricing': 'Preços',
+    'nav.faq': 'Dúvidas',
+
+    
+    // Dashboard
+    'dashboard.greeting.morning': 'Bom dia',
+    'dashboard.greeting.afternoon': 'Boa tarde',
+    'dashboard.greeting.evening': 'Boa noite',
+    'dashboard.subtitle': 'Acompanhe seus progressos e continue construindo seus sonhos',
+    'dashboard.plan.free': 'Gratuito',
     
     // Financial Summary
     'financial.summary.title': 'Resumo Financeiro',
@@ -245,20 +248,25 @@ export const translations: Record<Language, Record<string, string>> = {
     'hero.card_1_value': '65% abgeschlossen',
     'hero.card_2_label': 'Ersparnis diesen Monat',
     'hero.card_2_value': '+€ 1.247',
+    'hero.tagline': 'Ihre Finanzreise',
 
-    // Dashboard
-    'dashboard.greeting.morning': 'Guten Morgen',
-    'dashboard.greeting.afternoon': 'Guten Tag',
-    'dashboard.greeting.evening': 'Guten Abend',
-    'dashboard.subtitle': 'Verfolgen Sie Ihre Fortschritte und verwirklichen Sie weiterhin Ihre Träume',
-    'dashboard.plan.free': 'Kostenlos',
-    
     // Navigation
     'nav.dashboard': 'Dashboard',
     'nav.goals': 'Ziele',
     'nav.budgets': 'Budgets',
     'nav.analytics': 'Analysen',
     'nav.settings': 'Einstellungen',
+    'nav.how_it_works': 'Wie es funktioniert',
+    'nav.pricing': 'Preise',
+    'nav.faq': 'FAQ',
+
+    
+    // Dashboard
+    'dashboard.greeting.morning': 'Guten Morgen',
+    'dashboard.greeting.afternoon': 'Guten Tag',
+    'dashboard.greeting.evening': 'Guten Abend',
+    'dashboard.subtitle': 'Verfolgen Sie Ihre Fortschritte und verwirklichen Sie weiterhin Ihre Träume',
+    'dashboard.plan.free': 'Kostenlos',
     
     // Financial Summary
     'financial.summary.title': 'Finanzübersicht',
@@ -456,4 +464,3 @@ export const translations: Record<Language, Record<string, string>> = {
     'analytics.of_total': 'der Gesamtsumme',
   }
 };
-

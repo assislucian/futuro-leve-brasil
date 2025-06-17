@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Shield, TrendingUp, Heart } from "lucide-react";
-import { LanguageSelector } from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageProvider";
 
 const Hero = () => {
@@ -12,13 +11,6 @@ const Hero = () => {
     <section className="relative container mx-auto flex min-h-[calc(100vh-4rem)] items-center px-4 md:px-6 py-20">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-blue-50 rounded-3xl -z-10"></div>
-      
-      {/* Language selector - positioned prominently at top right */}
-      <div className="absolute top-6 right-6 z-20">
-        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-white/50">
-          <LanguageSelector />
-        </div>
-      </div>
       
       <div className="flex w-full flex-col items-center gap-16 md:flex-row">
         <div className="order-2 flex flex-col items-start space-y-8 text-left animate-in fade-in-50 duration-500 md:order-1 md:w-1/2">

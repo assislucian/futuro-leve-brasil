@@ -9,15 +9,26 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
+    // Primeiro verifica se há idioma salvo
     const saved = localStorage.getItem('plenus-language');
-    if (saved) return saved as Language;
+    if (saved && (saved === 'pt' || saved === 'de')) {
+      return saved as Language;
+    }
     
-    // Auto-detect browser language on first visit
-    return detectBrowserLanguage();
+    // Se não há idioma salvo, usa português como padrão (mercado principal)
+    // A detecção automática só acontece na primeira visita
+    const detected = detectBrowserLanguage();
+    localStorage.setItem('plenus-language', detected);
+    return detected;
   });
 
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
+    // Garante que a inicialização aconteça de forma síncrona
+    setIsInitialized(true);
     localStorage.setItem('plenus-language', language);
+    
     // Set HTML lang attribute for accessibility and SEO
     document.documentElement.lang = language;
     
@@ -27,9 +38,15 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
+    localStorage.setItem('plenus-language', lang);
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {
+    if (!isInitialized) {
+      // Durante a inicialização, retorna a chave para evitar inconsistências
+      return key;
+    }
+
     const langTranslations = translations[language];
     let text = langTranslations[key as keyof typeof langTranslations];
     
