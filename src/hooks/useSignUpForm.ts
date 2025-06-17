@@ -51,31 +51,6 @@ export function useSignUpForm() {
   });
 
   /**
-   * Verifica se o email já está em uso
-   * @param email - Email a ser verificado
-   * @returns true se disponível
-   */
-  const checkEmailAvailability = async (email: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', email) // Verificação pelo ID que seria o email do auth
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        // Email não encontrado, está disponível
-        return true;
-      }
-      
-      return !data; // Se encontrou dados, email não está disponível
-    } catch (error) {
-      console.warn('Erro ao verificar disponibilidade do email:', error);
-      return true; // Em caso de erro, prosseguir com tentativa
-    }
-  };
-
-  /**
    * Trata erros específicos do Supabase Auth
    * @param error - Erro do Supabase
    * @returns Mensagem de erro user-friendly
