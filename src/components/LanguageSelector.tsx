@@ -12,7 +12,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageProvider';
 
 export function LanguageSelector() {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   const languages = [
     { 
@@ -46,14 +46,14 @@ export function LanguageSelector() {
             {currentLanguage?.flag} {currentLanguage?.code.toUpperCase()}
           </span>
           <span className="sr-only">
-            Sprache wählen / Escolher idioma
+            {t('language.choose')}
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <div className="px-2 py-1.5">
           <p className="text-sm font-medium text-muted-foreground">
-            {language === 'pt' ? 'Escolher idioma' : 'Sprache wählen'}
+            {t('language.choose')}
           </p>
         </div>
         <DropdownMenuSeparator />
@@ -86,10 +86,7 @@ export function LanguageSelector() {
         <DropdownMenuSeparator />
         <div className="px-3 py-2">
           <p className="text-xs text-muted-foreground">
-            {language === 'pt' 
-              ? 'Mais idiomas em breve!' 
-              : 'Weitere Sprachen folgen!'
-            }
+            {t('language.more_coming')}
           </p>
         </div>
       </DropdownMenuContent>

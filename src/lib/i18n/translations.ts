@@ -1,4 +1,5 @@
 
+
 import type { Language } from '@/types/language';
 
 export const translations: Record<Language, Record<string, string>> = {
@@ -168,6 +169,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.update_password.update': 'Atualizar Senha',
     'auth.update_password.success': 'Senha atualizada com sucesso!',
     'auth.update_password.invalid_link': 'Link inválido ou expirado',
+    
+    // Language Selector
+    'language.choose': 'Escolher idioma',
+    'language.more_coming': 'Mais idiomas em breve!',
     
     // Validation
     'validation.required': 'Este campo é obrigatório',
@@ -391,6 +396,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.update_password.success': 'Passwort erfolgreich aktualisiert!',
     'auth.update_password.invalid_link': 'Ungültiger oder abgelaufener Link',
     
+    // Language Selector
+    'language.choose': 'Sprache wählen',
+    'language.more_coming': 'Weitere Sprachen folgen!',
+    
     // Validation
     'validation.required': 'Dieses Feld ist erforderlich',
     'validation.email.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
@@ -447,3 +456,4 @@ export const translations: Record<Language, Record<string, string>> = {
     'analytics.of_total': 'der Gesamtsumme',
   }
 };
+

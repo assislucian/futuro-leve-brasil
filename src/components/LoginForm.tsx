@@ -20,19 +20,19 @@ import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLanguage } from "@/contexts/LanguageProvider";
 
-const formSchema = z.object({
-  email: z.string()
-    .email({ message: "Por favor, insira um email válido" })
-    .toLowerCase(),
-  password: z.string().min(1, { message: "A senha é obrigatória" }),
-});
-
 export function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const { t } = useLanguage();
+
+  const formSchema = z.object({
+    email: z.string()
+      .email({ message: t('validation.email.invalid') })
+      .toLowerCase(),
+    password: z.string().min(1, { message: t('validation.required') }),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
