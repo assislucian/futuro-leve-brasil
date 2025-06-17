@@ -10,13 +10,13 @@ import { AlertCircle, TrendingUp, Target, Sparkles, ArrowRight, Brain } from "lu
 const getInsightIcon = (type: SmartInsight['type']) => {
   switch (type) {
     case 'goal_opportunity':
-      return <TrendingUp className="h-4 w-4 text-green-600" />;
+      return <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />;
     case 'budget_alert':
-      return <AlertCircle className="h-4 w-4 text-amber-600" />;
+      return <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
     case 'smart_suggestion':
-      return <Brain className="h-4 w-4 text-blue-600" />;
+      return <Brain className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
     case 'celebration':
-      return <Target className="h-4 w-4 text-purple-600" />;
+      return <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
     default:
       return <Sparkles className="h-4 w-4 text-primary" />;
   }
@@ -26,23 +26,23 @@ const getPriorityStyles = (priority: SmartInsight['priority']) => {
   switch (priority) {
     case 'high':
       return {
-        badge: 'bg-red-50 text-red-700 border-red-200',
-        card: 'border-l-4 border-l-red-400 bg-gradient-to-r from-red-50/30 to-transparent'
+        badge: 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
+        card: 'border-l-4 border-l-red-400 bg-gradient-to-r from-red-50/30 dark:from-red-950/30 to-transparent'
       };
     case 'medium':
       return {
-        badge: 'bg-amber-50 text-amber-700 border-amber-200',
-        card: 'border-l-4 border-l-amber-400 bg-gradient-to-r from-amber-50/30 to-transparent'
+        badge: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+        card: 'border-l-4 border-l-amber-400 bg-gradient-to-r from-amber-50/30 dark:from-amber-950/30 to-transparent'
       };
     case 'low':
       return {
-        badge: 'bg-blue-50 text-blue-700 border-blue-200',
-        card: 'border-l-4 border-l-blue-400 bg-gradient-to-r from-blue-50/30 to-transparent'
+        badge: 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+        card: 'border-l-4 border-l-blue-400 bg-gradient-to-r from-blue-50/30 dark:from-blue-950/30 to-transparent'
       };
     default:
       return {
-        badge: 'bg-gray-50 text-gray-700 border-gray-200',
-        card: 'border-l-4 border-l-gray-400 bg-gradient-to-r from-gray-50/30 to-transparent'
+        badge: 'bg-muted text-muted-foreground border-border',
+        card: 'border-l-4 border-l-border bg-gradient-to-r from-muted/30 to-transparent'
       };
   }
 };
@@ -61,11 +61,11 @@ export function SmartInsightsCard() {
 
   if (isLoading) {
     return (
-      <Card className="border border-gray-200 shadow-sm bg-white">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-3">
+      <Card className="border border-border shadow-sm bg-card">
+        <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="p-1.5 bg-purple-100 rounded-full">
-              <Sparkles className="h-4 w-4 text-purple-600" />
+            <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
+              <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
             Insights Inteligentes
           </CardTitle>
@@ -75,7 +75,7 @@ export function SmartInsightsCard() {
         </CardHeader>
         <CardContent className="space-y-3 p-3">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="space-y-2 p-3 rounded-md border bg-gray-50/50">
+            <div key={i} className="space-y-2 p-3 rounded-md border bg-muted/50">
               <div className="flex items-start justify-between">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-14" />
@@ -91,11 +91,11 @@ export function SmartInsightsCard() {
 
   if (error || !insights || insights.length === 0) {
     return (
-      <Card className="border border-gray-200 shadow-sm bg-white">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-3">
+      <Card className="border border-border shadow-sm bg-card">
+        <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="p-1.5 bg-purple-100 rounded-full">
-              <Brain className="h-4 w-4 text-purple-600" />
+            <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
+              <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
             Insights Inteligentes
           </CardTitle>
@@ -106,11 +106,11 @@ export function SmartInsightsCard() {
         {!error && (
           <CardContent className="p-3">
             <div className="text-center py-4">
-              <Brain className="h-10 w-10 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 mb-3">
+              <Brain className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground mb-3">
                 Nossa IA está aprendendo sobre seus hábitos financeiros.
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Adicione mais transações para receber insights personalizados!
               </p>
             </div>
@@ -124,15 +124,15 @@ export function SmartInsightsCard() {
   const topInsights = insights.slice(0, 3);
 
   return (
-    <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 bg-white">
-      <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-3">
+    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
+      <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <div className="p-1.5 bg-purple-100 rounded-full">
-            <Brain className="h-4 w-4 text-purple-600" />
+          <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">
+            <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </div>
           Insights Inteligentes
         </CardTitle>
-        <CardDescription className="text-gray-600 text-sm">
+        <CardDescription className="text-muted-foreground text-sm">
           🚀 Nossa IA descobriu oportunidades para acelerar seus sonhos!
         </CardDescription>
       </CardHeader>
@@ -145,12 +145,12 @@ export function SmartInsightsCard() {
               className={`relative p-3 rounded-md border transition-all duration-200 hover:shadow-sm ${styles.card}`}
             >
               <div className="flex items-start gap-2">
-                <div className="flex-shrink-0 mt-0.5 p-1 bg-white rounded-full shadow-sm">
+                <div className="flex-shrink-0 mt-0.5 p-1 bg-card rounded-full shadow-sm border border-border">
                   {getInsightIcon(insight.type)}
                 </div>
                 <div className="flex-grow min-w-0 space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="font-semibold text-sm leading-tight text-gray-800">
+                    <h4 className="font-semibold text-sm leading-tight text-card-foreground">
                       {insight.title}
                     </h4>
                     <Badge 
@@ -161,14 +161,14 @@ export function SmartInsightsCard() {
                     </Badge>
                   </div>
                   
-                  <p className="text-xs text-gray-600 leading-relaxed">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
                     {insight.description}
                   </p>
                   
                   <Button 
                     asChild 
                     size="sm" 
-                    className="h-7 text-xs bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all duration-200"
+                    className="h-7 text-xs bg-card border border-border text-card-foreground hover:bg-muted hover:border-border shadow-sm transition-all duration-200"
                   >
                     <Link to={insight.actionPath} className="flex items-center gap-1">
                       {insight.actionLabel}
@@ -187,8 +187,8 @@ export function SmartInsightsCard() {
         })}
         
         {insights.length > 3 && (
-          <div className="text-center pt-2 border-t border-gray-100">
-            <Button variant="ghost" size="sm" asChild className="text-gray-600 hover:text-gray-800">
+          <div className="text-center pt-2 border-t border-border">
+            <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-card-foreground">
               <Link to="/insights" className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
                 Ver todos os insights ({insights.length})

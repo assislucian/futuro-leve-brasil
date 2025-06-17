@@ -74,19 +74,19 @@ const FinancialSummary = () => {
   const getCardStyles = (color: string) => {
     const styles = {
       green: {
-        iconBg: "bg-green-50",
-        iconColor: "text-green-600",
-        valueColor: "text-green-700"
+        iconBg: "bg-green-50 dark:bg-green-950",
+        iconColor: "text-green-600 dark:text-green-400",
+        valueColor: "text-green-700 dark:text-green-300"
       },
       red: {
-        iconBg: "bg-red-50",
-        iconColor: "text-red-600",
-        valueColor: "text-red-700"
+        iconBg: "bg-red-50 dark:bg-red-950",
+        iconColor: "text-red-600 dark:text-red-400",
+        valueColor: "text-red-700 dark:text-red-300"
       },
       gray: {
-        iconBg: "bg-gray-50",
-        iconColor: "text-gray-600",
-        valueColor: "text-gray-900"
+        iconBg: "bg-muted",
+        iconColor: "text-muted-foreground",
+        valueColor: "text-foreground"
       }
     };
     return styles[color as keyof typeof styles] || styles.gray;
@@ -102,10 +102,10 @@ const FinancialSummary = () => {
           return (
             <Card 
               key={index}
-              className="border border-gray-200 shadow-sm bg-white hover:shadow-md transition-shadow duration-200"
+              className="border border-border shadow-sm bg-card hover:shadow-md transition-shadow duration-200"
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
                   {card.title}
                 </CardTitle>
                 <div className={`p-1.5 ${styles.iconBg} rounded-md`}>
@@ -116,7 +116,7 @@ const FinancialSummary = () => {
                 <div className={`text-xl font-semibold ${styles.valueColor}`}>
                   {formatCurrency(card.value)}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {card.description}
                 </p>
               </CardContent>
