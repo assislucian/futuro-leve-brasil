@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Sparkles } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z.object({
@@ -116,13 +116,14 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-sm font-medium text-foreground">Email</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="seu@email.com" 
                   type="email"
                   {...field}
                   autoComplete="email"
+                  className="border-slate-200 focus:border-teal-500 focus:ring-teal-500"
                 />
               </FormControl>
               <FormMessage />
@@ -135,7 +136,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Senha</FormLabel>
+              <FormLabel className="text-sm font-medium text-foreground">Senha</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input 
@@ -143,12 +144,13 @@ export function LoginForm() {
                     placeholder="Sua senha" 
                     {...field}
                     autoComplete="current-password"
+                    className="border-slate-200 focus:border-teal-500 focus:ring-teal-500 pr-10"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-400 hover:text-slate-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -167,7 +169,7 @@ export function LoginForm() {
         <div className="flex items-center justify-end">
           <Link 
             to="/forgot-password" 
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-teal-600 hover:text-teal-700 hover:underline transition-colors"
           >
             Esqueceu a senha?
           </Link>
@@ -175,10 +177,10 @@ export function LoginForm() {
 
         {/* Aviso após múltiplas tentativas */}
         {attemptCount >= 3 && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-sm">
-              Problemas para acessar? Tente <Link to="/forgot-password" className="underline">redefinir sua senha</Link> ou 
+          <Alert className="border-amber-200 bg-amber-50">
+            <AlertCircle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-sm text-amber-700">
+              Problemas para acessar? Tente <Link to="/forgot-password" className="underline font-medium">redefinir sua senha</Link> ou 
               entre em contato conosco se precisar de ajuda.
             </AlertDescription>
           </Alert>
@@ -186,10 +188,17 @@ export function LoginForm() {
 
         <Button 
           type="submit" 
-          className="w-full btn-primary" 
+          className="w-full plenus-btn-primary text-white font-medium h-11" 
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Entrando..." : "Entrar"}
+          {isSubmitting ? (
+            <>
+              <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
+              Entrando...
+            </>
+          ) : (
+            "Entrar"
+          )}
         </Button>
       </form>
     </Form>
