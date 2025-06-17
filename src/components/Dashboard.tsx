@@ -43,19 +43,21 @@ const Dashboard = () => {
 
   if (isLoadingHasTransactions) {
     return (
-      <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="space-y-2">
-            <div className="h-8 w-72 bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 w-80 bg-gray-200 rounded animate-pulse" />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+            <div className="space-y-2">
+              <div className="h-8 w-72 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-80 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="flex gap-2">
+              <div className="h-9 w-32 bg-muted rounded animate-pulse" />
+              <div className="h-9 w-32 bg-muted rounded animate-pulse" />
+              <div className="h-9 w-36 bg-muted rounded animate-pulse" />
+            </div>
           </div>
-          <div className="flex gap-2">
-            <div className="h-9 w-32 bg-gray-200 rounded animate-pulse" />
-            <div className="h-9 w-32 bg-gray-200 rounded animate-pulse" />
-            <div className="h-9 w-36 bg-gray-200 rounded animate-pulse" />
-          </div>
+          <LoadingState variant="dashboard" />
         </div>
-        <LoadingState variant="dashboard" />
       </div>
     );
   }
@@ -73,53 +75,60 @@ const Dashboard = () => {
     <>
       <OnboardingTour />
       <GoalCompletionCelebration />
-      <div className="flex flex-col gap-6 min-h-screen bg-gray-50 p-4 md:p-6">
-        {/* Header otimizado com melhor hierarquia visual */}
-        <header className="flex items-start justify-between flex-wrap gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight">
-                {getGreeting()}, {firstName}! {getGreetingEmoji()}
-              </h1>
-              <Badge 
-                variant="secondary" 
-                className="bg-gray-100 text-gray-600 border-gray-200 font-medium px-2 py-1 text-xs"
-              >
-                Gratuito
-              </Badge>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
+          {/* Header otimizado com melhor hierarquia visual */}
+          <header className="flex items-start justify-between flex-wrap gap-4 mb-8">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl md:text-3xl font-semibold text-foreground leading-tight">
+                  {getGreeting()}, {firstName}! {getGreetingEmoji()}
+                </h1>
+                <Badge 
+                  variant="secondary" 
+                  className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
+                >
+                  Gratuito
+                </Badge>
+              </div>
+              <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
+                Acompanhe seus progressos e continue construindo seus sonhos
+              </p>
             </div>
-            <p className="text-base text-gray-600 leading-relaxed max-w-xl">
-              Acompanhe seus progressos e continue construindo seus sonhos
-            </p>
-          </div>
-          
-          <nav className="flex items-center gap-2 flex-wrap" role="navigation" aria-label="Ações rápidas">
-            <AddRecurringTransactionDialog />
-            <AddInstallmentPlanDialog />
-            <AddTransactionDialog />
-          </nav>
-        </header>
+            
+            <nav className="flex items-center gap-2 flex-wrap" role="navigation" aria-label="Ações rápidas">
+              <AddRecurringTransactionDialog />
+              <AddInstallmentPlanDialog />
+              <AddTransactionDialog />
+            </nav>
+          </header>
 
-        {/* Layout principal com grid responsivo otimizado */}
-        <main className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Coluna principal - Resumo e transações */}
-          <section className="lg:col-span-8 space-y-4" aria-label="Resumo financeiro e transações">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-              <FinancialSummary />
+          {/* Layout Principal */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Coluna Principal (2/3 da tela) */}
+            <div className="xl:col-span-2 space-y-6">
+              {/* Resumo Financeiro */}
+              <div className="bg-card rounded-lg border border-border shadow-sm">
+                <FinancialSummary />
+              </div>
+              
+              {/* Transações */}
+              <div className="bg-card rounded-lg border border-border shadow-sm">
+                <TransactionList />
+              </div>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-              <TransactionList />
+            
+            {/* Sidebar (1/3 da tela) */}
+            <div className="xl:col-span-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
+                <SmartInsightsCard />
+                <NextActionCard />
+                <GoalsSummary />
+                <BudgetsSummary />
+              </div>
             </div>
-          </section>
-          
-          {/* Sidebar - Insights e resumos */}
-          <aside className="lg:col-span-4 space-y-4" aria-label="Insights e resumos">
-            <SmartInsightsCard />
-            <NextActionCard />
-            <GoalsSummary />
-            <BudgetsSummary />
-          </aside>
-        </main>
+          </div>
+        </div>
       </div>
     </>
   );
