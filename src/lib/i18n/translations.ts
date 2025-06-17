@@ -1,3 +1,4 @@
+
 import type { Language } from '@/types/language';
 
 export const translations: Record<Language, Record<string, string>> = {
@@ -18,6 +19,54 @@ export const translations: Record<Language, Record<string, string>> = {
     'hero.card_2_label': 'Economia este mês',
     'hero.card_2_value': '+R$ 1.247',
     'hero.tagline': 'Sua jornada financeira',
+
+    // Features
+    'features.title': 'Finanças com alma. Resultados reais.',
+    'features.subtitle': 'Descubra as ferramentas que vão revolucionar sua vida financeira.',
+    'features.feature_1.title': 'Transforme sonhos em planos',
+    'features.feature_1.description': 'Crie metas para sua viagem, sua casa ou sua segurança. Nós te ajudamos a chegar lá, passo a passo.',
+    'features.feature_2.title': 'Entenda seu dinheiro, sem planilhas',
+    'features.feature_2.description': 'Veja para onde vai cada real com um painel simples e visual. Chega de se sentir perdido(a) no fim do mês.',
+    'features.feature_3.title': 'Decisões inteligentes, sem estresse',
+    'features.feature_3.description': 'Receba dicas claras para fazer seu dinheiro render mais e alcançar seus objetivos mais rápido.',
+
+    // Pricing
+    'pricing.title': 'Um plano para cada jornada',
+    'pricing.subtitle': 'Comece de graça e evolua quando estiver pronto. Sem pressão.',
+    'pricing.free.title': 'Gratuito',
+    'pricing.free.description': 'O primeiro passo para sua tranquilidade financeira. Comece a organizar suas contas e planejar seus sonhos.',
+    'pricing.free.price': 'R$0',
+    'pricing.free.price_period': '/mês',
+    'pricing.free.feature_1': 'Controle de despesas e receitas',
+    'pricing.free.feature_2': 'Criação de até 2 metas',
+    'pricing.free.feature_3': 'Dashboard simplificado',
+    'pricing.free.cta': 'Começar Agora',
+    'pricing.premium.title': 'Plenus Premium',
+    'pricing.premium.description': 'Para acelerar suas conquistas e ter a paz de espírito que você merece.',
+    'pricing.premium.price': 'R$19,90',
+    'pricing.premium.price_period': '/mês',
+    'pricing.premium.feature_1': 'Tudo do plano Gratuito',
+    'pricing.premium.feature_2': 'Metas e orçamentos ilimitados',
+    'pricing.premium.feature_3': 'Insights e relatórios com IA',
+    'pricing.premium.feature_4': 'Suporte prioritário',
+    'pricing.premium.cta': 'Quero o Premium',
+
+    // FAQ
+    'faq.title': 'Dúvidas Frequentes',
+    'faq.subtitle': 'Respostas para as perguntas mais comuns que recebemos.',
+    'faq.question_1': 'O Plenus é seguro?',
+    'faq.answer_1': 'Sim! A segurança é nossa prioridade máxima. Todos os seus dados são criptografados e armazenados com as melhores práticas de segurança do mercado. Nunca compartilhamos suas informações sem sua permissão.',
+    'faq.question_2': 'Preciso conectar minha conta bancária?',
+    'faq.answer_2': 'Não. Atualmente, o Plenus funciona com a inserção manual de suas receitas e despesas. Isso lhe dá total controle e privacidade sobre suas informações financeiras.',
+    'faq.question_3': 'Como o plano Premium me ajuda a alcançar meus sonhos mais rápido?',
+    'faq.answer_3': 'O plano Premium oferece ferramentas avançadas como metas e orçamentos ilimitados, além de relatórios e insights gerados por Inteligência Artificial. Isso te dá uma visão mais clara e recomendações personalizadas para otimizar suas finanças e acelerar suas conquistas.',
+    'faq.question_4': 'Posso cancelar a qualquer momento?',
+    'faq.answer_4': 'Com certeza. Você pode cancelar sua assinatura Premium a qualquer momento, sem burocracia. Você continuará com acesso aos recursos Premium até o final do período pago.',
+
+    // Footer
+    'footer.copyright': '© 2025 Plenus. Todos os direitos reservados.',
+    'footer.terms': 'Termos de Uso',
+    'footer.privacy': 'Política de Privacidade',
 
     // Navigation
     'nav.dashboard': 'Dashboard',
@@ -249,6 +298,54 @@ export const translations: Record<Language, Record<string, string>> = {
     'hero.card_2_label': 'Ersparnis diesen Monat',
     'hero.card_2_value': '+€ 1.247',
     'hero.tagline': 'Ihre Finanzreise',
+
+    // Features
+    'features.title': 'Finanzen mit Seele. Echte Ergebnisse.',
+    'features.subtitle': 'Entdecken Sie die Tools, die Ihr Finanzleben revolutionieren werden.',
+    'features.feature_1.title': 'Verwandeln Sie Träume in Pläne',
+    'features.feature_1.description': 'Erstellen Sie Ziele für Ihre Reise, Ihr Zuhause oder Ihre Sicherheit. Wir helfen Ihnen dabei, Schritt für Schritt dorthin zu gelangen.',
+    'features.feature_2.title': 'Verstehen Sie Ihr Geld, ohne Tabellen',
+    'features.feature_2.description': 'Sehen Sie, wohin jeder Euro geht, mit einem einfachen und visuellen Dashboard. Schluss mit dem Gefühl, am Monatsende verloren zu sein.',
+    'features.feature_3.title': 'Intelligente Entscheidungen, ohne Stress',
+    'features.feature_3.description': 'Erhalten Sie klare Tipps, um Ihr Geld mehr zu verdienen und Ihre Ziele schneller zu erreichen.',
+
+    // Pricing
+    'pricing.title': 'Ein Plan für jede Reise',
+    'pricing.subtitle': 'Starten Sie kostenlos und entwickeln Sie sich weiter, wenn Sie bereit sind. Ohne Druck.',
+    'pricing.free.title': 'Kostenlos',
+    'pricing.free.description': 'Der erste Schritt zu Ihrer finanziellen Ruhe. Beginnen Sie mit der Organisation Ihrer Konten und der Planung Ihrer Träume.',
+    'pricing.free.price': '€0',
+    'pricing.free.price_period': '/Monat',
+    'pricing.free.feature_1': 'Ausgaben- und Einnahmenkontrolle',
+    'pricing.free.feature_2': 'Erstellung von bis zu 2 Zielen',
+    'pricing.free.feature_3': 'Vereinfachtes Dashboard',
+    'pricing.free.cta': 'Jetzt starten',
+    'pricing.premium.title': 'Plenus Premium',
+    'pricing.premium.description': 'Um Ihre Errungenschaften zu beschleunigen und den Seelenfrieden zu haben, den Sie verdienen.',
+    'pricing.premium.price': '€19,90',
+    'pricing.premium.price_period': '/Monat',
+    'pricing.premium.feature_1': 'Alles vom kostenlosen Plan',
+    'pricing.premium.feature_2': 'Unbegrenzte Ziele und Budgets',
+    'pricing.premium.feature_3': 'KI-Insights und Berichte',
+    'pricing.premium.feature_4': 'Prioritärer Support',
+    'pricing.premium.cta': 'Ich will Premium',
+
+    // FAQ
+    'faq.title': 'Häufig gestellte Fragen',
+    'faq.subtitle': 'Antworten auf die häufigsten Fragen, die wir erhalten.',
+    'faq.question_1': 'Ist Plenus sicher?',
+    'faq.answer_1': 'Ja! Sicherheit ist unsere oberste Priorität. Alle Ihre Daten werden verschlüsselt und mit den besten Sicherheitspraktiken der Branche gespeichert. Wir teilen Ihre Informationen niemals ohne Ihre Erlaubnis.',
+    'faq.question_2': 'Muss ich mein Bankkonto verbinden?',
+    'faq.answer_2': 'Nein. Derzeit funktioniert Plenus mit der manuellen Eingabe Ihrer Einnahmen und Ausgaben. Das gibt Ihnen vollständige Kontrolle und Privatsphäre über Ihre Finanzinformationen.',
+    'faq.question_3': 'Wie hilft mir der Premium-Plan dabei, meine Träume schneller zu erreichen?',
+    'faq.answer_3': 'Der Premium-Plan bietet erweiterte Tools wie unbegrenzte Ziele und Budgets sowie von künstlicher Intelligenz generierte Berichte und Einblicke. Das gibt Ihnen klarere Sicht und personalisierte Empfehlungen zur Optimierung Ihrer Finanzen und Beschleunigung Ihrer Errungenschaften.',
+    'faq.question_4': 'Kann ich jederzeit kündigen?',
+    'faq.answer_4': 'Auf jeden Fall. Sie können Ihr Premium-Abonnement jederzeit ohne Bürokratie kündigen. Sie haben weiterhin Zugang zu den Premium-Funktionen bis zum Ende der bezahlten Periode.',
+
+    // Footer
+    'footer.copyright': '© 2025 Plenus. Alle Rechte vorbehalten.',
+    'footer.terms': 'Nutzungsbedingungen',
+    'footer.privacy': 'Datenschutzrichtlinie',
 
     // Navigation
     'nav.dashboard': 'Dashboard',
