@@ -1,8 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 const Pricing = () => {
   return (
@@ -34,13 +35,24 @@ const Pricing = () => {
               </Button>
             </CardFooter>
           </Card>
-          <Card className="border-primary shadow-2xl shadow-primary/20">
+          <Card className="border-primary shadow-2xl shadow-primary/20 relative overflow-hidden">
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                <Sparkles className="h-3 w-3 mr-1" />
+                7 dias grátis
+              </Badge>
+            </div>
             <CardHeader>
               <CardTitle>Plenus Premium</CardTitle>
               <CardDescription>Para acelerar suas conquistas e ter a paz de espírito que você merece.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-4xl font-bold">R$19,90<span className="text-lg font-normal text-muted-foreground">/mês</span></div>
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
+                <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
+                  🎉 Teste grátis por 7 dias! Cancele quando quiser.
+                </p>
+              </div>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Tudo do plano Gratuito</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-primary" />Metas e orçamentos ilimitados</li>
@@ -49,8 +61,11 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" asChild>
-                <Link to="/auth">Quero o Premium</Link>
+              <Button className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90" asChild>
+                <Link to="/auth">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Começar Trial Grátis
+                </Link>
               </Button>
             </CardFooter>
           </Card>

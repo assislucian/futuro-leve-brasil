@@ -1,4 +1,3 @@
-
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -18,9 +17,10 @@ import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Target, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { TrialBanner } from "@/components/TrialBanner";
 
 const DashboardPage = () => {
-  const { user } = useAuth();
+  const { user, isTrialing, profile } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
@@ -37,6 +37,18 @@ const DashboardPage = () => {
     if (currentHour < 18) return "☀️";
     return "🌙";
   };
+
+  const getPlanBadge = () => {
+    if (profile?.plan === 'premium') {
+      return { text: 'Premium', variant: 'default' as const };
+    }
+    if (isTrialing) {
+      return { text: 'Trial Premium', variant: 'secondary' as const };
+    }
+    return { text: 'Gratuito', variant: 'secondary' as const };
+  };
+
+  const planBadge = getPlanBadge();
 
   if (isLoadingHasTransactions) {
     return (
@@ -76,6 +88,11 @@ const DashboardPage = () => {
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
+          {/* Trial Banner */}
+          <div className="mb-6">
+            <TrialBanner />
+          </div>
+
           {/* Header */}
           <header className="flex items-start justify-between flex-wrap gap-4 mb-8">
             <div className="space-y-2">
@@ -84,10 +101,10 @@ const DashboardPage = () => {
                   {getGreeting()}, {firstName}! {getGreetingEmoji()}
                 </h1>
                 <Badge 
-                  variant="secondary" 
+                  variant={planBadge.variant}
                   className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
                 >
-                  Gratuito
+                  {planBadge.text}
                 </Badge>
               </div>
               <p className="text-base text-muted-foreground leading-relaxed max-w-xl">

@@ -1,14 +1,17 @@
+
 import React, { useState } from "react";
 import { AddBudgetDialog } from "@/components/AddBudgetDialog";
 import { BudgetList } from "@/components/BudgetList";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Lock, Sparkles } from "lucide-react";
+import { PlusCircle, Lock, Sparkles, Crown } from "lucide-react";
 import { useBudgets } from "@/hooks/useBudgets";
 import { BudgetSummary } from "@/components/BudgetSummary";
 import { BudgetSummaryLoading } from "@/components/BudgetSummaryLoading";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
 
 const PremiumFeatureLock = () => (
   <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-8">
@@ -23,9 +26,11 @@ const PremiumFeatureLock = () => (
           <p className="text-muted-foreground">
             A criação de orçamentos é um recurso exclusivo do plano Premium. Tenha controle total sobre seus gastos, receba alertas inteligentes e acelere a conquista dos seus sonhos.
           </p>
-          <Button className="mt-6 w-full" disabled>
-            <Lock className="mr-2 h-4 w-4" />
-            Fazer Upgrade para Premium
+          <Button asChild className="mt-6 w-full">
+            <Link to="/#pricing">
+              <Crown className="mr-2 h-4 w-4" />
+              Fazer Upgrade para Premium
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -34,6 +39,7 @@ const PremiumFeatureLock = () => (
 
 const BudgetsPageContent = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const { isTrialing } = useAuth();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
@@ -68,12 +74,23 @@ const BudgetsPageContent = () => {
             Defina seus limites de gastos e acompanhe sua saúde financeira.
           </p>
         </div>
-        <AddBudgetDialog>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Novo Orçamento
-          </Button>
-        </AddBudgetDialog>
+        <div className="flex items-center gap-4">
+          {isTrialing && (
+            <Alert className="border-emerald-500/50 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-500 bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-lg max-w-xs">
+              <Crown className="h-4 w-4" />
+              <AlertTitle className="font-semibold text-sm mb-1">Acesso Premium Ativo!</AlertTitle>
+              <AlertDescription className="text-xs">
+                Aproveite orçamentos ilimitados durante seu trial.
+              </AlertDescription>
+            </Alert>
+          )}
+          <AddBudgetDialog>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Novo Orçamento
+            </Button>
+          </AddBudgetDialog>
+        </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
