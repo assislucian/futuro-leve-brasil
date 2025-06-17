@@ -1,4 +1,3 @@
-
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -18,9 +17,10 @@ import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Target, Calculator, Sparkles, Repeat, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { TrialBanner } from "@/components/TrialBanner";
 
 const DashboardPage = () => {
-  const { user } = useAuth();
+  const { user, isTrialing, trialDaysLeft, hasTrialAccess } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
@@ -76,6 +76,11 @@ const DashboardPage = () => {
       <GoalCompletionCelebration />
       <div className="min-h-screen plenus-bg-gradient">
         <div className="plenus-container py-6">
+          {/* Trial Banner Estratégico */}
+          <div className="mb-6">
+            <TrialBanner variant={trialDaysLeft <= 2 ? "urgent" : "dashboard"} />
+          </div>
+
           {/* Header com estilo Plenus */}
           <header className="flex items-start justify-between flex-wrap gap-6 mb-8">
             <div className="space-y-3">
@@ -83,13 +88,16 @@ const DashboardPage = () => {
                 <h1 className="text-3xl md:text-4xl font-semibold plenus-text-gradient leading-tight">
                   {getGreeting()}, {firstName}! {getGreetingEmoji()}
                 </h1>
-                <Badge className="plenus-badge-teal">
+                <Badge className={isTrialing ? "plenus-badge-gold" : "plenus-badge-teal"}>
                   <Sparkles className="h-3 w-3 mr-1" />
-                  Gratuito
+                  {isTrialing ? `Premium Trial (${trialDaysLeft}d)` : "Gratuito"}
                 </Badge>
               </div>
               <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-                Acompanhe seus progressos e continue construindo seus sonhos
+                {isTrialing 
+                  ? `✨ Aproveitando todas as funcionalidades Premium! ${trialDaysLeft <= 2 ? 'Últimos dias para decidir!' : ''}` 
+                  : "Acompanhe seus progressos e continue construindo seus sonhos"
+                }
               </p>
             </div>
             

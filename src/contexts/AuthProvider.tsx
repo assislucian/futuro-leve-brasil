@@ -12,6 +12,9 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isTrialing: boolean;
+  trialDaysLeft: number;
+  isTrialExpired: boolean;
+  hasTrialAccess: boolean;
   error: string | null;
   refreshProfile: () => Promise<void>;
   clearError: () => void;
@@ -37,6 +40,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     error 
   });
 
+  // Calcular status do trial de forma mais precisa
+  const calculateTrialStatus = useCallback(() => {
+    if (!profile?.trial_ends_at) {
+      return {
+        isTrialing: false,
+        trialDaysLeft: 0,
+        isTrialExpired: false,
+        hasTrialAccess: false
+      };
+    }
+
+    const now = new Date();
+    const trialEnd = new Date(profile.trial_ends_at);
+    const timeDiff = trialEnd.getTime() - now.getTime();
+    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    const isTrialing = timeDiff > 0;
+    const isTrialExpired = timeDiff <= 0;
+    const hasTrialAccess = profile.plan === 'premium' || isTrialing;
+
+    return {
+      isTrialing,
+      trialDaysLeft: Math.max(0, daysLeft),
+      isTrialExpired,
+      hasTrialAccess
+    };
+  }, [profile]);
+
+  const trialStatus = calculateTrialStatus();
+
   /**
    * Busca o perfil do usuário com tratamento de erro robusto
    */
@@ -48,7 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .from("profiles")
         .select("*")
         .eq("id", userId)
-        .maybeSingle(); // Usar maybeSingle para evitar erro se não encontrar
+        .maybeSingle();
 
       if (error) {
         console.error("AuthProvider: Erro ao buscar perfil:", error);
@@ -58,12 +91,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (!data) {
         console.warn("AuthProvider: Perfil não encontrado para userId:", userId);
-        // Não é necessariamente um erro - usuário pode não ter perfil ainda
         return null;
       }
 
       console.log("AuthProvider: Perfil carregado com sucesso:", data);
-      setError(null); // Limpar erro anterior se existir
+      setError(null);
       return data;
     } catch (error) {
       console.error("AuthProvider: Erro inesperado ao buscar perfil:", error);
@@ -100,7 +132,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(newSession.user);
         setSession(newSession);
         
-        // Buscar perfil apenas se necessário
         const profileData = await fetchProfile(newSession.user.id);
         setProfile(profileData);
       } else {
@@ -125,14 +156,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         console.log("AuthProvider: Inicializando autenticação");
         
-        // Primeiro, configurar o listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
             console.log("AuthProvider: Evento de auth:", event, "Session:", !!session);
             
             if (!mounted) return;
 
-            // Usar setTimeout para evitar problemas de concorrência
             setTimeout(() => {
               if (mounted) {
                 updateAuthState(session);
@@ -141,7 +170,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }
         );
 
-        // Depois, verificar sessão atual
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -155,7 +183,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           await updateAuthState(session);
         }
 
-        // Retornar função de cleanup
         return () => {
           subscription.unsubscribe();
         };
@@ -175,17 +202,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, [updateAuthState]);
 
-  // Calcular se está em período de trial
-  const isTrialing = profile?.trial_ends_at 
-    ? new Date(profile.trial_ends_at) > new Date() 
-    : false;
-
   const contextValue: AuthContextType = {
     user,
     profile,
     session,
     loading,
-    isTrialing,
+    isTrialing: trialStatus.isTrialing,
+    trialDaysLeft: trialStatus.trialDaysLeft,
+    isTrialExpired: trialStatus.isTrialExpired,
+    hasTrialAccess: trialStatus.hasTrialAccess,
     error,
     refreshProfile,
     clearError,
