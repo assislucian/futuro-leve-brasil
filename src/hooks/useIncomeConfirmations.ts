@@ -70,7 +70,7 @@ export const useConfirmIncome = () => {
             .eq("id", confirmationId)
             .single();
 
-          if (!selectError && confirmation && typeof confirmation === 'object' && 'transaction_id' in confirmation) {
+          if (!selectError && confirmation !== null && typeof confirmation === 'object' && 'transaction_id' in confirmation) {
             const confirmationData = confirmation as { transaction_id: string };
             await supabase
               .from("transactions")
