@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   });
 
   /**
-   * Busca o perfil do usuário com tratamento de erro robusto
+   * Busca o perfil do usuário com tratamento de erro robusto e retry
    */
-  const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
+  const fetchProfile = useCallback(async (userId: string, retryCount = 0): Promise<Profile | null> => {
     try {
       console.log("AuthProvider: Buscando perfil para userId:", userId);
       
@@ -54,6 +54,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .maybeSingle();
 
       if (error) {
+        // Retry uma vez em caso de erro de rede
+        if (retryCount === 0 && error.message.includes('network')) {
+          console.warn("AuthProvider: Tentando novamente buscar perfil devido a erro de rede");
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return fetchProfile(userId, 1);
+        }
+        
         console.error("AuthProvider: Erro ao buscar perfil:", error);
         setError(`Erro ao carregar perfil: ${error.message}`);
         return null;
@@ -61,7 +68,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (!data) {
         console.warn("AuthProvider: Perfil não encontrado para userId:", userId);
-        return null;
+        // Tentar criar perfil automaticamente se não existir
+        const { data: newProfile, error: createError } = await supabase
+          .from("profiles")
+          .insert({
+            id: userId,
+            full_name: user?.user_metadata?.full_name || user?.email || 'Usuário',
+            plan: 'free',
+            trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          })
+          .select()
+          .maybeSingle();
+
+        if (createError) {
+          console.error("AuthProvider: Erro ao criar perfil:", createError);
+          setError("Erro ao criar perfil do usuário");
+          return null;
+        }
+
+        console.log("AuthProvider: Perfil criado automaticamente:", newProfile);
+        setError(null);
+        return newProfile;
       }
 
       console.log("AuthProvider: Perfil carregado com sucesso:", data);
@@ -72,7 +99,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setError("Erro inesperado ao carregar perfil do usuário");
       return null;
     }
-  }, []);
+  }, [user]);
 
   /**
    * Função para atualizar o perfil manualmente
@@ -121,17 +148,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     let mounted = true;
+    let authSubscription: any = null;
 
     const initializeAuth = async () => {
       try {
         console.log("AuthProvider: Inicializando autenticação");
         
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        authSubscription = supabase.auth.onAuthStateChange(
           async (event, session) => {
             console.log("AuthProvider: Evento de auth:", event, "Session:", !!session);
             
             if (!mounted) return;
 
+            // Usar timeout para evitar race conditions
             setTimeout(() => {
               if (mounted) {
                 updateAuthState(session);
@@ -152,10 +181,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (mounted) {
           await updateAuthState(session);
         }
-
-        return () => {
-          subscription.unsubscribe();
-        };
       } catch (error) {
         console.error("AuthProvider: Erro na inicialização:", error);
         if (mounted) {
@@ -169,6 +194,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => {
       mounted = false;
+      if (authSubscription?.data?.subscription) {
+        authSubscription.data.subscription.unsubscribe();
+      }
     };
   }, [updateAuthState]);
 

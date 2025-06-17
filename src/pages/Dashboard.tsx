@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
@@ -40,9 +40,8 @@ const DashboardPage = () => {
     return { text: 'Gratuito', variant: 'secondary' as const, className: 'bg-slate-100 text-slate-600' };
   };
 
-  const planBadge = getPlanBadge();
-
-  if (isLoadingHasTransactions) {
+  // Aguardar tanto auth quanto transações
+  if (authLoading || isLoadingHasTransactions) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
@@ -69,21 +68,23 @@ const DashboardPage = () => {
     return <WelcomeGuide />;
   }
 
+  const planBadge = getPlanBadge();
+
   return (
     <>
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
-          {/* Header Simplificado */}
+          {/* Header Otimizado */}
           <header className="flex items-start justify-between mb-8 bg-card rounded-lg border p-6">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <h1 className="text-2xl font-semibold text-foreground">
                   {getGreeting()}, {firstName}!
                 </h1>
-                <Badge className={cn("text-xs font-medium", planBadge.className)}>
+                <span className={cn("text-xs font-medium px-2 py-1 rounded-full", planBadge.className)}>
                   {planBadge.text}
-                </Badge>
+                </span>
               </div>
               <p className="text-muted-foreground">
                 Acompanhe seus progressos e continue construindo seus objetivos
@@ -126,7 +127,7 @@ const DashboardPage = () => {
             </div>
           </header>
 
-          {/* Layout Principal */}
+          {/* Layout Principal Otimizado */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             {/* Coluna Principal */}
             <div className="xl:col-span-2 space-y-6">
@@ -141,7 +142,7 @@ const DashboardPage = () => {
               </div>
             </div>
             
-            {/* Sidebar com Grid Layout */}
+            {/* Sidebar com Grid Layout Otimizado */}
             <div className="xl:col-span-1">
               <div className="sidebar-cards" style={{
                 display: 'grid',

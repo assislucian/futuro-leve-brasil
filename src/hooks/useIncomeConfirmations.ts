@@ -18,11 +18,24 @@ export const useIncomeConfirmations = () => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["income-confirmations"],
+    queryKey: ["income-confirmations", user?.id],
     queryFn: async (): Promise<IncomeConfirmation[]> => {
       if (!user) return [];
       
       try {
+        // Verificar se a tabela existe primeiro
+        const { data: tableExists } = await supabase
+          .from("information_schema.tables" as any)
+          .select("table_name")
+          .eq("table_schema", "public")
+          .eq("table_name", "income_confirmations")
+          .maybeSingle();
+
+        if (!tableExists) {
+          console.log("Tabela income_confirmations não existe ainda. Funcionalidade será ativada em breve.");
+          return [];
+        }
+
         const { data, error } = await supabase
           .from("income_confirmations" as any)
           .select("*")
@@ -30,15 +43,21 @@ export const useIncomeConfirmations = () => {
           .eq("status", "pending")
           .order("created_at", { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.warn("Erro ao buscar confirmações:", error);
+          return [];
+        }
+
         return (data || []) as unknown as IncomeConfirmation[];
       } catch (error) {
-        console.log("Tabela income_confirmations ainda não existe:", error);
+        console.log("Sistema de confirmações será ativado em breve:", error);
         return [];
       }
     },
     enabled: !!user,
     refetchInterval: 1000 * 60 * 5, // Verificar a cada 5 minutos
+    retry: 1, // Reduzir tentativas para evitar spam de logs
+    retryDelay: 5000, // 5 segundos entre tentativas
   });
 };
 
@@ -48,11 +67,23 @@ export const useConfirmIncome = () => {
 
   return useMutation({
     mutationFn: async ({ confirmationId, confirmed }: { confirmationId: string; confirmed: boolean }) => {
-      if (!user) throw new Error("User not authenticated");
+      if (!user) throw new Error("Usuário não autenticado");
 
       const status = confirmed ? 'confirmed' : 'cancelled';
       
       try {
+        // Verificar se a tabela existe
+        const { data: tableExists } = await supabase
+          .from("information_schema.tables" as any)
+          .select("table_name")
+          .eq("table_schema", "public")
+          .eq("table_name", "income_confirmations")
+          .maybeSingle();
+
+        if (!tableExists) {
+          throw new Error("Sistema de confirmações ainda não está disponível");
+        }
+
         // Atualizar status da confirmação
         const { error: updateError } = await supabase
           .from("income_confirmations" as any)
@@ -68,16 +99,16 @@ export const useConfirmIncome = () => {
             .from("income_confirmations" as any)
             .select("transaction_id")
             .eq("id", confirmationId)
-            .single();
+            .eq("user_id", user.id)
+            .maybeSingle();
 
-          if (!selectError && confirmation !== null) {
-            // More explicit type check and null safety
-            const confirmationData = confirmation as Record<string, any>;
-            if (confirmationData && 'transaction_id' in confirmationData && confirmationData.transaction_id) {
+          if (!selectError && confirmation) {
+            const transactionId = (confirmation as any)?.transaction_id;
+            if (transactionId) {
               await supabase
                 .from("transactions")
                 .delete()
-                .eq("id", confirmationData.transaction_id)
+                .eq("id", transactionId)
                 .eq("user_id", user.id);
             }
           }
@@ -85,7 +116,7 @@ export const useConfirmIncome = () => {
 
         return { confirmed, status };
       } catch (error) {
-        console.log("Erro ao processar confirmação:", error);
+        console.error("Erro ao processar confirmação:", error);
         throw error;
       }
     },
@@ -93,6 +124,7 @@ export const useConfirmIncome = () => {
       queryClient.invalidateQueries({ queryKey: ["income-confirmations"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
+      queryClient.invalidateQueries({ queryKey: ["financialSummary"] });
       
       if (data.confirmed) {
         toast.success("✅ Receita confirmada!", {
@@ -105,7 +137,13 @@ export const useConfirmIncome = () => {
       }
     },
     onError: (error: any) => {
-      toast.error(`Erro ao processar confirmação: ${error.message}`);
+      if (error.message.includes("ainda não está disponível")) {
+        toast.info("🔧 Funcionalidade em breve", {
+          description: "O sistema de confirmações será ativado em breve!"
+        });
+      } else {
+        toast.error(`Erro ao processar confirmação: ${error.message}`);
+      }
     },
   });
 };
