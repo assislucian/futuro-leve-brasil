@@ -1,5 +1,5 @@
 
-import { BarChart3, Target, Wallet, TrendingUp, LogOut, Home, PlusCircle } from "lucide-react";
+import { BarChart3, Target, Wallet, TrendingUp, LogOut, Home, PlusCircle, Calculator } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import {
@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
+import { Link } from "react-router-dom";
 
 const mainItems = [
   { title: "Visão Geral", url: "/dashboard", icon: Home },
@@ -102,7 +103,8 @@ export default function AppSidebar() {
                 Ações Rápidas
               </SidebarGroupLabel>
               <SidebarGroupContent>
-                <div className="px-3 py-2">
+                <div className="px-3 py-2 space-y-2">
+                  {/* Nova Transação */}
                   <AddTransactionDialog>
                     <Button 
                       size="sm" 
@@ -112,6 +114,32 @@ export default function AppSidebar() {
                       Nova Transação
                     </Button>
                   </AddTransactionDialog>
+
+                  {/* Nova Meta */}
+                  <Button 
+                    asChild
+                    size="sm" 
+                    variant="outline"
+                    className="w-full border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200"
+                  >
+                    <Link to="/goals">
+                      <Target className="h-4 w-4 mr-2 text-emerald-600" />
+                      Nova Meta
+                    </Link>
+                  </Button>
+
+                  {/* Novo Orçamento */}
+                  <Button 
+                    asChild
+                    size="sm" 
+                    variant="outline"
+                    className="w-full border-orange-200 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
+                  >
+                    <Link to="/budgets">
+                      <Calculator className="h-4 w-4 mr-2 text-orange-600" />
+                      Orçamento
+                    </Link>
+                  </Button>
                 </div>
               </SidebarGroupContent>
             </SidebarGroup>

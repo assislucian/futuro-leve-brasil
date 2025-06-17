@@ -15,9 +15,8 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Target, Calculator } from "lucide-react";
+import { PlusCircle, RotateCcw, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { TrialBanner } from "@/components/TrialBanner";
 
 const DashboardPage = () => {
@@ -113,7 +112,7 @@ const DashboardPage = () => {
               </p>
             </div>
             
-            {/* Ações Rápidas Funcionais */}
+            {/* Ações Rápidas de Transações */}
             <div className="flex items-center gap-2 flex-wrap">
               {/* Nova Transação - Dialog Funcional */}
               <AddTransactionDialog>
@@ -126,37 +125,29 @@ const DashboardPage = () => {
                 </Button>
               </AddTransactionDialog>
 
-              {/* Nova Meta - Link para Página de Metas */}
-              <Button 
-                asChild
-                size="sm" 
-                variant="outline"
-                className="h-9 gap-2 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200"
-              >
-                <Link to="/goals">
-                  <Target className="h-4 w-4 text-emerald-600" />
-                  <span className="hidden sm:inline">Nova Meta</span>
-                </Link>
-              </Button>
-
               {/* Transação Recorrente - Dialog Funcional */}
-              <AddRecurringTransactionDialog />
+              <AddRecurringTransactionDialog>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="h-9 gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
+                >
+                  <RotateCcw className="h-4 w-4 text-blue-600" />
+                  <span className="hidden sm:inline">Recorrente</span>
+                </Button>
+              </AddRecurringTransactionDialog>
 
               {/* Parcelamento - Dialog Funcional */}
-              <AddInstallmentPlanDialog />
-
-              {/* Novo Orçamento - Link para Página de Orçamentos */}
-              <Button 
-                asChild
-                size="sm" 
-                variant="outline"
-                className="h-9 gap-2 border-orange-200 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
-              >
-                <Link to="/budgets">
-                  <Calculator className="h-4 w-4 text-orange-600" />
-                  <span className="hidden sm:inline">Orçamento</span>
-                </Link>
-              </Button>
+              <AddInstallmentPlanDialog>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="h-9 gap-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
+                >
+                  <CreditCard className="h-4 w-4 text-purple-600" />
+                  <span className="hidden sm:inline">Parcelas</span>
+                </Button>
+              </AddInstallmentPlanDialog>
             </div>
           </header>
 
