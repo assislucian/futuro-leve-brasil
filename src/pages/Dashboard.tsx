@@ -15,7 +15,7 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Target, Calculator, Sparkles } from "lucide-react";
+import { PlusCircle, Target, Calculator, Sparkles, Repeat, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -93,7 +93,7 @@ const DashboardPage = () => {
               </p>
             </div>
             
-            {/* Ações Rápidas com estilo Plenus */}
+            {/* Ações Rápidas com estilo Plenus - CORRIGIDAS */}
             <div className="flex items-center plenus-gap flex-wrap">
               {/* Nova Transação - Botão Principal */}
               <AddTransactionDialog>
@@ -114,11 +114,21 @@ const DashboardPage = () => {
                 </Link>
               </Button>
 
-              {/* Transação Recorrente */}
-              <AddRecurringTransactionDialog />
+              {/* Transação Recorrente - CORRIGIDO */}
+              <AddRecurringTransactionDialog>
+                <Button className="plenus-btn-outline-blue h-10 px-4 rounded-xl plenus-hover-lift">
+                  <Repeat className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Recorrente</span>
+                </Button>
+              </AddRecurringTransactionDialog>
 
-              {/* Parcelamento */}
-              <AddInstallmentPlanDialog />
+              {/* Parcelamento - CORRIGIDO */}
+              <AddInstallmentPlanDialog>
+                <Button className="plenus-btn-outline-purple h-10 px-4 rounded-xl plenus-hover-lift">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Parcelas</span>
+                </Button>
+              </AddInstallmentPlanDialog>
 
               {/* Novo Orçamento */}
               <Button 
