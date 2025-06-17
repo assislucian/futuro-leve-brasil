@@ -1,5 +1,5 @@
 
-import { Target, Wallet, TrendingUp, LogOut, Home, PlusCircle, Zap } from "lucide-react";
+import { Target, Wallet, TrendingUp, LogOut, Home, Zap } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import {
@@ -20,9 +20,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { AddTransactionDialog } from "@/components/AddTransactionDialog";
-import { AddRecurringTransactionDialog } from "@/components/AddRecurringTransactionDialog";
-import { AddInstallmentPlanDialog } from "@/components/AddInstallmentPlanDialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -142,48 +139,25 @@ export default function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {!isCollapsed && (
+        {!isCollapsed && !isPremium && (
           <>
             <Separator className="my-4" />
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-3 mb-3">
-                Ações Estratégicas
-              </SidebarGroupLabel>
               <SidebarGroupContent>
-                <div className="px-3 space-y-3">
-                  {/* Ação Principal */}
-                  <AddTransactionDialog>
-                    <Button 
-                      size="sm" 
-                      className="w-full h-10 bg-emerald-500 hover:bg-emerald-600 text-white font-medium"
-                    >
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      Nova Transação
-                    </Button>
-                  </AddTransactionDialog>
-
-                  {/* Ações Secundárias Integradas */}
-                  <div className="space-y-2">
-                    <AddRecurringTransactionDialog />
-                    <AddInstallmentPlanDialog />
-                  </div>
-
-                  {/* Upgrade Premium Discreto */}
-                  {!isPremium && (
-                    <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border">
-                      <div className="text-center space-y-2">
-                        <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                          Desbloqueie Recursos Premium
-                        </p>
-                        <Button 
-                          size="sm" 
-                          className="w-full h-8 bg-emerald-500 hover:bg-emerald-600 text-white text-xs"
-                        >
-                          Upgrade
-                        </Button>
-                      </div>
+                <div className="px-3">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border">
+                    <div className="text-center space-y-2">
+                      <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                        Desbloqueie Recursos Premium
+                      </p>
+                      <Button 
+                        size="sm" 
+                        className="w-full h-8 bg-emerald-500 hover:bg-emerald-600 text-white text-xs"
+                      >
+                        Upgrade
+                      </Button>
                     </div>
-                  )}
+                  </div>
                 </div>
               </SidebarGroupContent>
             </SidebarGroup>

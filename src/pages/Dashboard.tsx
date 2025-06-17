@@ -12,7 +12,7 @@ import { NextActionCard } from "@/components/NextActionCard";
 import { GoalCompletionCelebration } from "@/components/GoalCompletionCelebration";
 import { useHasTransactions } from "@/hooks/useHasTransactions";
 import { WelcomeGuide } from "@/components/WelcomeGuide";
-import { AdvancedInsightsCard } from "@/components/insights/AdvancedInsightsCard";
+import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Target, TrendingUp } from "lucide-react";
@@ -90,7 +90,7 @@ const DashboardPage = () => {
               </p>
             </div>
             
-            {/* Ações Estratégicas Centralizadas */}
+            {/* Ações Centralizadas */}
             <div className="flex flex-col gap-3">
               <div className="text-xs font-medium text-muted-foreground uppercase">
                 Ações Rápidas
@@ -130,9 +130,6 @@ const DashboardPage = () => {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             {/* Coluna Principal */}
             <div className="xl:col-span-2 space-y-6">
-              {/* Insights Premium */}
-              <AdvancedInsightsCard />
-              
               {/* Resumo Financeiro */}
               <div className="bg-card rounded-lg border">
                 <FinancialSummary />
@@ -146,6 +143,7 @@ const DashboardPage = () => {
             
             {/* Sidebar */}
             <div className="xl:col-span-1 space-y-6">
+              <SmartInsightsCard />
               <NextActionCard />
               <GoalsSummary />
               <BudgetsSummary />
