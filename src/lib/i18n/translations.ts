@@ -1,4 +1,3 @@
-
 import type { Language } from '@/types/language';
 
 export const translations: Record<Language, Record<string, string>> = {
@@ -78,21 +77,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'nav.pricing': 'Preços',
     'nav.faq': 'Dúvidas',
 
-    
     // Dashboard
     'dashboard.greeting.morning': 'Bom dia',
     'dashboard.greeting.afternoon': 'Boa tarde',
     'dashboard.greeting.evening': 'Boa noite',
     'dashboard.subtitle': 'Acompanhe seus progressos e continue construindo seus sonhos',
     'dashboard.plan.free': 'Gratuito',
-    
+
     // Financial Summary
     'financial.summary.title': 'Resumo Financeiro',
     'financial.summary.total_balance': 'Saldo Total',
     'financial.summary.monthly_income': 'Receita Mensal',
     'financial.summary.monthly_expenses': 'Gastos Mensais',
     'financial.summary.savings': 'Poupança',
-    
+
     // Transactions
     'transactions.title': 'Transações Recentes',
     'transactions.subtitle': 'Aqui estão as últimas movimentações da sua conta.',
@@ -106,14 +104,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'transactions.empty.title': 'Comece sua Jornada Financeira!',
     'transactions.empty.subtitle': 'Ainda não há transações registradas. Que tal adicionar sua primeira receita ou despesa?\nCada passo conta para seus sonhos! ✨',
     'transactions.empty.button': 'Adicionar Primeira Transação',
-    
+
     // Goals
     'goals.title': 'Suas Metas Financeiras 🎯',
     'goals.subtitle': 'Conecte seu dinheiro com seus sonhos. Acompanhe aqui seu progresso.',
     'goals.upgrade.title': 'Acelere Seus Sonhos!',
     'goals.upgrade.description': 'O plano gratuito permite 2 metas. Faça upgrade para metas ilimitadas.',
     'goals.upgrade.link': 'Fazer Upgrade',
-    
+
     // Budgets
     'budgets.title': 'Meus Orçamentos',
     'budgets.subtitle': 'Defina seus limites de gastos e acompanhe sua saúde financeira.',
@@ -131,7 +129,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'budgets.premium.title': 'Desbloqueie o Poder dos Orçamentos',
     'budgets.premium.description': 'A criação de orçamentos é um recurso exclusivo do plano Premium. Tenha controle total sobre seus gastos, receba alertas inteligentes e acelere a conquista dos seus sonhos.',
     'budgets.premium.button': 'Fazer Upgrade para Premium',
-    
+
     // Settings
     'settings.title': 'Configurações',
     'settings.subtitle': 'Gerencie suas configurações de conta e perfil.',
@@ -140,7 +138,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.theme': 'Tema do App',
     'settings.danger': 'Zona de Perigo',
     'settings.danger.description': 'As ações abaixo são destrutivas e não podem ser desfeitas. Seja cuidadoso antes de prosseguir.',
-    
+
     // Smart Insights
     'insights.title': 'Insights Inteligentes',
     'insights.subtitle': '🚀 Nossa IA descobriu oportunidades para acelerar seus sonhos!',
@@ -150,14 +148,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'insights.priority.important': '⚡ Importante',
     'insights.priority.tip': '💡 Dica',
     'insights.view_all': 'Ver Todos os Insights ({count})',
-    
+
     // Next Action
     'next_action.title': 'Próxima Ação',
     'next_action.subtitle': 'Recomendação personalizada',
     'next_action.priority.urgent': 'Urgente',
     'next_action.priority.opportunity': 'Oportunidade',
     'next_action.priority.suggestion': 'Sugestão',
-    
+
     // Auth
     'auth.login': 'Entrar',
     'auth.signup': 'Criar Conta',
@@ -177,7 +175,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.forgot_password.remembered': 'Lembrou da senha?',
     'auth.reset_link': 'Enviar Link de Redefinição',
     'auth.back_to_login': 'Voltar ao Login',
-    
+
     // Auth Login Messages
     'auth.login.many_attempts': 'Muitas tentativas incorretas. Verifique suas credenciais ou redefina sua senha.',
     'auth.login.invalid_credentials': 'Email ou senha incorretos. Verifique e tente novamente.',
@@ -192,7 +190,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.login.help_text': 'Problemas para acessar? Tente',
     'auth.login.reset_password': 'redefinir sua senha',
     'auth.login.contact_support': 'ou entre em contato conosco se precisar de ajuda.',
-    
+
     // Auth Signup
     'auth.signup.full_name': 'Nome Completo',
     'auth.signup.full_name_placeholder': 'Digite seu nome completo',
@@ -209,7 +207,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.signup.creating': 'Criando conta...',
     'auth.signup.create_account': 'Criar Conta Gratuita',
     'auth.signup.free_trial_text': 'Ao criar sua conta, você terá acesso a 7 dias gratuitos de todas as funcionalidades Premium.',
-    
+
     // Auth Update Password
     'auth.update_password.title': 'Criar Nova Senha',
     'auth.update_password.subtitle': 'Digite sua nova senha para proteger sua conta.',
@@ -221,11 +219,11 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.update_password.update': 'Atualizar Senha',
     'auth.update_password.success': 'Senha atualizada com sucesso!',
     'auth.update_password.invalid_link': 'Link inválido ou expirado',
-    
+
     // Language Selector
     'language.choose': 'Escolher idioma',
     'language.more_coming': 'Mais idiomas em breve!',
-    
+
     // Validation
     'validation.required': 'Este campo é obrigatório',
     'validation.email.invalid': 'Por favor, insira um email válido',
@@ -233,7 +231,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'validation.password.mismatch': 'As senhas não coincidem',
     'validation.number.min': 'O valor deve ser pelo menos {min}',
     'validation.number.max': 'O valor deve ser no máximo {max}',
-    
+
     // Time relative
     'time.now': 'agora',
     'time.minute_ago': 'há um minuto',
@@ -248,7 +246,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'time.months_ago': 'há {count} meses',
     'time.year_ago': 'há um ano',
     'time.years_ago': 'há {count} anos',
-    
+
     // Plurals
     'item.count': '{count} item',
     'items.count': '{count} itens',
@@ -256,7 +254,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'goals.count': '{count} metas',
     'transaction.count': '{count} transação',
     'transactions.count': '{count} transações',
-    
+
     // Common
     'common.loading': 'Carregando...',
     'common.error': 'Erro',
@@ -270,7 +268,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.confirm': 'Confirmar',
     'common.previous': 'Anterior',
     'common.next': 'Próximo',
-    
+    'common.user': 'Usuário',
+
     // Analytics
     'analytics.title': '📊 Análise Financeira',
     'analytics.subtitle': 'Análise inteligente dos seus gastos e padrões financeiros',
@@ -280,6 +279,54 @@ export const translations: Record<Language, Record<string, string>> = {
     'analytics.unplanned': 'Não Planejados',
     'analytics.period': 'No período selecionado',
     'analytics.of_total': 'do total',
+
+    // Sidebar
+    'sidebar.main_navigation': 'Navegação Principal',
+    'sidebar.quick_actions': 'Ações Rápidas',
+    'sidebar.new_transaction': 'Nova Transação',
+    'sidebar.leave_account': 'Sair da Conta',
+    'sidebar.toggle': 'Alternar Sidebar',
+    'sidebar.overview': 'Visão Geral',
+    'sidebar.goals': 'Metas',
+    'sidebar.budgets': 'Orçamentos',
+    'sidebar.reports': 'Relatórios',
+
+    // Transaction buttons
+    'transaction.recurring': 'Recorrente',
+    'transaction.installments': 'Parcelas',
+    'transaction.new': 'Nova Transação',
+
+    // Smart Insights content
+    'insights.savings_food': 'Economia em Alimentação!',
+    'insights.savings_leisure': 'Economia em Lazer!',
+    'insights.budget_exceeded': 'Orçamento ultrapassado!',
+    'insights.savings_message': 'Você economizou {amount} este mês. Que tal acelerar seu sonho "{goal}"?',
+    'insights.budget_exceeded_message': 'Você gastou {amount} além do planejado em {category}.',
+    'insights.contribute_goal': 'Contribuir para Meta',
+    'insights.adjust_budget': 'Ajustar Orçamento',
+    'insights.great_savings': 'Ótima economia em {category}!',
+    'insights.great_savings_message': 'Você economizou {amount}. Que tal usar esse valor para acelerar seu sonho "{goal}"?',
+    'insights.accelerate_dream': 'Acelerar meu Sonho',
+
+    // Goals Summary
+    'goals.your_dreams': 'Seus Sonhos',
+    'goals.dreams_in_progress': '{count} sonhos em andamento',
+    'goals.active_goals': '{count} ativas',
+    'goals.total_saved': 'Total já guardado para seus sonhos',
+    'goals.congratulations': 'Parabéns!',
+    'goals.building_future': 'Você está construindo seu futuro financeiro! Cada real economizado é um passo mais perto dos seus sonhos. 🚀',
+    'goals.view_my_goals': 'Ver Minhas Metas',
+
+    // Budgets Summary
+    'budgets.your_budgets': 'Seus Orçamentos',
+    'budgets.spending_overview': 'Visão geral do seu plano de gastos.',
+    'budgets.total_spent': 'Gastos Totais',
+    'budgets.of': 'de',
+    'budgets.exceeded': 'ultrapassado',
+    'budgets.manage_budgets': 'Gerenciar Orçamentos',
+
+    // Theme toggle
+    'theme.toggle': 'Alternar tema',
   },
   de: {
     // Hero
@@ -357,21 +404,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'nav.pricing': 'Preise',
     'nav.faq': 'FAQ',
 
-    
     // Dashboard
     'dashboard.greeting.morning': 'Guten Morgen',
     'dashboard.greeting.afternoon': 'Guten Tag',
     'dashboard.greeting.evening': 'Guten Abend',
     'dashboard.subtitle': 'Verfolgen Sie Ihre Fortschritte und verwirklichen Sie weiterhin Ihre Träume',
     'dashboard.plan.free': 'Kostenlos',
-    
+
     // Financial Summary
     'financial.summary.title': 'Finanzübersicht',
     'financial.summary.total_balance': 'Gesamtsaldo',
     'financial.summary.monthly_income': 'Monatliches Einkommen',
     'financial.summary.monthly_expenses': 'Monatliche Ausgaben',
     'financial.summary.savings': 'Ersparnisse',
-    
+
     // Transactions
     'transactions.title': 'Aktuelle Transaktionen',
     'transactions.subtitle': 'Hier sind Ihre letzten Kontobewegungen.',
@@ -385,14 +431,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'transactions.empty.title': 'Beginnen Sie Ihre Finanzreise!',
     'transactions.empty.subtitle': 'Es sind noch keine Transaktionen registriert. Wie wäre es mit Ihrer ersten Einnahme oder Ausgabe?\nJeder Schritt zählt für Ihre Träume! ✨',
     'transactions.empty.button': 'Erste Transaktion hinzufügen',
-    
+
     // Goals
     'goals.title': 'Ihre Finanzziele 🎯',
     'goals.subtitle': 'Verbinden Sie Ihr Geld mit Ihren Träumen. Verfolgen Sie hier Ihren Fortschritt.',
     'goals.upgrade.title': 'Beschleunigen Sie Ihre Träume!',
     'goals.upgrade.description': 'Der kostenlose Plan erlaubt 2 Ziele. Upgraden Sie für unbegrenzte Ziele.',
     'goals.upgrade.link': 'Upgrade',
-    
+
     // Budgets
     'budgets.title': 'Meine Budgets',
     'budgets.subtitle': 'Definieren Sie Ihre Ausgabengrenzen und überwachen Sie Ihre finanzielle Gesundheit.',
@@ -410,7 +456,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'budgets.premium.title': 'Entfesseln Sie die Macht der Budgets',
     'budgets.premium.description': 'Die Budgeterstellung ist eine exklusive Funktion des Premium-Plans. Haben Sie vollständige Kontrolle über Ihre Ausgaben, erhalten Sie intelligente Warnungen und beschleunigen Sie die Verwirklichung Ihrer Träume.',
     'budgets.premium.button': 'Auf Premium upgraden',
-    
+
     // Settings
     'settings.title': 'Einstellungen',
     'settings.subtitle': 'Verwalten Sie Ihre Kontoeinstellungen und Ihr Profil.',
@@ -419,7 +465,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.theme': 'App-Design',
     'settings.danger': 'Gefahrenbereich',
     'settings.danger.description': 'Die unten stehenden Aktionen sind destruktiv und können nicht rückgängig gemacht werden. Bitte seien Sie vorsichtig, bevor Sie fortfahren.',
-    
+
     // Smart Insights
     'insights.title': 'Intelligente Einblicke',
     'insights.subtitle': '🚀 Unsere KI hat Möglichkeiten entdeckt, Ihre Träume zu beschleunigen!',
@@ -429,14 +475,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'insights.priority.important': '⚡ Wichtig',
     'insights.priority.tip': '💡 Tipp',
     'insights.view_all': 'Alle Einblicke anzeigen ({count})',
-    
+
     // Next Action
     'next_action.title': 'Nächste Aktion',
     'next_action.subtitle': 'Personalisierte Empfehlung',
     'next_action.priority.urgent': 'Dringend',
     'next_action.priority.opportunity': 'Chance',
     'next_action.priority.suggestion': 'Vorschlag',
-    
+
     // Auth
     'auth.login': 'Anmelden',
     'auth.signup': 'Konto erstellen',
@@ -456,7 +502,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.forgot_password.remembered': 'Passwort wieder eingefallen?',
     'auth.reset_link': 'Zurücksetzungslink senden',
     'auth.back_to_login': 'Zurück zur Anmeldung',
-    
+
     // Auth Login Messages
     'auth.login.many_attempts': 'Zu viele falsche Versuche. Überprüfen Sie Ihre Anmeldedaten oder setzen Sie Ihr Passwort zurück.',
     'auth.login.invalid_credentials': 'E-Mail oder Passwort falsch. Überprüfen Sie und versuchen Sie es erneut.',
@@ -471,7 +517,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.login.help_text': 'Probleme beim Zugriff? Versuchen Sie',
     'auth.login.reset_password': 'Ihr Passwort zurückzusetzen',
     'auth.login.contact_support': 'oder kontaktieren Sie uns, wenn Sie Hilfe benötigen.',
-    
+
     // Auth Signup
     'auth.signup.full_name': 'Vollständiger Name',
     'auth.signup.full_name_placeholder': 'Geben Sie Ihren vollständigen Namen ein',
@@ -488,7 +534,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.signup.creating': 'Konto wird erstellt...',
     'auth.signup.create_account': 'Kostenloses Konto erstellen',
     'auth.signup.free_trial_text': 'Durch die Erstellung Ihres Kontos erhalten Sie 7 Tage kostenlosen Zugang zu allen Premium-Funktionen.',
-    
+
     // Auth Update Password
     'auth.update_password.title': 'Neues Passwort erstellen',
     'auth.update_password.subtitle': 'Geben Sie Ihr neues Passwort ein, um Ihr Konto zu sichern.',
@@ -500,11 +546,11 @@ export const translations: Record<Language, Record<string, string>> = {
     'auth.update_password.update': 'Passwort aktualisieren',
     'auth.update_password.success': 'Passwort erfolgreich aktualisiert!',
     'auth.update_password.invalid_link': 'Ungültiger oder abgelaufener Link',
-    
+
     // Language Selector
     'language.choose': 'Sprache wählen',
     'language.more_coming': 'Weitere Sprachen folgen!',
-    
+
     // Validation
     'validation.required': 'Dieses Feld ist erforderlich',
     'validation.email.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
@@ -512,7 +558,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'validation.password.mismatch': 'Die Passwörter stimmen nicht überein',
     'validation.number.min': 'Der Wert muss mindestens {min} sein',
     'validation.number.max': 'Der Wert darf höchstens {max} sein',
-    
+
     // Time relative
     'time.now': 'jetzt',
     'time.minute_ago': 'vor einer Minute',
@@ -527,7 +573,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'time.months_ago': 'vor {count} Monaten',
     'time.year_ago': 'vor einem Jahr',
     'time.years_ago': 'vor {count} Jahren',
-    
+
     // Plurals
     'item.count': '{count} Element',
     'items.count': '{count} Elemente',
@@ -535,7 +581,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'goals.count': '{count} Ziele',
     'transaction.count': '{count} Transaktion',
     'transactions.count': '{count} Transaktionen',
-    
+
     // Common
     'common.loading': 'Lädt...',
     'common.error': 'Fehler',
@@ -549,7 +595,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.confirm': 'Bestätigen',
     'common.previous': 'Vorherige',
     'common.next': 'Nächste',
-    
+    'common.user': 'Benutzer',
+
     // Analytics
     'analytics.title': '📊 Finanz-Analytics',
     'analytics.subtitle': 'Intelligente Analyse Ihrer Ausgaben und finanziellen Muster',
@@ -559,5 +606,53 @@ export const translations: Record<Language, Record<string, string>> = {
     'analytics.unplanned': 'Ungeplant',
     'analytics.period': 'Im ausgewählten Zeitraum',
     'analytics.of_total': 'der Gesamtsumme',
+
+    // Sidebar
+    'sidebar.main_navigation': 'Hauptnavigation',
+    'sidebar.quick_actions': 'Schnellaktionen',
+    'sidebar.new_transaction': 'Neue Transaktion',
+    'sidebar.leave_account': 'Konto verlassen',
+    'sidebar.toggle': 'Sidebar umschalten',
+    'sidebar.overview': 'Übersicht',
+    'sidebar.goals': 'Ziele',
+    'sidebar.budgets': 'Budgets',
+    'sidebar.reports': 'Berichte',
+
+    // Transaction buttons
+    'transaction.recurring': 'Wiederkehrend',
+    'transaction.installments': 'Ratenzahlung',
+    'transaction.new': 'Neue Transaktion',
+
+    // Smart Insights content
+    'insights.savings_food': 'Ersparnis bei Lebensmitteln!',
+    'insights.savings_leisure': 'Ersparnis bei Freizeit!',
+    'insights.budget_exceeded': 'Budget überschritten!',
+    'insights.savings_message': 'Sie haben {amount} diesen Monat gespart. Wie wäre es, Ihren Traum "{goal}" zu beschleunigen?',
+    'insights.budget_exceeded_message': 'Sie haben {amount} mehr als geplant für {category} ausgegeben.',
+    'insights.contribute_goal': 'Zu Ziel beitragen',
+    'insights.adjust_budget': 'Budget anpassen',
+    'insights.great_savings': 'Großartige Ersparnis bei {category}!',
+    'insights.great_savings_message': 'Sie haben {amount} gespart. Wie wäre es, diesen Betrag zu verwenden, um Ihren Traum "{goal}" zu beschleunigen?',
+    'insights.accelerate_dream': 'Meinen Traum beschleunigen',
+
+    // Goals Summary
+    'goals.your_dreams': 'Ihre Träume',
+    'goals.dreams_in_progress': '{count} Träume in Bearbeitung',
+    'goals.active_goals': '{count} aktive',
+    'goals.total_saved': 'Gesamtsumme für Ihre Träume gespart',
+    'goals.congratulations': 'Herzlichen Glückwunsch!',
+    'goals.building_future': 'Sie bauen Ihre finanzielle Zukunft auf! Jeder gesparte Euro bringt Sie Ihren Träumen näher. 🚀',
+    'goals.view_my_goals': 'Meine Ziele anzeigen',
+
+    // Budgets Summary
+    'budgets.your_budgets': 'Ihre Budgets',
+    'budgets.spending_overview': 'Übersicht Ihres Ausgabenplans.',
+    'budgets.total_spent': 'Gesamtausgaben',
+    'budgets.of': 'von',
+    'budgets.exceeded': 'überschritten',
+    'budgets.manage_budgets': 'Budgets verwalten',
+
+    // Theme toggle
+    'theme.toggle': 'Design umschalten',
   }
 };
