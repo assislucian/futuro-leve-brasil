@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -27,9 +26,20 @@ export function DemoDataPopulator() {
       // Deletar em ordem para respeitar foreign keys
       await supabase.from('goal_contributions').delete().eq('user_id', user.id);
       await supabase.from('goals').delete().eq('user_id', user.id);
-      await supabase.from('installment_payments').delete().eq('installment_plan_id', 
-        (await supabase.from('installment_plans').select('id').eq('user_id', user.id)).data?.map(p => p.id) || []
-      );
+      
+      // Buscar IDs dos planos de parcelamento para deletar pagamentos
+      const { data: installmentPlans } = await supabase
+        .from('installment_plans')
+        .select('id')
+        .eq('user_id', user.id);
+      
+      if (installmentPlans && installmentPlans.length > 0) {
+        const planIds = installmentPlans.map(p => p.id);
+        for (const planId of planIds) {
+          await supabase.from('installment_payments').delete().eq('installment_plan_id', planId);
+        }
+      }
+      
       await supabase.from('installment_plans').delete().eq('user_id', user.id);
       await supabase.from('recurring_transactions').delete().eq('user_id', user.id);
       await supabase.from('budgets').delete().eq('user_id', user.id);
@@ -83,8 +93,7 @@ export function DemoDataPopulator() {
       const goals = [
         { name: 'Reserva de Emergência', target_amount: 20000.00, target_date: '2025-12-31' },
         { name: 'Viagem para Europa', target_amount: 15000.00, target_date: '2025-11-30' },
-        { name: 'Entrada do Apartamento', target_amount: 50000.00, target_date: '2026-06-30' },
-        { name: 'Curso de Especialização', target_amount: 3500.00, target_date: '2025-08-15' }
+        { name: 'Entrada do Apartamento', target_amount: 50000.00, target_date: '2026-06-30' }
       ];
 
       const { data: goalsData, error: goalsError } = await supabase
@@ -136,15 +145,6 @@ export function DemoDataPopulator() {
             { goal_id: apartamentoGoal.id, amount: 2500.00, date: '2025-05-15' },
             { goal_id: apartamentoGoal.id, amount: 3000.00, date: '2025-06-01' },
             { goal_id: apartamentoGoal.id, amount: 3500.00, date: '2025-06-10' }
-          );
-        }
-
-        // Curso de Especialização - 85.7% do valor alvo (próximo mas não completo)
-        const cursoGoal = goalsData.find(g => g.name === 'Curso de Especialização');
-        if (cursoGoal) {
-          contributions.push(
-            { goal_id: cursoGoal.id, amount: 1500.00, date: '2025-05-01' },
-            { goal_id: cursoGoal.id, amount: 1500.00, date: '2025-05-20' }
           );
         }
 

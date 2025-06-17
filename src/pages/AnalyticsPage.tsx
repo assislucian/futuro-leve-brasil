@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, TrendingUp, TrendingDown, DollarSign, Target } from "lucide-react";
+import { AlertCircle, TrendingUp, TrendingDown, DollarSign, Target, Brain } from "lucide-react";
 import { useExpenseAnalytics, useCategoryBreakdown, useMonthlyTrends } from "@/hooks/useExpenseAnalytics";
 import { ExpenseClassificationChart } from "@/components/analytics/ExpenseClassificationChart";
 import { PlanningStatusChart } from "@/components/analytics/PlanningStatusChart";
 import { MonthlyTrendsChart } from "@/components/analytics/MonthlyTrendsChart";
 import { CategoryBreakdownTable } from "@/components/analytics/CategoryBreakdownTable";
+import { IntelligentInsightsCard } from "@/components/analytics/IntelligentInsightsCard";
 
 const AnalyticsPage = () => {
   const currentDate = new Date();
@@ -61,8 +62,11 @@ const AnalyticsPage = () => {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">📊 Analytics Financeiro</h1>
-          <p className="text-muted-foreground">Análise inteligente dos seus gastos e padrões financeiros</p>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <Brain className="h-8 w-8 text-purple-600" />
+            Analytics Inteligente
+          </h1>
+          <p className="text-muted-foreground">Insights que transformam dados em oportunidades de crescimento</p>
         </div>
         <div className="flex gap-4">
           <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
@@ -92,6 +96,11 @@ const AnalyticsPage = () => {
         </div>
       </div>
 
+      {/* Insights Inteligentes - Destaque principal */}
+      <div className="mb-8">
+        <IntelligentInsightsCard />
+      </div>
+
       {/* Cards de Resumo */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {analyticsLoading ? (
@@ -108,7 +117,7 @@ const AnalyticsPage = () => {
           ))
         ) : analytics && (
           <>
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total de Gastos</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -119,7 +128,7 @@ const AnalyticsPage = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Gastos Fixos</CardTitle>
                 <TrendingUp className="h-4 w-4 text-red-500" />
@@ -130,7 +139,7 @@ const AnalyticsPage = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Gastos Variáveis</CardTitle>
                 <TrendingDown className="h-4 w-4 text-blue-500" />
@@ -141,7 +150,7 @@ const AnalyticsPage = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Não Planejados</CardTitle>
                 <Target className="h-4 w-4 text-amber-500" />
