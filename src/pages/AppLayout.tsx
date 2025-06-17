@@ -1,3 +1,4 @@
+
 import { Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -5,7 +6,37 @@ import AppSidebar from "@/components/AppSidebar";
 import AppHeader from "@/components/AppHeader";
 import { Sparkles } from "lucide-react";
 import { IncomeConfirmationToast } from "@/components/IncomeConfirmationToast";
-import { SidebarInset, SidebarTrigger, Separator, Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, UserNav, TrialBanner } from "@/components/ui";
+import { 
+  SidebarInset, 
+  SidebarTrigger, 
+  Separator, 
+  Breadcrumb, 
+  BreadcrumbList, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbSeparator, 
+  BreadcrumbPage 
+} from "@/components/ui/sidebar";
+import { UserNav } from "@/components/UserNav";
+import { TrialBanner } from "@/components/TrialBanner";
+
+const getPageTitle = () => {
+  const path = window.location.pathname;
+  switch (path) {
+    case '/dashboard':
+      return 'Dashboard';
+    case '/budgets':
+      return 'Orçamentos';
+    case '/goals':
+      return 'Metas';
+    case '/analytics':
+      return 'Análises';
+    case '/settings':
+      return 'Configurações';
+    default:
+      return 'Dashboard';
+  }
+};
 
 const AppLayout = () => {
   const { user, loading } = useAuth();

@@ -23,7 +23,7 @@ export const useIncomeConfirmations = () => {
       if (!user) return [];
       
       const { data, error } = await supabase
-        .from("income_confirmations")
+        .from("income_confirmations" as any)
         .select("*")
         .eq("user_id", user.id)
         .eq("status", "pending")
@@ -49,7 +49,7 @@ export const useConfirmIncome = () => {
       
       // Atualizar status da confirmação
       const { error: updateError } = await supabase
-        .from("income_confirmations")
+        .from("income_confirmations" as any)
         .update({ status })
         .eq("id", confirmationId)
         .eq("user_id", user.id);
@@ -59,7 +59,7 @@ export const useConfirmIncome = () => {
       // Se foi cancelada, remover a transação automática
       if (!confirmed) {
         const { data: confirmation } = await supabase
-          .from("income_confirmations")
+          .from("income_confirmations" as any)
           .select("transaction_id")
           .eq("id", confirmationId)
           .single();
