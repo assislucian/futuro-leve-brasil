@@ -25,13 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircle, Target, TrendingUp } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
 import { BRAZILIAN_CATEGORIES } from "@/lib/constants/categories";
 import { QuickGoalContribution } from "./QuickGoalContribution";
 import { BudgetImpactPreview } from "./BudgetImpactPreview";
-import { Badge } from "./ui/badge";
 
 interface AddTransactionDialogProps {
   open?: boolean;
@@ -41,77 +40,33 @@ interface AddTransactionDialogProps {
 
 export function AddTransactionDialog({ open: controlledOpen, onOpenChange: controlledOnOpenChange, children }: AddTransactionDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const [selectedQuickAction, setSelectedQuickAction] = useState<{ goalId: string, amount: number } | null>(null);
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
   
-  const { form, onSubmit } = useTransactionForm({ 
-    setOpen: (newOpen) => {
-      setOpen(newOpen);
-      if (!newOpen) {
-        setSelectedQuickAction(null);
-      }
-    }
-  });
+  const { form, onSubmit } = useTransactionForm({ setOpen });
 
   const selectedType = form.watch("type");
   const amount = form.watch("amount");
   const category = form.watch("category");
   const categories = selectedType === "income" ? BRAZILIAN_CATEGORIES.INCOME : BRAZILIAN_CATEGORIES.EXPENSE;
 
-  // Mostrar ações rápidas quando há valor suficiente
-  const shouldShowQuickActions = amount && amount > 0 && (
-    (selectedType === "income" && amount >= 50) || 
-    (selectedType === "expense" && amount >= 20)
-  );
-
-  const handleQuickActionSubmit = async (values: any) => {
-    console.log('Executando ação rápida:', selectedQuickAction);
-    
-    // Primeiro salva a transação
-    await onSubmit(values);
-    
-    // Se há uma ação rápida selecionada, executa ela
-    if (selectedQuickAction) {
-      // Aqui você pode implementar a lógica de contribuição rápida para meta
-      console.log('Contribuindo para meta:', selectedQuickAction.goalId, 'valor:', selectedQuickAction.amount);
-      // TODO: Implementar contribuição automática para meta
-    }
-  };
-
-  const handleQuickContribution = (goalId: string, contributionAmount: number) => {
-    setSelectedQuickAction({ goalId, amount: contributionAmount });
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button size="sm" className="h-8 gap-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Nova Transação
-            </span>
+          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Nova Transação
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            ✨ Adicionar Nova Transação
-            {selectedType === "income" && shouldShowQuickActions && (
-              <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 animate-pulse">
-                💡 Ação Rápida Disponível
-              </Badge>
-            )}
-          </DialogTitle>
+          <DialogTitle>Adicionar Nova Transação</DialogTitle>
           <DialogDescription>
-            {selectedType === "income" 
-              ? "Registre uma nova receita e acelere seus sonhos automaticamente!"
-              : "Registre uma despesa e veja o impacto no seu orçamento em tempo real."
-            }
+            Registre uma nova {selectedType === "income" ? "receita" : "despesa"} em sua conta.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -125,22 +80,16 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                     <FormLabel>Tipo</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="h-11">
+                        <SelectTrigger>
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="income" className="text-emerald-600">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">💰</span>
-                            <span>Receita</span>
-                          </div>
+                          Receita
                         </SelectItem>
-                        <SelectItem value="expense" className="text-rose-600">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">💸</span>
-                            <span>Despesa</span>
-                          </div>
+                        <SelectItem value="expense" className="text-red-600">
+                          Despesa
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -161,7 +110,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                         placeholder="0,00" 
                         {...field} 
                         value={field.value ?? ""} 
-                        className="h-11 text-lg font-semibold"
+                        className="font-medium"
                       />
                     </FormControl>
                     <FormMessage />
@@ -180,7 +129,6 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                     <Input 
                       placeholder={selectedType === "income" ? "Ex: Salário, Freelance" : "Ex: Supermercado, Gasolina"} 
                       {...field} 
-                      className="h-11"
                     />
                   </FormControl>
                   <FormMessage />
@@ -197,7 +145,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                     <FormLabel>Categoria</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="h-11">
+                        <SelectTrigger>
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                       </FormControl>
@@ -220,7 +168,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
                   <FormItem>
                     <FormLabel>Data</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} className="h-11" />
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,7 +176,7 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
               />
             </div>
 
-            {/* Preview de Impacto no Orçamento para Despesas */}
+            {/* Preview de Impacto no Orçamento */}
             {selectedType === "expense" && amount && amount > 0 && category && (
               <BudgetImpactPreview 
                 category={category}
@@ -237,46 +185,23 @@ export function AddTransactionDialog({ open: controlledOpen, onOpenChange: contr
               />
             )}
 
-            {/* Ações Rápidas para Receitas */}
-            {selectedType === "income" && shouldShowQuickActions && (
+            {/* Contribuição Rápida para Metas */}
+            {selectedType === "income" && amount && amount >= 50 && (
               <QuickGoalContribution 
                 amount={amount}
-                onContribute={handleQuickContribution}
+                onContribute={() => {}}
               />
             )}
 
-            <DialogFooter className="flex gap-2 pt-4">
-              {selectedType === "income" && shouldShowQuickActions ? (
-                <div className="flex gap-2 w-full">
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    disabled={form.formState.isSubmitting}
-                    className="flex-1"
-                    onClick={form.handleSubmit(onSubmit)}
-                  >
-                    Apenas Salvar
-                  </Button>
-                  <Button 
-                    type="button"
-                    disabled={form.formState.isSubmitting || !selectedQuickAction}
-                    className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-                    onClick={form.handleSubmit(handleQuickActionSubmit)}
-                  >
-                    <Target className="mr-2 h-4 w-4" />
-                    {selectedQuickAction ? "Salvar + Acelerar Sonho" : "Selecione uma Meta"}
-                  </Button>
-                </div>
-              ) : (
-                <Button 
-                  type="button"
-                  disabled={form.formState.isSubmitting}
-                  className="w-full h-11 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-                  onClick={form.handleSubmit(onSubmit)}
-                >
-                  {form.formState.isSubmitting ? "Salvando..." : "💾 Salvar Transação"}
-                </Button>
-              )}
+            <DialogFooter className="pt-4">
+              <Button 
+                type="button"
+                disabled={form.formState.isSubmitting}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white"
+                onClick={form.handleSubmit(onSubmit)}
+              >
+                {form.formState.isSubmitting ? "Salvando..." : "Salvar Transação"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
