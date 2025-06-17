@@ -20,7 +20,7 @@ import { UpdatePasswordPage } from "./pages/UpdatePasswordPage";
 import EmailConfirmationPage from "./pages/EmailConfirmationPage";
 import { TermsPage } from "./pages/TermsPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
-import { NotFound } from "./pages/NotFound";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
