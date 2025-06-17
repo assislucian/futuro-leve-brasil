@@ -6,16 +6,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGoalsSummary } from "@/hooks/useGoalsSummary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Rocket, Crown } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const GoalsPage = () => {
-  const { profile, loading: authLoading, isTrialing } = useAuth();
+  const { profile, loading: authLoading } = useAuth();
   const { data: goalsSummary, isLoading: goalsLoading } = useGoalsSummary();
 
   const isLoading = authLoading || goalsLoading;
   const goalCount = goalsSummary?.count || 0;
-  const hasAccess = profile?.plan === 'premium' || isTrialing;
+  const hasAccess = profile?.plan === 'premium';
   const limitReached = !hasAccess && goalCount >= 2;
 
   return (
@@ -39,15 +39,6 @@ const GoalsPage = () => {
                     O plano gratuito permite 2 metas. <Link to="/#pricing" className="font-bold underline hover:text-amber-500">Faça upgrade</Link> para metas ilimitadas.
                   </AlertDescription>
                 </Alert>
-            )}
-            {isTrialing && (
-              <Alert className="border-emerald-500/50 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-500 bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-lg max-w-xs">
-                <Crown className="h-4 w-4" />
-                <AlertTitle className="font-semibold text-sm mb-1">Acesso Premium Ativo!</AlertTitle>
-                <AlertDescription className="text-xs">
-                  Aproveite metas ilimitadas durante seu trial.
-                </AlertDescription>
-              </Alert>
             )}
             <AddGoalDialog disabled={limitReached} />
           </div>

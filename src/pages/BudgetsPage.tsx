@@ -9,7 +9,6 @@ import { BudgetSummary } from "@/components/BudgetSummary";
 import { BudgetSummaryLoading } from "@/components/BudgetSummaryLoading";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 
@@ -39,7 +38,6 @@ const PremiumFeatureLock = () => (
 
 const BudgetsPageContent = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const { isTrialing } = useAuth();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
@@ -74,23 +72,12 @@ const BudgetsPageContent = () => {
             Defina seus limites de gastos e acompanhe sua saúde financeira.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          {isTrialing && (
-            <Alert className="border-emerald-500/50 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-500 bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-lg max-w-xs">
-              <Crown className="h-4 w-4" />
-              <AlertTitle className="font-semibold text-sm mb-1">Acesso Premium Ativo!</AlertTitle>
-              <AlertDescription className="text-xs">
-                Aproveite orçamentos ilimitados durante seu trial.
-              </AlertDescription>
-            </Alert>
-          )}
-          <AddBudgetDialog>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Novo Orçamento
-            </Button>
-          </AddBudgetDialog>
-        </div>
+        <AddBudgetDialog>
+          <Button>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Novo Orçamento
+          </Button>
+        </AddBudgetDialog>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">

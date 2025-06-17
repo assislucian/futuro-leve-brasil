@@ -15,11 +15,11 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, RotateCcw, CreditCard } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const DashboardPage = () => {
-  const { user, isTrialing, profile } = useAuth();
+  const { user, profile } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
@@ -40,9 +40,6 @@ const DashboardPage = () => {
   const getPlanBadge = () => {
     if (profile?.plan === 'premium') {
       return { text: 'Premium', variant: 'default' as const };
-    }
-    if (isTrialing) {
-      return { text: 'Trial Premium', variant: 'secondary' as const };
     }
     return { text: 'Gratuito', variant: 'secondary' as const };
   };
@@ -96,7 +93,7 @@ const DashboardPage = () => {
                 </h1>
                 <Badge 
                   variant={planBadge.variant}
-                  className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
+                  className="font-medium px-2 py-1 text-xs"
                 >
                   {planBadge.text}
                 </Badge>
@@ -108,7 +105,6 @@ const DashboardPage = () => {
             
             {/* Ações Rápidas de Transações */}
             <div className="flex items-center gap-2 flex-wrap">
-              {/* Nova Transação - Dialog Funcional */}
               <AddTransactionDialog>
                 <Button 
                   size="sm" 
@@ -119,10 +115,7 @@ const DashboardPage = () => {
                 </Button>
               </AddTransactionDialog>
 
-              {/* Transação Recorrente - Dialog Funcional */}
               <AddRecurringTransactionDialog />
-
-              {/* Parcelamento - Dialog Funcional */}
               <AddInstallmentPlanDialog />
             </div>
           </header>

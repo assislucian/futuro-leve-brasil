@@ -24,7 +24,7 @@ export const TrialBanner = () => {
               <span className="text-sm font-medium text-amber-900 dark:text-amber-100">
                 Acesso Premium Ativo
               </span>
-              <Badge className="bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900 dark:text-amber-200 text-xs">
+              <Badge className="bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/50 dark:text-amber-200 dark:border-amber-700 text-xs">
                 Trial
               </Badge>
             </div>
@@ -37,7 +37,7 @@ export const TrialBanner = () => {
             asChild
             size="sm" 
             variant="outline"
-            className="h-7 text-xs border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:border-amber-700 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 dark:text-amber-200"
+            className="h-7 text-xs border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:border-amber-700 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 dark:text-amber-200 transition-colors"
           >
             <Link to="/#pricing" className="flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
