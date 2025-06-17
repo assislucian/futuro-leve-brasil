@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -28,13 +29,13 @@ export function DemoDataPopulator() {
       await supabase.from('goals').delete().eq('user_id', user.id);
       
       // Buscar IDs dos planos de parcelamento para deletar pagamentos
-      const { data: installmentPlans } = await supabase
+      const { data: existingInstallmentPlans } = await supabase
         .from('installment_plans')
         .select('id')
         .eq('user_id', user.id);
       
-      if (installmentPlans && installmentPlans.length > 0) {
-        const planIds = installmentPlans.map(p => p.id);
+      if (existingInstallmentPlans && existingInstallmentPlans.length > 0) {
+        const planIds = existingInstallmentPlans.map(p => p.id);
         for (const planId of planIds) {
           await supabase.from('installment_payments').delete().eq('installment_plan_id', planId);
         }
@@ -219,7 +220,7 @@ export function DemoDataPopulator() {
       if (recurringError) throw recurringError;
 
       // 6. Criar planos de parcelamento
-      const installmentPlans = [
+      const installmentPlanData = [
         { description: 'Notebook para trabalho', total_amount: 2400.00, installment_amount: 200.00, total_installments: 12, paid_installments: 6, category: 'Tecnologia' },
         { description: 'Curso online', total_amount: 1200.00, installment_amount: 100.00, total_installments: 12, paid_installments: 8, category: 'Educação' },
         { description: 'Móveis da sala', total_amount: 3600.00, installment_amount: 300.00, total_installments: 12, paid_installments: 12, category: 'Casa', is_active: false }
@@ -228,7 +229,7 @@ export function DemoDataPopulator() {
       const { error: installmentError } = await supabase
         .from('installment_plans')
         .insert(
-          installmentPlans.map(p => ({
+          installmentPlanData.map(p => ({
             user_id: user.id,
             description: p.description,
             total_amount: p.total_amount,
