@@ -4,27 +4,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { 
   signUpFormSchema, 
   SignUpFormData, 
   validatePasswordStrength,
   isValidEmail 
 } from "@/lib/validators/signup";
-import { AuthError } from "@supabase/supabase-js";
-
-// Interface para estado do hook
-interface UseSignUpFormState {
-  isSubmitting: boolean;
-  lastAttemptEmail: string | null;
-}
-
-// Interface para resultado do cadastro
-interface SignUpResult {
-  success: boolean;
-  requiresEmailConfirmation: boolean;
-  error?: string;
-}
+import { UseSignUpFormState } from "@/types/auth";
+import { performSignUp } from "@/services/authService";
 
 /**
  * Hook personalizado para gerenciar o formulário de cadastro
@@ -49,102 +36,6 @@ export function useSignUpForm() {
     },
     mode: "onChange", // Validação em tempo real
   });
-
-  /**
-   * Trata erros específicos do Supabase Auth
-   * @param error - Erro do Supabase
-   * @returns Mensagem de erro user-friendly
-   */
-  const handleAuthError = (error: AuthError): string => {
-    const errorMap: Record<string, string> = {
-      'User already registered': 'Este email já está cadastrado. Tente fazer login ou usar outro email.',
-      'Invalid email': 'Email inválido. Verifique o formato e tente novamente.',
-      'Password should be at least 6 characters': 'Senha não atende aos critérios de segurança.',
-      'Signup is disabled': 'Cadastros estão temporariamente desabilitados.',
-      'Email rate limit exceeded': 'Muitas tentativas de cadastro. Aguarde alguns minutos.',
-      'Captcha verification failed': 'Falha na verificação de segurança. Tente novamente.',
-    };
-
-    // Busca por correspondência parcial na mensagem
-    for (const [key, message] of Object.entries(errorMap)) {
-      if (error.message.includes(key)) {
-        return message;
-      }
-    }
-
-    // Tratamento genérico baseado no status
-    if (error.status === 422) {
-      return 'Dados inválidos. Verifique as informações e tente novamente.';
-    }
-    
-    if (error.status === 429) {
-      return 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.';
-    }
-
-    return 'Erro no cadastro. Tente novamente em alguns minutos.';
-  };
-
-  /**
-   * Executa o processo de cadastro
-   * @param values - Dados do formulário
-   * @returns Resultado do cadastro
-   */
-  const performSignUp = async (values: SignUpFormData): Promise<SignUpResult> => {
-    try {
-      // Gerar URL de redirecionamento segura
-      const baseUrl = window.location.origin;
-      const redirectUrl = `${baseUrl}/email-confirmation`;
-      
-      console.log('Iniciando cadastro para:', values.email);
-      console.log('URL de redirecionamento:', redirectUrl);
-      
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            full_name: values.fullName,
-          },
-          emailRedirectTo: redirectUrl,
-        },
-      });
-
-      if (error) {
-        console.error('Erro no cadastro:', error);
-        return {
-          success: false,
-          requiresEmailConfirmation: false,
-          error: handleAuthError(error)
-        };
-      }
-
-      if (data.user) {
-        console.log('Usuário criado com sucesso:', data.user.email);
-        
-        // Armazenar email para possível reenvio de confirmação
-        localStorage.setItem('pendingEmailConfirmation', values.email);
-        
-        return {
-          success: true,
-          requiresEmailConfirmation: !data.user.email_confirmed_at,
-        };
-      }
-
-      return {
-        success: false,
-        requiresEmailConfirmation: false,
-        error: 'Erro inesperado durante o cadastro.'
-      };
-      
-    } catch (error) {
-      console.error('Erro inesperado no cadastro:', error);
-      return {
-        success: false,
-        requiresEmailConfirmation: false,
-        error: 'Erro no sistema. Tente novamente em alguns minutos.'
-      };
-    }
-  };
 
   /**
    * Handler principal do formulário
