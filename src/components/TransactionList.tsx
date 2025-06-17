@@ -13,21 +13,19 @@ import { DeleteTransactionAlert } from "./DeleteTransactionAlert";
 import { TransactionBadge } from "./ui/transaction-badge";
 import { TransactionGoalConnector } from "./TransactionGoalConnector";
 import { AddTransactionDialog } from "./AddTransactionDialog";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const TransactionList = () => {
   const { data: transactions, isLoading, error } = useRecentTransactions();
-
-  const formatCurrency = (value: number) => {
-    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  };
+  const { t, formatCurrency, formatDate } = useLanguage();
   
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Transações Recentes</CardTitle>
+          <CardTitle>{t('transactions.title')}</CardTitle>
           <CardDescription>
-            Buscando suas últimas movimentações...
+            {t('common.loading')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -51,9 +49,9 @@ const TransactionList = () => {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Erro ao Carregar Transações</AlertTitle>
+        <AlertTitle>{t('common.error')}</AlertTitle>
         <AlertDescription>
-          Não foi possível buscar suas transações. Por favor, tente novamente mais tarde.
+          {t('common.error')}
         </AlertDescription>
       </Alert>
     );
@@ -65,10 +63,10 @@ const TransactionList = () => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              📊 Transações Recentes
+              📊 {t('transactions.title')}
             </CardTitle>
             <CardDescription>
-              Aqui estão as últimas movimentações da sua conta.
+              {t('transactions.subtitle')}
             </CardDescription>
           </div>
           <AddTransactionDialog>
@@ -77,7 +75,7 @@ const TransactionList = () => {
               className="h-8 gap-1.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-sm"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Adicionar</span>
+              <span className="hidden sm:inline">{t('transactions.add')}</span>
             </Button>
           </AddTransactionDialog>
         </div>
@@ -87,10 +85,10 @@ const TransactionList = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Descrição</TableHead>
-                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
-                <TableHead className="text-right">Valor</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
+                <TableHead>{t('transactions.description')}</TableHead>
+                <TableHead className="hidden sm:table-cell">{t('transactions.category')}</TableHead>
+                <TableHead className="text-right">{t('transactions.amount')}</TableHead>
+                <TableHead className="text-right">{t('transactions.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -106,7 +104,7 @@ const TransactionList = () => {
                       <div>
                         <div className="font-medium">{transaction.description}</div>
                         <div className="text-sm text-muted-foreground md:inline">
-                          {new Date(transaction.transaction_date + 'T00:00:00').toLocaleDateString('pt-BR', {day: '2-digit', month: 'short', year: 'numeric'})}
+                          {formatDate(transaction.transaction_date)}
                         </div>
                       </div>
                     </div>
@@ -134,22 +132,22 @@ const TransactionList = () => {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
-                            <span className="sr-only">Abrir menu</span>
+                            <span className="sr-only">{t('transactions.actions')}</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-white shadow-lg border">
+                        <DropdownMenuContent align="end" className="w-48 bg-card shadow-lg border">
                            <EditTransactionDialog transaction={transaction}>
                               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                <span>Editar</span>
+                                <span>{t('transactions.edit')}</span>
                               </DropdownMenuItem>
                            </EditTransactionDialog>
                           <DropdownMenuSeparator />
                           <DeleteTransactionAlert transactionId={transaction.id}>
                             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                               <Trash2 className="mr-2 h-4 w-4" />
-                              <span>Excluir</span>
+                              <span>{t('transactions.delete')}</span>
                             </DropdownMenuItem>
                           </DeleteTransactionAlert>
                         </DropdownMenuContent>
@@ -166,17 +164,15 @@ const TransactionList = () => {
               <FileText className="h-8 w-8 text-slate-500" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-slate-800">Comece sua Jornada Financeira!</h3>
-              <p className="text-slate-600 max-w-md leading-relaxed">
-                Ainda não há transações registradas. Que tal adicionar sua primeira receita ou despesa?
-                <br/>
-                <span className="font-medium text-emerald-600">Cada passo conta para seus sonhos! ✨</span>
+              <h3 className="text-xl font-semibold text-foreground">{t('transactions.empty.title')}</h3>
+              <p className="text-muted-foreground max-w-md leading-relaxed whitespace-pre-line">
+                {t('transactions.empty.subtitle')}
               </p>
             </div>
             <AddTransactionDialog>
               <Button className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg hover:shadow-emerald-200 transition-all duration-200">
                 <Plus className="mr-2 h-4 w-4" />
-                Adicionar Primeira Transação
+                {t('transactions.empty.button')}
               </Button>
             </AddTransactionDialog>
           </div>

@@ -15,18 +15,20 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const DashboardPage = () => {
   const { user } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
+  const { t } = useLanguage();
   
-  const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
+  const firstName = user?.user_metadata.full_name?.split(' ')[0] || (t('dashboard.greeting.morning').includes('Guten') ? 'Person' : 'pessoa');
   const currentHour = new Date().getHours();
   
   const getGreeting = () => {
-    if (currentHour < 12) return "Bom dia";
-    if (currentHour < 18) return "Boa tarde";
-    return "Boa noite";
+    if (currentHour < 12) return t('dashboard.greeting.morning');
+    if (currentHour < 18) return t('dashboard.greeting.afternoon');
+    return t('dashboard.greeting.evening');
   };
 
   const getGreetingEmoji = () => {
@@ -83,11 +85,11 @@ const DashboardPage = () => {
                 variant="secondary" 
                 className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
               >
-                Gratuito
+                {t('dashboard.plan.free')}
               </Badge>
             </div>
             <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
-              Acompanhe seus progressos e continue construindo seus sonhos
+              {t('dashboard.subtitle')}
             </p>
           </div>
           
