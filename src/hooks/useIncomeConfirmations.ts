@@ -19,7 +19,7 @@ export const useIncomeConfirmations = () => {
 
   return useQuery({
     queryKey: ["income-confirmations"],
-    queryFn: async () => {
+    queryFn: async (): Promise<IncomeConfirmation[]> => {
       if (!user) return [];
       
       try {
@@ -31,7 +31,7 @@ export const useIncomeConfirmations = () => {
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        return (data || []) as IncomeConfirmation[];
+        return (data || []) as unknown as IncomeConfirmation[];
       } catch (error) {
         console.log("Tabela income_confirmations ainda não existe:", error);
         return [];
@@ -70,11 +70,12 @@ export const useConfirmIncome = () => {
             .eq("id", confirmationId)
             .single();
 
-          if (!selectError && confirmation?.transaction_id) {
+          if (!selectError && confirmation && typeof confirmation === 'object' && 'transaction_id' in confirmation) {
+            const confirmationData = confirmation as { transaction_id: string };
             await supabase
               .from("transactions")
               .delete()
-              .eq("id", confirmation.transaction_id)
+              .eq("id", confirmationData.transaction_id)
               .eq("user_id", user.id);
           }
         }
