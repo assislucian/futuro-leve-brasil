@@ -48,22 +48,36 @@ export function TransactionGoalConnector({
     queryFn: async () => {
       if (!user) return [];
       
+      console.log("TransactionGoalConnector: Buscando metas ativas para usuário:", user.id);
+      
       const { data, error } = await supabase
         .from('goals')
         .select('*')
         .eq('user_id', user.id)
-        .filter('current_amount', 'lt', 'target_amount')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("TransactionGoalConnector: Erro ao buscar metas:", error);
+        throw error;
+      }
+
+      console.log("TransactionGoalConnector: Metas encontradas:", data);
+
+      // Filtrar apenas metas não concluídas (current_amount < target_amount)
+      const activeBucketGoals = data?.filter(goal => goal.current_amount < goal.target_amount) || [];
+      console.log("TransactionGoalConnector: Metas ativas filtradas:", activeBucketGoals);
+
+      return activeBucketGoals;
     },
-    enabled: !!user && open,
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   const contributeToGoal = useMutation({
     mutationFn: async ({ goalId, amount }: { goalId: string; amount: number }) => {
       if (!user) throw new Error("Usuário não autenticado");
+
+      console.log("TransactionGoalConnector: Adicionando contribuição:", { goalId, amount });
 
       const { error } = await supabase
         .from('goal_contributions')
@@ -74,7 +88,10 @@ export function TransactionGoalConnector({
           contribution_date: new Date().toISOString().split('T')[0]
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("TransactionGoalConnector: Erro ao adicionar contribuição:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast.success('🎯 Contribuição adicionada! Você está mais perto do seu sonho!', {
@@ -84,10 +101,12 @@ export function TransactionGoalConnector({
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       queryClient.invalidateQueries({ queryKey: ['activeGoals'] });
       queryClient.invalidateQueries({ queryKey: ['smartInsights'] });
+      queryClient.invalidateQueries({ queryKey: ['goalsSummary'] });
       setOpen(false);
       onConnect?.();
     },
     onError: (error) => {
+      console.error("TransactionGoalConnector: Erro na mutation:", error);
       toast.error(`Erro ao adicionar contribuição: ${error.message}`);
     },
   });

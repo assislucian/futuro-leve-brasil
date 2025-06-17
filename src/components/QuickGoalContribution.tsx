@@ -22,19 +22,29 @@ export function QuickGoalContribution({ amount, onContribute }: QuickGoalContrib
     queryFn: async () => {
       if (!user) return null;
       
+      console.log("QuickGoalContribution: Buscando próxima meta ativa para usuário:", user.id);
+      
       const { data, error } = await supabase
         .from('goals')
         .select('*')
         .eq('user_id', user.id)
-        .filter('current_amount', 'lt', 'target_amount')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        .order('created_at', { ascending: false });
 
-      if (error || !data) return null;
-      return data;
+      if (error) {
+        console.error("QuickGoalContribution: Erro ao buscar metas:", error);
+        return null;
+      }
+
+      console.log("QuickGoalContribution: Metas encontradas:", data);
+
+      // Filtrar apenas metas não concluídas e pegar a primeira
+      const activeGoal = data?.find(goal => goal.current_amount < goal.target_amount);
+      console.log("QuickGoalContribution: Meta ativa selecionada:", activeGoal);
+
+      return activeGoal || null;
     },
     enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   if (isLoading || !nextGoal) return null;
