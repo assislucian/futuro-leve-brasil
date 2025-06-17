@@ -70,13 +70,15 @@ export const useConfirmIncome = () => {
             .eq("id", confirmationId)
             .single();
 
-          if (!selectError && confirmation !== null && typeof confirmation === 'object' && 'transaction_id' in confirmation) {
+          if (!selectError && confirmation && typeof confirmation === 'object' && 'transaction_id' in confirmation) {
             const confirmationData = confirmation as { transaction_id: string };
-            await supabase
-              .from("transactions")
-              .delete()
-              .eq("id", confirmationData.transaction_id)
-              .eq("user_id", user.id);
+            if (confirmationData.transaction_id) {
+              await supabase
+                .from("transactions")
+                .delete()
+                .eq("id", confirmationData.transaction_id)
+                .eq("user_id", user.id);
+            }
           }
         }
 
