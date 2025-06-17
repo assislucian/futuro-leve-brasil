@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const formSchema = z.object({
   password: z.string().min(6, { message: "Das Passwort muss mindestens 6 Zeichen lang sein." }),
@@ -29,6 +30,8 @@ const formSchema = z.object({
 
 function UpdatePasswordForm() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { 
@@ -45,7 +48,7 @@ function UpdatePasswordForm() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Passwort erfolgreich aktualisiert!");
+      toast.success(t('auth.update_password.success'));
       navigate("/dashboard");
     }
   }
@@ -53,9 +56,9 @@ function UpdatePasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Neues Passwort erstellen</CardTitle>
+        <CardTitle>{t('auth.update_password.title')}</CardTitle>
         <CardDescription>
-          Geben Sie Ihr neues Passwort ein, um Ihr Konto zu sichern.
+          {t('auth.update_password.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -66,9 +69,9 @@ function UpdatePasswordForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Neues Passwort</FormLabel>
+                  <FormLabel>{t('auth.update_password.new_password')}</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Mindestens 6 Zeichen" {...field} />
+                    <Input type="password" placeholder={t('auth.update_password.password_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,16 +82,16 @@ function UpdatePasswordForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Passwort bestätigen</FormLabel>
+                  <FormLabel>{t('auth.update_password.confirm_password')}</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Passwort erneut eingeben" {...field} />
+                    <Input type="password" placeholder={t('auth.update_password.confirm_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Wird aktualisiert..." : "Passwort aktualisieren"}
+              {form.formState.isSubmitting ? t('auth.update_password.updating') : t('auth.update_password.update')}
             </Button>
           </form>
         </Form>
@@ -99,18 +102,18 @@ function UpdatePasswordForm() {
 
 const UpdatePasswordPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    // Prüfen, ob der Benutzer von einem gültigen Passwort-Reset-Link kommt
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const accessToken = hashParams.get('access_token');
     const type = hashParams.get('type');
     
     if (!accessToken || type !== 'recovery') {
-      toast.error("Ungültiger oder abgelaufener Link");
+      toast.error(t('auth.update_password.invalid_link'));
       navigate("/forgot-password");
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">

@@ -17,12 +17,15 @@ import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Bitte geben Sie eine gültige E-Mail-Adresse ein." }),
 });
 
 function ForgotPasswordForm() {
+  const { t } = useLanguage();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "" },
@@ -36,7 +39,7 @@ function ForgotPasswordForm() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Wenn die E-Mail korrekt ist, haben wir einen Link zum Zurücksetzen Ihres Passworts gesendet.");
+      toast.success(t('auth.forgot_password.success'));
       form.reset();
     }
   }
@@ -44,9 +47,9 @@ function ForgotPasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Passwort vergessen?</CardTitle>
+        <CardTitle>{t('auth.forgot_password.title')}</CardTitle>
         <CardDescription>
-          Kein Problem. Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Erstellen eines neuen Passworts.
+          {t('auth.forgot_password.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -57,16 +60,16 @@ function ForgotPasswordForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>E-Mail</FormLabel>
+                  <FormLabel>{t('auth.email')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="ihre@email.com" {...field} />
+                    <Input placeholder={t('auth.email_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Wird gesendet..." : "Zurücksetzungslink senden"}
+              {form.formState.isSubmitting ? t('auth.forgot_password.sending') : t('auth.reset_link')}
             </Button>
           </form>
         </Form>
@@ -76,6 +79,8 @@ function ForgotPasswordForm() {
 }
 
 const ForgotPasswordPage = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
@@ -87,9 +92,9 @@ const ForgotPasswordPage = () => {
         </div>
         <ForgotPasswordForm />
          <div className="mt-4 text-center text-sm">
-            Passwort wieder eingefallen?{" "}
+            {t('auth.forgot_password.remembered')}{" "}
             <Link to="/auth" className="underline hover:text-primary">
-              Zurück zur Anmeldung
+              {t('auth.back_to_login')}
             </Link>
           </div>
       </div>

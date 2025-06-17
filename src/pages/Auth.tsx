@@ -7,10 +7,12 @@ import { Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const AuthPage = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!loading && user) {
@@ -37,15 +39,15 @@ const AuthPage = () => {
         </div>
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Anmelden</TabsTrigger>
-            <TabsTrigger value="signup">Konto erstellen</TabsTrigger>
+            <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+            <TabsTrigger value="signup">{t('auth.signup')}</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <Card>
               <CardHeader>
-                <CardTitle>Willkommen zurück!</CardTitle>
+                <CardTitle>{t('auth.welcome_back')}</CardTitle>
                 <CardDescription>
-                  Melden Sie sich in Ihrem Konto an, um Ihre Finanzreise fortzusetzen.
+                  {t('auth.welcome_back.subtitle')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -56,9 +58,9 @@ const AuthPage = () => {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>Erstellen Sie Ihr Konto</CardTitle>
+                <CardTitle>{t('auth.create_account')}</CardTitle>
                 <CardDescription>
-                  Beginnen Sie noch heute damit, Ihre Beziehung zum Geld zu transformieren.
+                  {t('auth.create_account.subtitle')}
                 </CardDescription>
               </CardHeader>
               <CardContent>

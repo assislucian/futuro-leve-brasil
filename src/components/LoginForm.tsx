@@ -18,6 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 const formSchema = z.object({
   email: z.string()
@@ -31,6 +32,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
+  const { t } = useLanguage();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,26 +59,25 @@ export function LoginForm() {
       if (error) {
         console.error('Erro no login:', error);
         
-        // Tratamento específico de erros com mensagens user-friendly
         if (error.message.includes('Invalid login credentials')) {
           if (attemptCount >= 3) {
-            toast.error('Muitas tentativas incorretas. Verifique suas credenciais ou redefina sua senha.');
+            toast.error(t('auth.login.many_attempts'));
           } else {
-            toast.error('Email ou senha incorretos. Verifique e tente novamente.');
+            toast.error(t('auth.login.invalid_credentials'));
           }
         } else if (error.message.includes('Email not confirmed')) {
-          toast.error('Email não confirmado. Verifique sua caixa de entrada.');
+          toast.error(t('auth.login.email_not_confirmed'));
           localStorage.setItem('pendingEmailConfirmation', values.email);
           navigate('/email-confirmation');
           return;
         } else if (error.message.includes('Too many requests')) {
-          toast.error('Muitas tentativas. Aguarde 5 minutos antes de tentar novamente.');
+          toast.error(t('auth.login.too_many_requests'));
         } else if (error.message.includes('User not found')) {
-          toast.error('Conta não encontrada. Verifique o email ou crie uma nova conta.');
+          toast.error(t('auth.login.user_not_found'));
         } else if (error.message.includes('rate limit')) {
-          toast.error('Limite de tentativas excedido. Aguarde alguns minutos.');
+          toast.error(t('auth.login.rate_limit'));
         } else {
-          toast.error('Erro no login. Tente novamente em alguns minutos.');
+          toast.error(t('auth.login.generic_error'));
         }
         return;
       }
@@ -84,25 +85,23 @@ export function LoginForm() {
       if (data.user) {
         console.log('Login realizado com sucesso:', data.user.email);
         
-        // Verificar se o email foi confirmado
         if (!data.user.email_confirmed_at) {
-          toast.error('Email não confirmado. Verifique sua caixa de entrada.');
+          toast.error(t('auth.login.email_not_confirmed'));
           localStorage.setItem('pendingEmailConfirmation', values.email);
           navigate('/email-confirmation');
           return;
         }
         
-        toast.success("Login realizado com sucesso! Bem-vindo(a) de volta.", {
+        toast.success(t('auth.login.success'), {
           duration: 3000,
         });
         
-        // Reset attempt count on successful login
         setAttemptCount(0);
         navigate('/dashboard');
       }
     } catch (error) {
       console.error('Erro inesperado no login:', error);
-      toast.error("Erro no sistema. Tente novamente em alguns minutos.");
+      toast.error(t('auth.login.system_error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -116,10 +115,10 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('auth.email')}</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="seu@email.com" 
+                  placeholder={t('auth.email_placeholder')}
                   type="email"
                   {...field}
                   autoComplete="email"
@@ -135,12 +134,12 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Senha</FormLabel>
+              <FormLabel>{t('auth.password')}</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input 
                     type={showPassword ? "text" : "password"} 
-                    placeholder="Sua senha" 
+                    placeholder={t('auth.password_placeholder')}
                     {...field}
                     autoComplete="current-password"
                   />
@@ -169,17 +168,19 @@ export function LoginForm() {
             to="/forgot-password" 
             className="text-sm text-primary hover:underline"
           >
-            Esqueceu a senha?
+            {t('auth.forgot_password')}
           </Link>
         </div>
 
-        {/* Aviso após múltiplas tentativas */}
         {attemptCount >= 3 && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              Problemas para acessar? Tente <Link to="/forgot-password" className="underline">redefinir sua senha</Link> ou 
-              entre em contato conosco se precisar de ajuda.
+              {t('auth.login.help_text')}{' '}
+              <Link to="/forgot-password" className="underline">
+                {t('auth.login.reset_password')}
+              </Link>{' '}
+              {t('auth.login.contact_support')}
             </AlertDescription>
           </Alert>
         )}
@@ -189,7 +190,7 @@ export function LoginForm() {
           className="w-full btn-primary" 
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Entrando..." : "Entrar"}
+          {isSubmitting ? t('auth.login.logging_in') : t('auth.login')}
         </Button>
       </form>
     </Form>
