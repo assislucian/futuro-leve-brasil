@@ -15,7 +15,7 @@ import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Target, CreditCard, Repeat, Calculator } from "lucide-react";
+import { PlusCircle, Target, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -122,28 +122,10 @@ const DashboardPage = () => {
               </Button>
 
               {/* Transação Recorrente - Dialog Funcional */}
-              <AddRecurringTransactionDialog>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="h-9 gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
-                >
-                  <Repeat className="h-4 w-4 text-blue-600" />
-                  <span className="hidden sm:inline">Recorrente</span>
-                </Button>
-              </AddRecurringTransactionDialog>
+              <AddRecurringTransactionDialog />
 
               {/* Parcelamento - Dialog Funcional */}
-              <AddInstallmentPlanDialog>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="h-9 gap-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
-                >
-                  <CreditCard className="h-4 w-4 text-purple-600" />
-                  <span className="hidden sm:inline">Parcelamento</span>
-                </Button>
-              </AddInstallmentPlanDialog>
+              <AddInstallmentPlanDialog />
 
               {/* Novo Orçamento - Link para Página de Orçamentos */}
               <Button 
