@@ -17,7 +17,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle, RotateCcw, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TrialBanner } from "@/components/TrialBanner";
 
 const DashboardPage = () => {
   const { user, isTrialing, profile } = useAuth();
@@ -88,11 +87,6 @@ const DashboardPage = () => {
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
-          {/* Trial Banner */}
-          <div className="mb-6">
-            <TrialBanner />
-          </div>
-
           {/* Header */}
           <header className="flex items-start justify-between flex-wrap gap-4 mb-8">
             <div className="space-y-2">
@@ -126,28 +120,10 @@ const DashboardPage = () => {
               </AddTransactionDialog>
 
               {/* Transação Recorrente - Dialog Funcional */}
-              <AddRecurringTransactionDialog>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="h-9 gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
-                >
-                  <RotateCcw className="h-4 w-4 text-blue-600" />
-                  <span className="hidden sm:inline">Recorrente</span>
-                </Button>
-              </AddRecurringTransactionDialog>
+              <AddRecurringTransactionDialog />
 
               {/* Parcelamento - Dialog Funcional */}
-              <AddInstallmentPlanDialog>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="h-9 gap-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
-                >
-                  <CreditCard className="h-4 w-4 text-purple-600" />
-                  <span className="hidden sm:inline">Parcelas</span>
-                </Button>
-              </AddInstallmentPlanDialog>
+              <AddInstallmentPlanDialog />
             </div>
           </header>
 
