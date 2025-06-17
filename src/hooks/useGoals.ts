@@ -7,11 +7,11 @@ export function useGoals() {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ['activeGoals', user?.id],
+    queryKey: ['goals', user?.id],
     queryFn: async () => {
       if (!user) return [];
       
-      console.log("useGoals: Buscando metas ativas para usuário:", user.id);
+      console.log("useGoals: Buscando todas as metas para usuário:", user.id);
       
       const { data, error } = await supabase
         .from('goals')
@@ -26,13 +26,15 @@ export function useGoals() {
 
       console.log("useGoals: Metas encontradas:", data);
 
-      // Filtrar apenas metas não concluídas (current_amount < target_amount)
-      const activeBucketGoals = data?.filter(goal => goal.current_amount < goal.target_amount) || [];
-      console.log("useGoals: Metas ativas filtradas:", activeBucketGoals);
-
-      return activeBucketGoals;
+      // Retornar TODAS as metas, não apenas as ativas
+      // A lógica de filtro deve ser feita nos componentes quando necessário
+      return data || [];
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 2, // 2 minutos
+    gcTime: 1000 * 60 * 5, // 5 minutos
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    retry: 2,
   });
 }
