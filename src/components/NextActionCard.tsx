@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 import { useNextAction } from "@/hooks/useNextAction";
-import { ArrowRight, Lightbulb, CircleDollarSign, Star, AlertTriangle, Target, Sparkles, Rocket, Plus } from "lucide-react";
+import { ArrowRight, Lightbulb, CircleDollarSign, Star, AlertTriangle, Target, Sparkles, Rocket, Plus, TrendingUp } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { AddTransactionDialog } from "./AddTransactionDialog";
 
 const iconMap = {
   CircleDollarSign,
@@ -15,6 +16,7 @@ const iconMap = {
   Target,
   Sparkles,
   Rocket,
+  TrendingUp,
 };
 
 export function NextActionCard() {
@@ -56,6 +58,33 @@ export function NextActionCard() {
         return <Badge className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-medium text-xs">Sugestão</Badge>;
     };
 
+    // Renderizar ações específicas baseadas no tipo de sugestão
+    const renderActionButton = () => {
+        // Se a ação é sobre adicionar transação, usar o dialog
+        if (nextAction.cta.toLowerCase().includes('adicionar') && nextAction.cta.toLowerCase().includes('transação')) {
+            return (
+                <AddTransactionDialog>
+                    <Button className="w-full h-9 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 text-sm font-medium rounded-md">
+                        <Plus className="h-4 w-4 mr-2" />
+                        {nextAction.cta}
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                </AddTransactionDialog>
+            );
+        }
+
+        // Para outras ações, usar link normal
+        return (
+            <Button asChild className="w-full h-9 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 text-sm font-medium rounded-md">
+                <Link to={nextAction.link} className="flex items-center justify-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    {nextAction.cta}
+                    <ArrowRight className="h-4 w-4" />
+                </Link>
+            </Button>
+        );
+    };
+
     return (
         <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
             <CardHeader className="pb-3 space-y-2">
@@ -85,13 +114,7 @@ export function NextActionCard() {
                     </div>
                 </div>
                 
-                <Button asChild className="w-full h-9 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 text-sm font-medium rounded-md">
-                    <Link to={nextAction.link} className="flex items-center justify-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        {nextAction.cta}
-                        <ArrowRight className="h-4 w-4" />
-                    </Link>
-                </Button>
+                {renderActionButton()}
             </CardContent>
         </Card>
     );
