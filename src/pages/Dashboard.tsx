@@ -1,4 +1,3 @@
-
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -25,6 +24,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CinemaTour } from "@/components/CinemaTour";
+import { CinemaTourTrigger } from "@/components/CinemaTourTrigger";
 
 const DashboardPage = () => {
   const { user, profile, loading: authLoading } = useAuth();
@@ -71,13 +72,19 @@ const DashboardPage = () => {
   }
 
   if (!hasTransactions) {
-    return <WelcomeGuide />;
+    return (
+      <>
+        <CinemaTour />
+        <WelcomeGuide />
+      </>
+    );
   }
 
   const planBadge = getPlanBadge();
 
   return (
     <>
+      <CinemaTour />
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 max-w-7xl">
@@ -88,9 +95,12 @@ const DashboardPage = () => {
                 <h1 className="text-xl sm:text-2xl font-semibold text-foreground leading-tight will-change-auto">
                   {getGreeting()}, {firstName}!
                 </h1>
-                <span className={cn("text-xs font-medium px-2 py-1 rounded-full w-fit flex-shrink-0", planBadge.className)}>
-                  {planBadge.text}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={cn("text-xs font-medium px-2 py-1 rounded-full w-fit flex-shrink-0", planBadge.className)}>
+                    {planBadge.text}
+                  </span>
+                  <CinemaTourTrigger />
+                </div>
               </div>
               <p className="text-sm sm:text-base text-muted-foreground">
                 Acompanhe seus progressos e continue construindo seus objetivos
@@ -173,7 +183,7 @@ const DashboardPage = () => {
             {/* Coluna Principal - Performance Otimizada */}
             <div className="xl:col-span-2 space-y-4 sm:space-y-6">
               {/* Resumo Financeiro */}
-              <div className="bg-card rounded-lg border will-change-auto">
+              <div className="bg-card rounded-lg border will-change-auto financial-summary">
                 <FinancialSummary />
               </div>
               
@@ -188,9 +198,9 @@ const DashboardPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6" style={{
                 alignItems: 'start'
               }}>
-                <div className="will-change-auto"><SmartInsightsCard /></div>
+                <div className="will-change-auto smart-insights-card"><SmartInsightsCard /></div>
                 <div className="will-change-auto"><NextActionCard /></div>
-                <div className="will-change-auto"><GoalsSummary /></div>
+                <div className="will-change-auto goals-summary"><GoalsSummary /></div>
                 <div className="will-change-auto"><BudgetsSummary /></div>
               </div>
             </div>
