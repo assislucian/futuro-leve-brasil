@@ -44,7 +44,7 @@ const AppLayout = () => {
   const { user, loading } = useAuth();
   const isMobile = useIsMobile();
 
-  // Mostra loading enquanto verifica autenticação
+  // Loading state otimizado
   if (loading) {
     console.log("AppLayout: Mostrando carregamento");
     return (
@@ -57,7 +57,7 @@ const AppLayout = () => {
     );
   }
 
-  // Se não tem usuário, não renderiza nada (será tratado pela proteção de rota)
+  // Se não tem usuário, não renderiza nada
   if (!user) {
     console.log("AppLayout: Sem usuário autorizado");
     return null;
@@ -66,16 +66,16 @@ const AppLayout = () => {
   console.log("AppLayout: Renderizando layout da aplicação");
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full will-change-transform">
+      <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <SidebarInset className="flex-1">
-          {/* Header Mobile-First - Otimizado para Performance */}
-          <header className="flex h-14 sm:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 will-change-auto">
+        <SidebarInset className="flex-1 flex flex-col">
+          {/* Header estável sem tremida */}
+          <header className="flex h-14 sm:h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
             <div className="flex items-center gap-2 px-3 sm:px-4 flex-1 min-w-0">
-              <SidebarTrigger className="-ml-1 will-change-transform" />
+              <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               
-              {/* Breadcrumb Responsivo - Layout Fixo */}
+              {/* Breadcrumb estável */}
               <Breadcrumb className="flex-1 min-w-0">
                 <BreadcrumbList>
                   {!isMobile && (
@@ -97,17 +97,21 @@ const AppLayout = () => {
               </Breadcrumb>
             </div>
             
-            {/* User Navigation - Mobile Otimizado */}
+            {/* User Navigation estável */}
             <div className="px-3 sm:px-4 flex-shrink-0">
               <UserNav />
             </div>
           </header>
           
-          {/* Content Area - Mobile Spacing Otimizado */}
-          <div className="flex flex-1 flex-col gap-3 sm:gap-4 p-3 sm:p-4 pt-0 will-change-auto">
-            <TrialBanner />
-            <div className="will-change-auto">
-              <Outlet />
+          {/* Content Area com scroll suave */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+              <div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4">
+                <TrialBanner />
+                <div className="flex-1">
+                  <Outlet />
+                </div>
+              </div>
             </div>
           </div>
         </SidebarInset>

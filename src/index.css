@@ -61,27 +61,46 @@
 @layer base {
   * {
     @apply border-border;
+    /* Fundamental optimization for smooth navigation */
+    box-sizing: border-box;
+  }
+  
+  html {
+    /* Prevent layout shifts from scrollbar */
+    scrollbar-gutter: stable;
+    /* Optimize scroll behavior */
+    scroll-behavior: smooth;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Improve text rendering */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    /* Otimizações para performance mobile */
-    -webkit-tap-highlight-color: transparent;
-    text-size-adjust: 100%;
+    /* Critical: Prevent layout shifts and tremida */
     overflow-x: hidden;
+    position: relative;
+    /* Remove will-change to prevent GPU layer issues */
+    min-height: 100vh;
+    /* Stable scrollbar */
+    scrollbar-gutter: stable;
   }
   
+  /* Prevent tremida from heading layout shifts */
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight text-foreground;
     line-height: 1.25;
-    /* Evitar layout shifts */
-    contain: layout;
+    /* Critical: Contain layout to prevent shifts */
+    contain: layout style;
+    /* Prevent font loading shifts */
+    font-display: swap;
   }
   
   h1 { @apply text-2xl sm:text-3xl md:text-4xl font-semibold; }
@@ -93,18 +112,30 @@
 }
 
 @layer components {
-  /* Card Styles - Performance Otimizada */
+  /* Optimized card styles without tremida */
   .card-modern {
-    @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md;
+    @apply bg-card border border-border shadow-sm rounded-lg;
+    /* Stable transitions without GPU layers */
     transition: box-shadow 200ms ease-out;
+    /* Prevent layout shifts */
+    contain: layout;
+  }
+  
+  .card-modern:hover {
+    @apply shadow-md;
   }
   
   .card-premium {
-    @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg;
+    @apply bg-card border border-border shadow-md rounded-lg;
     transition: box-shadow 200ms ease-out;
+    contain: layout;
   }
   
-  /* Text Utilities */
+  .card-premium:hover {
+    @apply shadow-lg;
+  }
+  
+  /* Stable text utilities */
   .text-success {
     @apply text-success;
   }
@@ -113,7 +144,7 @@
     @apply text-destructive;
   }
   
-  /* Background Utilities */
+  /* Background utilities without tremida */
   .bg-success {
     @apply bg-success/10 text-success border-success/20;
   }
@@ -122,18 +153,28 @@
     @apply bg-destructive/10 text-destructive border-destructive/20;
   }
 
-  /* Button Styles - Performance Otimizada */
+  /* Optimized button styles */
   .btn-primary {
-    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow rounded-md;
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm rounded-md;
     transition: all 200ms ease-out;
+    contain: layout;
+  }
+  
+  .btn-primary:hover {
+    @apply shadow;
   }
   
   .btn-secondary {
-    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow rounded-md;
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm rounded-md;
     transition: all 200ms ease-out;
+    contain: layout;
   }
   
-  /* Mobile-First Spacing System - Otimizado */
+  .btn-secondary:hover {
+    @apply shadow;
+  }
+  
+  /* Stable spacing system */
   .space-clean { @apply space-y-3 sm:space-y-4; }
   .space-clean-lg { @apply space-y-4 sm:space-y-6; }
   .space-clean-xl { @apply space-y-6 sm:space-y-8; }
@@ -142,14 +183,16 @@
   .gap-clean-lg { @apply gap-3 sm:gap-4; }
   .gap-clean-xl { @apply gap-4 sm:gap-6; }
   
-  /* Mobile-First Container */
+  /* Stable container */
   .container-clean {
     @apply max-w-7xl mx-auto px-3 sm:px-4 md:px-6;
+    contain: layout;
   }
   
-  /* Mobile-Responsive Icon Container - Performance */
+  /* Icon containers without tremida */
   .icon-container {
     @apply p-1.5 sm:p-2 rounded-md;
+    contain: layout;
   }
   
   .icon-container-primary {
@@ -164,13 +207,14 @@
     @apply bg-destructive/10 text-destructive;
   }
 
-  /* Mobile Touch Targets - Aprimorado */
+  /* Optimized touch targets */
   .touch-target {
     @apply min-h-[44px] min-w-[44px];
     touch-action: manipulation;
+    contain: layout;
   }
   
-  /* Mobile-Optimized Text Sizes */
+  /* Stable text sizes */
   .text-mobile-body {
     @apply text-sm sm:text-base;
   }
@@ -189,7 +233,7 @@
     text-wrap: balance;
   }
   
-  /* Professional Shadows - Mobile Responsive e Otimizada */
+  /* Stable shadows */
   .shadow-clean {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   }
@@ -198,7 +242,7 @@
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
   
-  /* Mobile-First Spacing */
+  /* Stable spacing */
   .p-clean { @apply p-3 sm:p-4; }
   .px-clean { @apply px-3 sm:px-4; }
   .py-clean { @apply py-3 sm:py-4; }
@@ -207,14 +251,16 @@
   .mx-clean { @apply mx-3 sm:mx-4; }
   .my-clean { @apply my-3 sm:my-4; }
 
-  /* Mobile Overflow Handling - Aprimorado */
+  /* Optimized overflow handling */
   .overflow-touch {
     -webkit-overflow-scrolling: touch;
     overflow-x: auto;
     overscroll-behavior-x: contain;
+    /* Prevent tremida from scrolling */
+    scrollbar-width: thin;
   }
   
-  /* Safe Area Support */
+  /* Safe area support */
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
@@ -223,7 +269,7 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   
-  /* Mobile Viewport Units */
+  /* Stable viewport units */
   .h-mobile-screen {
     height: 100vh;
     height: 100dvh;
@@ -234,32 +280,27 @@
     min-height: 100dvh;
   }
   
-  /* Truncate Text Otimizado */
+  /* Optimized text truncation */
   .truncate-mobile {
     @apply truncate;
     contain: layout;
   }
   
-  /* Flex Utilities Otimizados */
+  /* Stable flex utilities */
   .flex-shrink-0 {
     flex-shrink: 0;
     contain: layout;
   }
 }
 
-/* Mobile-Specific Otimizações */
+/* Critical: Remove problematic mobile animations that cause tremida */
 @media (max-width: 640px) {
-  /* Redução de animações para melhor performance mobile */
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  /* Only disable problematic animations, keep smooth ones */
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
-  /* Otimizações de focus para mobile */
+  /* Ensure focus is visible on mobile */
   button:focus,
   input:focus,
   select:focus,
@@ -268,14 +309,13 @@
     outline-offset: 2px;
   }
   
-  /* Otimizar scrolling */
+  /* Optimize mobile scrolling */
   * {
-    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
 }
 
-/* High DPI displays - Otimizado */
+/* Optimize for high DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .crisp-edges {
     image-rendering: -webkit-optimize-contrast;
@@ -283,7 +323,7 @@
   }
 }
 
-/* Performance Otimizations para Animações */
+/* Respect user preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -295,14 +335,16 @@
   }
 }
 
-/* Otimizações específicas para evitar tremulação */
+/* Stable image and video rendering */
 img, video {
   height: auto;
   max-width: 100%;
   contain: layout;
+  /* Prevent layout shifts during loading */
+  font-size: 0;
 }
 
-/* Contenção de layout para evitar reflows */
+/* Layout containment for stability */
 .contain-layout {
   contain: layout;
 }
@@ -313,4 +355,30 @@ img, video {
 
 .contain-paint {
   contain: paint;
+}
+
+/* Critical: Stable scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Ensure smooth navigation without tremida */
+.smooth-navigation {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }

@@ -19,8 +19,7 @@ import { OnboardingTour } from "@/components/OnboardingTour";
 
 /**
  * Componente principal do Dashboard
- * Ponto central da aplicação onde o usuário visualiza seu resumo financeiro
- * Agora inclui onboarding interativo para novos usuários
+ * Otimizado para navegação suave sem tremida
  */
 const Dashboard = () => {
   const { user } = useAuth();
@@ -44,7 +43,7 @@ const Dashboard = () => {
   if (isLoadingHasTransactions) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
+        <div className="container-clean py-6 max-w-7xl">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
             <div className="space-y-2">
               <div className="h-8 w-72 bg-muted rounded animate-pulse" />
@@ -76,17 +75,17 @@ const Dashboard = () => {
       <OnboardingTour />
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-7xl">
-          {/* Header otimizado com melhor hierarquia visual */}
+        <div className="container-clean py-6 max-w-7xl">
+          {/* Header otimizado sem tremida */}
           <header className="flex items-start justify-between flex-wrap gap-4 mb-8">
-            <div className="space-y-2">
+            <div className="space-y-2 flex-1 min-w-0">
               <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="text-2xl md:text-3xl font-semibold text-foreground leading-tight">
                   {getGreeting()}, {firstName}! {getGreetingEmoji()}
                 </h1>
                 <Badge 
                   variant="secondary" 
-                  className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs"
+                  className="bg-secondary text-secondary-foreground border border-border font-medium px-2 py-1 text-xs flex-shrink-0"
                 >
                   Gratuito
                 </Badge>
@@ -96,29 +95,29 @@ const Dashboard = () => {
               </p>
             </div>
             
-            <nav className="flex items-center gap-2 flex-wrap" role="navigation" aria-label="Ações rápidas">
+            <nav className="flex items-center gap-2 flex-wrap flex-shrink-0" role="navigation" aria-label="Ações rápidas">
               <AddRecurringTransactionDialog />
               <AddInstallmentPlanDialog />
               <AddTransactionDialog />
             </nav>
           </header>
 
-          {/* Layout Principal */}
+          {/* Layout Principal com grid estável */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Coluna Principal (2/3 da tela) */}
+            {/* Coluna Principal */}
             <div className="xl:col-span-2 space-y-6">
               {/* Resumo Financeiro */}
-              <div className="bg-card rounded-lg border border-border shadow-sm">
+              <div className="card-modern">
                 <FinancialSummary />
               </div>
               
               {/* Transações */}
-              <div className="bg-card rounded-lg border border-border shadow-sm">
+              <div className="card-modern">
                 <TransactionList />
               </div>
             </div>
             
-            {/* Sidebar (1/3 da tela) */}
+            {/* Sidebar */}
             <div className="xl:col-span-1">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
                 <SmartInsightsCard />
