@@ -74,8 +74,8 @@ export function validatePasswordStrength(password: string): PasswordValidationRe
     score += 1;
   }
   
-  if (!/[^a-zA-Z0-9]/.test(password)) {
-    errors.push("A senha deve conter pelo menos um caractere especial (ex: !@#$%^&*()_+-=)");
+  if (!/[@$!%*?&]/.test(password)) {
+    errors.push("A senha deve conter pelo menos um caractere especial (@$!%*?&)");
   } else {
     score += 1;
   }

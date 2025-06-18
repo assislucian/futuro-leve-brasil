@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,7 +51,7 @@ export function SignUpForm() {
   const handleSubmitWithFeedback = async (values: any) => {
     setSignUpState('checking');
     setIntelligentFeedback("Verificando disponibilidade do email...");
-    setSuggestionMessage("Use pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e um caractere especial (ex: !@#$%^&*()_+-=)");
+    setSuggestionMessage("Isso pode levar alguns segundos.");
     clearError();
 
     try {
