@@ -14,11 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string()
@@ -31,6 +30,7 @@ type LoginState = 'idle' | 'authenticating' | 'success' | 'error';
 
 export function LoginForm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, setLoginState] = useState<LoginState>('idle');
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -72,40 +72,43 @@ export function LoginForm() {
     setErrorMessage("");
     
     try {
-      console.log('Tentativa de login para:', values.email);
+      console.debug('🚀 Tentativa de login para:', values.email);
       
+      // ✅ TAREFA 3: Callback/Redirects - Login sem redirectTo manual
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (error) {
-        console.error('Erro no login:', error);
+        console.error('🚀 Erro no login:', error);
         setLoginState('error');
         setErrorMessage(getErrorMessage(error));
         return;
       }
 
-      if (data.user) {
-        if (!data.user.email_confirmed_at) {
-          setLoginState('error');
-          setErrorMessage("Email ainda não foi confirmado. Verifique sua caixa de entrada.");
-          localStorage.setItem('pendingEmailConfirmation', values.email);
-          setTimeout(() => navigate('/email-confirmation'), 3000);
-          return;
-        }
+      if (data.user && data.session) {
+        console.debug("🚀 Login bem-sucedido:", {
+          userId: data.user.id,
+          sessionExpiry: new Date(data.session.expires_at! * 1000)
+        });
         
         setLoginState('success');
         
-        toast.success("Acesso realizado com sucesso! 🎉", {
-          description: "Bem-vindo(a) de volta ao Plenus",
-          duration: 3000,
+        toast.success("Login realizado com sucesso! 🎉", {
+          description: "Redirecionando para o dashboard...",
+          duration: 2000,
         });
         
-        setTimeout(() => navigate('/dashboard'), 500);
+        // ✅ TAREFA 3: Aguardar um pouco para garantir que o AuthProvider processe
+        setTimeout(() => {
+          const redirectPath = location.state?.from?.pathname || '/dashboard';
+          console.debug('🚀 Redirecionando para:', redirectPath);
+          navigate(redirectPath, { replace: true });
+        }, 500);
       }
     } catch (error) {
-      console.error('Erro inesperado no login:', error);
+      console.error('🚀 Erro inesperado no login:', error);
       setLoginState('error');
       setErrorMessage("Erro no sistema. Tente novamente em alguns minutos.");
     }
@@ -183,7 +186,6 @@ export function LoginForm() {
           </Link>
         </div>
 
-        {/* Feedback de Erro */}
         {errorMessage && loginState === 'error' && (
           <Alert className="border-l-4 border-amber-500 bg-amber-50">
             <AlertCircle className="h-4 w-4" />
@@ -199,7 +201,6 @@ export function LoginForm() {
           </Alert>
         )}
 
-        {/* Feedback de Sucesso */}
         {loginState === 'success' && (
           <Alert className="border-l-4 border-green-500 bg-green-50">
             <CheckCircle className="h-4 w-4 text-green-600" />
@@ -214,7 +215,6 @@ export function LoginForm() {
           type="submit" 
           className="w-full" 
           disabled={loginState === 'authenticating' || loginState === 'success'}
-          variant={loginState === 'success' ? "default" : "default"}
         >
           {getButtonText()}
         </Button>

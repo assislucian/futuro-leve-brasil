@@ -27,8 +27,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const DashboardPage = () => {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, session, profile, loading: authLoading } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
+  
+  // ✅ TAREFA 3: Auditoria de sessão no Dashboard
+  console.debug("🚀 Dashboard: Estado de autenticação", {
+    hasUser: !!user,
+    hasSession: !!session,
+    hasProfile: !!profile,
+    sessionValid: session ? new Date(session.expires_at! * 1000) > new Date() : false,
+    authLoading,
+    isLoadingHasTransactions
+  });
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
   const currentHour = new Date().getHours();
