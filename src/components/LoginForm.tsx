@@ -15,10 +15,9 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string()
@@ -34,6 +33,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, setLoginState] = useState<LoginState>('idle');
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const isAuthenticatingRef = useRef(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,7 +52,7 @@ export function LoginForm() {
     if (errorMsg.includes('email not confirmed')) {
       return "Email ainda não foi confirmado. Verifique sua caixa de entrada.";
     }
-    if (errorMsg.includes('too many requests')) {
+    if (errorMsg.includes('too many requests') || errorMsg.includes('rate limit')) {
       return "Muitas tentativas. Aguarde alguns minutos.";
     }
     if (errorMsg.includes('user not found')) {
@@ -66,13 +66,18 @@ export function LoginForm() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (loginState === 'authenticating') return;
+    // Prevenir múltiplas submissões simultâneas
+    if (isAuthenticatingRef.current || loginState === 'authenticating') {
+      console.log("🚫 LoginForm: Tentativa de login duplicada bloqueada");
+      return;
+    }
     
+    isAuthenticatingRef.current = true;
     setLoginState('authenticating');
     setErrorMessage("");
     
     try {
-      console.log('Tentativa de login para:', values.email);
+      console.log('🔐 LoginForm: Tentativa de login para:', values.email);
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
@@ -80,7 +85,7 @@ export function LoginForm() {
       });
 
       if (error) {
-        console.error('Erro no login:', error);
+        console.error('❌ LoginForm: Erro no login:', error);
         setLoginState('error');
         setErrorMessage(getErrorMessage(error));
         return;
@@ -91,10 +96,10 @@ export function LoginForm() {
           setLoginState('error');
           setErrorMessage("Email ainda não foi confirmado. Verifique sua caixa de entrada.");
           localStorage.setItem('pendingEmailConfirmation', values.email);
-          setTimeout(() => navigate('/email-confirmation'), 3000);
           return;
         }
         
+        console.log('✅ LoginForm: Login bem-sucedido');
         setLoginState('success');
         
         toast.success("Acesso realizado com sucesso! 🎉", {
@@ -102,12 +107,17 @@ export function LoginForm() {
           duration: 3000,
         });
         
-        setTimeout(() => navigate('/dashboard'), 500);
+        // Aguardar um pouco para o AuthProvider processar a mudança
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 500);
       }
     } catch (error) {
-      console.error('Erro inesperado no login:', error);
+      console.error('💥 LoginForm: Erro inesperado no login:', error);
       setLoginState('error');
       setErrorMessage("Erro no sistema. Tente novamente em alguns minutos.");
+    } finally {
+      isAuthenticatingRef.current = false;
     }
   }
 
@@ -214,7 +224,6 @@ export function LoginForm() {
           type="submit" 
           className="w-full" 
           disabled={loginState === 'authenticating' || loginState === 'success'}
-          variant={loginState === 'success' ? "default" : "default"}
         >
           {getButtonText()}
         </Button>

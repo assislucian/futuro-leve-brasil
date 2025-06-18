@@ -10,8 +10,16 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user, session, loading } = useAuth();
   const location = useLocation();
+
+  console.log("🛡️ ProtectedRoute: Verificando acesso", {
+    requireAuth,
+    hasUser: !!user,
+    hasSession: !!session,
+    loading,
+    pathname: location.pathname
+  });
 
   // Mostra loading enquanto verifica autenticação
   if (loading) {
@@ -24,14 +32,17 @@ export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteP
   }
 
   // Se requer autenticação mas usuário não está logado
-  if (requireAuth && !user) {
+  if (requireAuth && (!user || !session)) {
+    console.log("🔒 ProtectedRoute: Redirecionando para /auth - usuário não autenticado");
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   // Se não requer autenticação mas usuário está logado (páginas públicas)
-  if (!requireAuth && user) {
+  if (!requireAuth && user && session) {
+    console.log("🏠 ProtectedRoute: Redirecionando para /dashboard - usuário já autenticado");
     return <Navigate to="/dashboard" replace />;
   }
 
+  console.log("✅ ProtectedRoute: Acesso autorizado");
   return <>{children}</>;
 };

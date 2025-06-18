@@ -1,5 +1,5 @@
 
-import React, { createContext, useEffect, useState, ReactNode, useCallback } from "react";
+import React, { createContext, useEffect, useState, ReactNode, useCallback, useRef } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -30,22 +30,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Refs para controle de execução e prevenção de race conditions
+  const initializingRef = useRef(false);
+  const mountedRef = useRef(true);
+  const subscriptionRef = useRef<any>(null);
 
-  console.log("AuthProvider: Estado atual", { 
+  console.log("🔐 AuthProvider: Estado atual", { 
     hasUser: !!user, 
     hasProfile: !!profile, 
     loading, 
     error,
-    profilePlan: profile?.plan,
-    trialEndsAt: profile?.trial_ends_at
+    isInitializing: initializingRef.current,
+    sessionId: session?.access_token?.substring(0, 10) + '...' || 'none'
   });
 
   /**
-   * Busca o perfil do usuário com tratamento de erro robusto e retry
+   * Busca o perfil do usuário com retry inteligente e cache
    */
-  const fetchProfile = useCallback(async (userId: string, retryCount = 0): Promise<Profile | null> => {
+  const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
+    if (!mountedRef.current) return null;
+    
     try {
-      console.log("AuthProvider: Buscando perfil para userId:", userId);
+      console.log("🔍 AuthProvider: Buscando perfil para userId:", userId);
       
       const { data, error } = await supabase
         .from("profiles")
@@ -54,21 +61,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .maybeSingle();
 
       if (error) {
-        // Retry uma vez em caso de erro de rede
-        if (retryCount === 0 && error.message.includes('network')) {
-          console.warn("AuthProvider: Tentando novamente buscar perfil devido a erro de rede");
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          return fetchProfile(userId, 1);
+        console.error("❌ AuthProvider: Erro ao buscar perfil:", error.message);
+        
+        // Se o perfil não existe, criar automaticamente
+        if (error.code === 'PGRST116') {
+          const { data: newProfile, error: createError } = await supabase
+            .from("profiles")
+            .insert({
+              id: userId,
+              full_name: user?.user_metadata?.full_name || user?.email || 'Usuário',
+              plan: 'free',
+              trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            })
+            .select()
+            .maybeSingle();
+
+          if (createError) {
+            console.error("❌ AuthProvider: Erro ao criar perfil:", createError);
+            return null;
+          }
+
+          console.log("✅ AuthProvider: Perfil criado automaticamente");
+          return newProfile;
         }
         
-        console.error("AuthProvider: Erro ao buscar perfil:", error);
-        setError(`Erro ao carregar perfil: ${error.message}`);
         return null;
       }
 
       if (!data) {
-        console.warn("AuthProvider: Perfil não encontrado para userId:", userId);
-        // Tentar criar perfil automaticamente se não existir
+        console.warn("⚠️ AuthProvider: Perfil não encontrado, criando...");
+        // Criar perfil se não existir
         const { data: newProfile, error: createError } = await supabase
           .from("profiles")
           .insert({
@@ -81,22 +103,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           .maybeSingle();
 
         if (createError) {
-          console.error("AuthProvider: Erro ao criar perfil:", createError);
-          setError("Erro ao criar perfil do usuário");
+          console.error("❌ AuthProvider: Erro ao criar perfil:", createError);
           return null;
         }
 
-        console.log("AuthProvider: Perfil criado automaticamente:", newProfile);
-        setError(null);
         return newProfile;
       }
 
-      console.log("AuthProvider: Perfil carregado com sucesso:", data);
-      setError(null);
+      console.log("✅ AuthProvider: Perfil carregado com sucesso");
       return data;
     } catch (error) {
-      console.error("AuthProvider: Erro inesperado ao buscar perfil:", error);
-      setError("Erro inesperado ao carregar perfil do usuário");
+      console.error("💥 AuthProvider: Erro inesperado ao buscar perfil:", error);
       return null;
     }
   }, [user]);
@@ -105,100 +122,142 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
    * Função para atualizar o perfil manualmente
    */
   const refreshProfile = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id || loading) return;
     
     const profileData = await fetchProfile(user.id);
-    setProfile(profileData);
-  }, [user?.id, fetchProfile]);
+    if (mountedRef.current) {
+      setProfile(profileData);
+    }
+  }, [user?.id, loading, fetchProfile]);
 
   /**
    * Limpar erro
    */
   const clearError = useCallback(() => {
-    setError(null);
+    if (mountedRef.current) {
+      setError(null);
+    }
   }, []);
 
   /**
-   * Atualizar estado do usuário de forma segura
+   * Atualizar estado do usuário de forma segura e otimizada
    */
-  const updateAuthState = useCallback(async (newSession: Session | null) => {
+  const updateAuthState = useCallback(async (newSession: Session | null, skipProfile = false) => {
+    if (!mountedRef.current) return;
+    
     try {
       if (newSession?.user) {
-        console.log("AuthProvider: Atualizando estado para usuário logado:", newSession.user.id);
+        console.log("🚀 AuthProvider: Atualizando estado para usuário logado:", newSession.user.id);
         
         setUser(newSession.user);
         setSession(newSession);
+        setError(null);
         
-        const profileData = await fetchProfile(newSession.user.id);
-        setProfile(profileData);
+        // Buscar perfil apenas se não estiver sendo pulado
+        if (!skipProfile) {
+          const profileData = await fetchProfile(newSession.user.id);
+          if (mountedRef.current) {
+            setProfile(profileData);
+          }
+        }
       } else {
-        console.log("AuthProvider: Limpando estado do usuário");
+        console.log("🔓 AuthProvider: Limpando estado do usuário");
         setUser(null);
         setProfile(null);
         setSession(null);
         setError(null);
       }
     } catch (error) {
-      console.error("AuthProvider: Erro ao atualizar estado:", error);
-      setError("Erro ao atualizar estado de autenticação");
-    } finally {
-      setLoading(false);
+      console.error("💥 AuthProvider: Erro ao atualizar estado:", error);
+      if (mountedRef.current) {
+        setError("Erro ao atualizar estado de autenticação");
+      }
     }
   }, [fetchProfile]);
 
   useEffect(() => {
-    let mounted = true;
-    let authSubscription: any = null;
-
+    let timeoutId: NodeJS.Timeout;
+    
     const initializeAuth = async () => {
+      // Prevenir múltiplas inicializações simultâneas
+      if (initializingRef.current || !mountedRef.current) {
+        return;
+      }
+      
+      initializingRef.current = true;
+      
       try {
-        console.log("AuthProvider: Inicializando autenticação");
+        console.log("🔄 AuthProvider: Inicializando autenticação...");
         
-        authSubscription = supabase.auth.onAuthStateChange(
+        // Configurar listener de mudanças de estado PRIMEIRO
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
-            console.log("AuthProvider: Evento de auth:", event, "Session:", !!session);
+            if (!mountedRef.current) return;
             
-            if (!mounted) return;
-
+            console.log("🔔 AuthProvider: Evento de auth:", event, "Session:", !!session);
+            
             // Usar timeout para evitar race conditions
-            setTimeout(() => {
-              if (mounted) {
-                updateAuthState(session);
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(async () => {
+              if (mountedRef.current) {
+                await updateAuthState(session, event === 'TOKEN_REFRESHED');
+                
+                // Definir loading como false após processar mudança de estado
+                if (event !== 'TOKEN_REFRESHED') {
+                  setLoading(false);
+                }
               }
-            }, 0);
+            }, event === 'TOKEN_REFRESHED' ? 100 : 300);
           }
         );
+        
+        subscriptionRef.current = subscription;
 
+        // DEPOIS buscar sessão atual
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error("AuthProvider: Erro ao obter sessão:", error);
-          setError(`Erro de autenticação: ${error.message}`);
-          setLoading(false);
+          console.error("❌ AuthProvider: Erro ao obter sessão:", error);
+          if (mountedRef.current) {
+            setError(`Erro de autenticação: ${error.message}`);
+            setLoading(false);
+          }
           return;
         }
 
-        if (mounted) {
+        if (mountedRef.current) {
           await updateAuthState(session);
+          setLoading(false);
         }
+        
       } catch (error) {
-        console.error("AuthProvider: Erro na inicialização:", error);
-        if (mounted) {
+        console.error("💥 AuthProvider: Erro na inicialização:", error);
+        if (mountedRef.current) {
           setError("Erro ao inicializar autenticação");
           setLoading(false);
         }
+      } finally {
+        initializingRef.current = false;
       }
     };
 
     initializeAuth();
 
     return () => {
-      mounted = false;
-      if (authSubscription?.data?.subscription) {
-        authSubscription.data.subscription.unsubscribe();
+      clearTimeout(timeoutId);
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
+        subscriptionRef.current = null;
       }
     };
-  }, [updateAuthState]);
+  }, []); // Dependências vazias - executar apenas uma vez
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Calcular se está em período de trial e dias restantes
   const isTrialing = profile?.trial_ends_at 
@@ -208,13 +267,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const trialDaysLeft = profile?.trial_ends_at 
     ? Math.max(0, Math.ceil((new Date(profile.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
-
-  console.log("AuthProvider: Trial status calculado", {
-    isTrialing,
-    trialDaysLeft,
-    trialEndsAt: profile?.trial_ends_at,
-    now: new Date().toISOString()
-  });
 
   const contextValue: AuthContextType = {
     user,

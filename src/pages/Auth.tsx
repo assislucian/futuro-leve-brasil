@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 
 const AuthPage = () => {
-  const { user, loading } = useAuth();
+  const { user, session, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,13 +17,23 @@ const AuthPage = () => {
   const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
-    if (!loading && user) {
-      console.log("Auth: Redirecionando usuário autenticado para:", from);
+    if (!loading && user && session) {
+      console.log("🏠 Auth: Redirecionando usuário autenticado para:", from);
       navigate(from, { replace: true });
     }
-  }, [user, loading, navigate, from]);
+  }, [user, session, loading, navigate, from]);
 
-  if (loading || (!loading && user)) {
+  if (loading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+        <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+        <p className="text-muted-foreground">Verificando autenticação...</p>
+      </div>
+    );
+  }
+
+  // Se usuário já está logado, mostra loading enquanto redireciona
+  if (user && session) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />

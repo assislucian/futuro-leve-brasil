@@ -401,10 +401,12 @@ export type Database = {
     }
     Functions: {
       calculate_next_execution_date: {
-        Args: {
-          input_date: string
-          frequency: Database["public"]["Enums"]["recurrence_frequency"]
-        }
+        Args:
+          | Record<PropertyKey, never>
+          | {
+              input_date: string
+              frequency: Database["public"]["Enums"]["recurrence_frequency"]
+            }
         Returns: string
       }
     }
