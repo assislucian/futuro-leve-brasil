@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Shield, TrendingUp, CheckCircle, Target, Users, Star } from "lucide-react";
@@ -120,8 +119,8 @@ const Hero = () => {
               {/* Main image with premium treatment */}
               <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl">
                 <img 
-                  src="https://images.pexels.com/photos/5691616/pexels-photo-5691616.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-                  alt="Profissional brasileira confiante organizando suas finanças"
+                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80" 
+                  alt="Casal jovem brasileiro sorrindo enquanto organiza suas finanças juntos"
                   className="h-full w-full object-cover"
                   loading="eager"
                 />
