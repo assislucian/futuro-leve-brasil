@@ -1,129 +1,198 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { AddTransactionDialog } from "./AddTransactionDialog";
+import { AddGoalDialog } from "./AddGoalDialog";
 import { DemoDataPopulator } from "./DemoDataPopulator";
-import { Sparkles, Target, PieChart, TrendingUp, Database } from "lucide-react";
+import { useWealthJourneyTour } from "@/hooks/useWealthJourneyTour";
+import { 
+  Sparkles, 
+  Target, 
+  DollarSign, 
+  BookOpen,
+  TrendingUp,
+  Heart,
+  ArrowRight,
+  Lightbulb
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-/**
- * Guia de boas-vindas para usuários sem transações
- * Incentiva as primeiras ações no app
- */
 export function WelcomeGuide() {
+  const [showDemo, setShowDemo] = useState(false);
+  const { restartTour } = useWealthJourneyTour();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 p-4 md:p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header de boas-vindas */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center">
-              <Sparkles className="h-10 w-10 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-white">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Header de Boas-vindas */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <Sparkles className="h-4 w-4" />
+            Bem-vindo ao Plenus
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Sua jornada para a <span className="text-emerald-600">plenitude financeira</span> começa aqui
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Transforme sua relação com o dinheiro e alcance seus sonhos. 
+            Vamos te guiar passo a passo nesta jornada.
+          </p>
+        </div>
+
+        {/* Tour Recomendado */}
+        <Card className="mb-8 border-emerald-200 bg-gradient-to-br from-emerald-50 to-white">
+          <CardHeader className="text-center pb-4">
+            <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+              <BookOpen className="h-8 w-8 text-emerald-600" />
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-              Bem-vindo ao Plenus! 🎉
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Sua jornada para a plenitude financeira começa agora. Vamos transformar seus sonhos em metas alcançáveis!
-            </p>
-          </div>
-        </div>
-
-        {/* Opções de início */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Opção 1: Começar do zero */}
-          <Card className="border-2 border-emerald-200 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
-            <CardHeader className="text-center space-y-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto">
-                <TrendingUp className="h-8 w-8 text-emerald-600" />
-              </div>
-              <CardTitle className="text-xl text-emerald-800">
-                Começar Minha Jornada
-              </CardTitle>
-              <CardDescription className="text-gray-600">
-                Adicione sua primeira transação e comece a organizar suas finanças
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <AddTransactionDialog />
-              <p className="text-sm text-gray-500 mt-3">
-                Pode ser algo simples como o café da manhã!
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Opção 2: Explorar com dados demo */}
-          <Card className="border-2 border-blue-200 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
-            <CardHeader className="text-center space-y-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto">
-                <Database className="h-8 w-8 text-blue-600" />
-              </div>
-              <CardTitle className="text-xl text-blue-800">
-                Explorar com Dados Demo
-              </CardTitle>
-              <CardDescription className="text-gray-600">
-                Experimente todas as funcionalidades com dados de exemplo realistas
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <DemoDataPopulator />
-              <p className="text-sm text-gray-500 mt-3">
-                Perfeito para conhecer o sistema completo
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Próximos passos */}
-        <Card className="bg-white/80 backdrop-blur-sm border-gray-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-gray-800">
-              <Sparkles className="h-5 w-5 text-purple-600" />
-              O que você pode fazer no Plenus
+            <CardTitle className="text-2xl text-emerald-800">
+              Jornada Plenus Recomendada
             </CardTitle>
+            <CardDescription className="text-emerald-700">
+              Uma experiência educativa completa para você dominar todas as funcionalidades
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto">
-                  <TrendingUp className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Controle Total</h3>
-                <p className="text-sm text-gray-600">
-                  Acompanhe receitas, despesas e veja para onde seu dinheiro está indo
-                </p>
+          <CardContent className="text-center space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center gap-2 justify-center sm:justify-start">
+                <Lightbulb className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                <span className="text-gray-700">No seu ritmo</span>
               </div>
-
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto">
-                  <Target className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Realize Sonhos</h3>
-                <p className="text-sm text-gray-600">
-                  Transforme seus objetivos em metas financeiras concretas e alcançáveis
-                </p>
+              <div className="flex items-center gap-2 justify-center sm:justify-start">
+                <Target className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                <span className="text-gray-700">Educativo e prático</span>
               </div>
-
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center mx-auto">
-                  <PieChart className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Planeje Gastos</h3>
-                <p className="text-sm text-gray-600">
-                  Crie orçamentos inteligentes e mantenha suas finanças organizadas
-                </p>
+              <div className="flex items-center gap-2 justify-center sm:justify-start">
+                <Heart className="h-4 w-4 text-red-500 flex-shrink-0" />
+                <span className="text-gray-700">Focado em resultados</span>
               </div>
             </div>
+            
+            <Button 
+              onClick={restartTour}
+              size="lg"
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8"
+            >
+              <BookOpen className="h-5 w-5 mr-2" />
+              Começar Jornada Plenus
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+            
+            <p className="text-sm text-emerald-700">
+              ⏱️ Demora apenas 5-10 minutos e vai transformar como você usa o Plenus
+            </p>
           </CardContent>
         </Card>
 
-        {/* Call to action final */}
-        <div className="text-center space-y-4 py-6">
+        {/* Opções Rápidas */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <Card className="border-blue-200 hover:border-blue-300 transition-colors">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Começar adicionando transações</CardTitle>
+                  <CardDescription>
+                    Adicione suas receitas e despesas para ter controle total
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <AddTransactionDialog>
+                <Button variant="outline" className="w-full border-blue-200 hover:bg-blue-50">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Adicionar Primeira Transação
+                </Button>
+              </AddTransactionDialog>
+            </CardContent>
+          </Card>
+
+          <Card className="border-purple-200 hover:border-purple-300 transition-colors">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Target className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Definir seus objetivos</CardTitle>
+                  <CardDescription>
+                    Crie metas financeiras e veja como alcançá-las
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <AddGoalDialog>
+                <Button variant="outline" className="w-full border-purple-200 hover:bg-purple-50">
+                  <Target className="h-4 w-4 mr-2" />
+                  Criar Primeira Meta
+                </Button>
+              </AddGoalDialog>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Dados de Demonstração */}
+        <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-white">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-amber-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Explorar com dados de exemplo</CardTitle>
+                  <CardDescription>
+                    Veja como o Plenus funciona com dados realistas
+                  </CardDescription>
+                </div>
+              </div>
+              <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                Recomendado
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-amber-800 bg-amber-100 p-3 rounded-lg">
+              💡 <strong>Dica:</strong> Os dados de exemplo ajudam você a entender todas as funcionalidades 
+              antes de adicionar suas informações reais. Você pode removê-los a qualquer momento.
+            </p>
+            
+            {!showDemo ? (
+              <Button 
+                onClick={() => setShowDemo(true)}
+                variant="outline" 
+                className="w-full border-amber-300 hover:bg-amber-50"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Ver Opções de Demonstração
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <DemoDataPopulator />
+                <Button 
+                  onClick={() => setShowDemo(false)}
+                  variant="ghost" 
+                  size="sm"
+                  className="w-full text-amber-700 hover:bg-amber-50"
+                >
+                  Ocultar opções
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Footer com dica */}
+        <div className="text-center mt-8 p-6 bg-white rounded-lg border border-gray-200">
           <p className="text-gray-600">
-            💡 <strong>Dica:</strong> Comece pequeno e vá crescendo. Cada passo conta na sua jornada financeira!
+            <strong>💭 Lembre-se:</strong> A transformação financeira é uma jornada, não um destino. 
+            O Plenus está aqui para te apoiar em cada passo. Comece hoje, mesmo que seja pequeno.
           </p>
         </div>
       </div>

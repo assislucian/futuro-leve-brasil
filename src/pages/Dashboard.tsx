@@ -1,3 +1,4 @@
+
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -24,8 +25,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CinemaTour } from "@/components/CinemaTour";
-import { CinemaTourTrigger } from "@/components/CinemaTourTrigger";
+import { WealthJourneyTour } from "@/components/WealthJourneyTour";
+import { WealthJourneyTrigger } from "@/components/WealthJourneyTrigger";
 
 const DashboardPage = () => {
   const { user, profile, loading: authLoading } = useAuth();
@@ -74,7 +75,7 @@ const DashboardPage = () => {
   if (!hasTransactions) {
     return (
       <>
-        <CinemaTour />
+        <WealthJourneyTour />
         <WelcomeGuide />
       </>
     );
@@ -84,7 +85,7 @@ const DashboardPage = () => {
 
   return (
     <>
-      <CinemaTour />
+      <WealthJourneyTour />
       <GoalCompletionCelebration />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 max-w-7xl">
@@ -99,7 +100,7 @@ const DashboardPage = () => {
                   <span className={cn("text-xs font-medium px-2 py-1 rounded-full w-fit flex-shrink-0", planBadge.className)}>
                     {planBadge.text}
                   </span>
-                  <CinemaTourTrigger />
+                  <WealthJourneyTrigger />
                 </div>
               </div>
               <p className="text-sm sm:text-base text-muted-foreground">
