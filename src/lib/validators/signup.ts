@@ -1,4 +1,3 @@
-
 import * as z from "zod";
 
 // Schema de validação do formulário de cadastro
@@ -24,9 +23,7 @@ export const signUpFormSchema = z.object({
   confirmPassword: z.string()
     .min(1, { message: "Confirmação de senha é obrigatória" }),
   
-  terms: z.boolean().refine(val => val === true, {
-    message: "Você deve aceitar os termos e condições",
-  }),
+  terms: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
   path: ["confirmPassword"],
