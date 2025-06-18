@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -111,6 +110,36 @@ export function WealthJourneyTour() {
   } = useWealthJourneyTour();
 
   const currentStep = tourSteps[currentStepIndex];
+  const [modalPosition, setModalPosition] = useState<{top: number, left: number} | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (currentStep.highlight) {
+      const el = document.querySelector(currentStep.highlight);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const modalWidth = 600; // Aproximado, pode ajustar
+        const modalHeight = 400; // Aproximado, pode ajustar
+        const padding = 24;
+        let top = rect.bottom + padding;
+        let left = rect.left + (rect.width / 2) - (modalWidth / 2);
+        // Se não couber abaixo, tenta acima
+        if (top + modalHeight > window.innerHeight) {
+          top = rect.top - modalHeight - padding;
+        }
+        // Ajusta para não sair da tela
+        if (left < 16) left = 16;
+        if (left + modalWidth > window.innerWidth) left = window.innerWidth - modalWidth - 16;
+        // Se ainda não couber, centraliza
+        if (top < 16) top = window.innerHeight / 2 - modalHeight / 2;
+        setModalPosition({ top, left });
+      } else {
+        setModalPosition(null);
+      }
+    } else {
+      setModalPosition(null);
+    }
+  }, [currentStepIndex, currentStep?.highlight]);
 
   if (!isActive || !currentStep) {
     return null;
@@ -152,7 +181,25 @@ export function WealthJourneyTour() {
 
       {/* Modal principal */}
       <Dialog open={true} onOpenChange={() => {}}>
-        <DialogContent className="fixed z-[102] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl border-0 shadow-2xl p-0 overflow-hidden">
+        <DialogContent
+          ref={modalRef}
+          style={modalPosition ? {
+            position: 'fixed',
+            top: modalPosition.top,
+            left: modalPosition.left,
+            width: 600,
+            maxWidth: '95vw',
+            zIndex: 102,
+            margin: 0,
+            borderRadius: 16,
+            padding: 0,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+            overflow: 'hidden',
+            background: 'white',
+            border: 0
+          } : {}}
+          className={modalPosition ? "shadow-2xl p-0 overflow-hidden" : "fixed z-[102] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl border-0 shadow-2xl p-0 overflow-hidden"}
+        >
           {/* Header com progresso visual */}
           <div className="relative bg-gradient-to-br from-emerald-50 to-blue-50 p-6 border-b">
             <div className="flex items-center justify-between mb-4">

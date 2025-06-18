@@ -1,4 +1,3 @@
-
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -107,7 +106,7 @@ const Dashboard = () => {
             {/* Coluna Principal */}
             <div className="xl:col-span-2 space-y-6">
               {/* Resumo Financeiro */}
-              <div className="card-modern">
+              <div className="card-modern financial-summary">
                 <FinancialSummary />
               </div>
               
