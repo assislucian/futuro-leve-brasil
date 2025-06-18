@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Sparkles, X, Crown, Zap, Target, TrendingUp, Shield } from "lucide-react";
+import { CheckCircle2, Sparkles, X, Crown, Zap, Target, TrendingUp, Shield, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 
