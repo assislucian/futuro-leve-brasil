@@ -228,12 +228,15 @@ export function SignUpForm() {
         )}
       </div>
 
-      {/* Termos e Condições (Opcional) */}
+      {/* Termos e Condições */}
       <div className="flex items-start space-x-3">
         <Checkbox
           id="terms"
           {...form.register("terms")}
           disabled={isSubmitting}
+          className={cn(
+            form.formState.errors.terms && "border-red-500"
+          )}
         />
         <div className="grid gap-1.5 leading-none">
           <Label
@@ -257,6 +260,11 @@ export function SignUpForm() {
               política de privacidade
             </Link>
           </Label>
+          {form.formState.errors.terms && (
+            <p className="text-sm text-red-600">
+              {form.formState.errors.terms.message}
+            </p>
+          )}
         </div>
       </div>
 

@@ -61,81 +61,42 @@
 @layer base {
   * {
     @apply border-border;
-    /* Fundamental optimization for smooth navigation */
-    box-sizing: border-box;
-  }
-  
-  html {
-    /* Prevent layout shifts from scrollbar */
-    scrollbar-gutter: stable;
-    /* Optimize scroll behavior */
-    scroll-behavior: smooth;
-    /* Prevent horizontal overflow */
-    overflow-x: hidden;
-    /* Improve text rendering */
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
   
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    /* Critical: Prevent layout shifts and tremida */
-    overflow-x: hidden;
-    position: relative;
-    /* Remove will-change to prevent GPU layer issues */
-    min-height: 100vh;
-    /* Stable scrollbar */
-    scrollbar-gutter: stable;
   }
   
-  /* Prevent tremida from heading layout shifts */
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight text-foreground;
     line-height: 1.25;
-    /* Critical: Contain layout to prevent shifts */
-    contain: layout style;
-    /* Prevent font loading shifts */
-    font-display: swap;
   }
   
-  h1 { @apply text-2xl sm:text-3xl md:text-4xl font-semibold; }
-  h2 { @apply text-xl sm:text-2xl md:text-3xl font-semibold; }
-  h3 { @apply text-lg sm:text-xl md:text-2xl font-medium; }
-  h4 { @apply text-base sm:text-lg md:text-xl font-medium; }
-  h5 { @apply text-sm sm:text-base md:text-lg font-medium; }
-  h6 { @apply text-xs sm:text-sm md:text-base font-medium; }
+  h1 { @apply text-3xl md:text-4xl font-semibold; }
+  h2 { @apply text-2xl md:text-3xl font-semibold; }
+  h3 { @apply text-xl md:text-2xl font-medium; }
+  h4 { @apply text-lg md:text-xl font-medium; }
+  h5 { @apply text-base md:text-lg font-medium; }
+  h6 { @apply text-sm md:text-base font-medium; }
 }
 
 @layer components {
-  /* Optimized card styles without tremida */
+  /* Card Styles usando variáveis semânticas */
   .card-modern {
-    @apply bg-card border border-border shadow-sm rounded-lg;
-    /* Stable transitions without GPU layers */
-    transition: box-shadow 200ms ease-out;
-    /* Prevent layout shifts */
-    contain: layout;
-  }
-  
-  .card-modern:hover {
-    @apply shadow-md;
+    @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md transition-shadow duration-200;
   }
   
   .card-premium {
-    @apply bg-card border border-border shadow-md rounded-lg;
-    transition: box-shadow 200ms ease-out;
-    contain: layout;
+    @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200;
   }
   
-  .card-premium:hover {
-    @apply shadow-lg;
-  }
-  
-  /* Stable text utilities */
+  /* Text Utilities usando variáveis semânticas */
   .text-success {
     @apply text-success;
   }
@@ -144,7 +105,7 @@
     @apply text-destructive;
   }
   
-  /* Background utilities without tremida */
+  /* Background Utilities usando variáveis semânticas */
   .bg-success {
     @apply bg-success/10 text-success border-success/20;
   }
@@ -153,46 +114,32 @@
     @apply bg-destructive/10 text-destructive border-destructive/20;
   }
 
-  /* Optimized button styles */
+  /* Button Styles usando variáveis semânticas */
   .btn-primary {
-    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm rounded-md;
-    transition: all 200ms ease-out;
-    contain: layout;
-  }
-  
-  .btn-primary:hover {
-    @apply shadow;
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
   .btn-secondary {
-    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm rounded-md;
-    transition: all 200ms ease-out;
-    contain: layout;
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow transition-all duration-200 rounded-md;
   }
   
-  .btn-secondary:hover {
-    @apply shadow;
-  }
+  /* Spacing System Profissional */
+  .space-clean { @apply space-y-4; }
+  .space-clean-lg { @apply space-y-6; }
+  .space-clean-xl { @apply space-y-8; }
   
-  /* Stable spacing system */
-  .space-clean { @apply space-y-3 sm:space-y-4; }
-  .space-clean-lg { @apply space-y-4 sm:space-y-6; }
-  .space-clean-xl { @apply space-y-6 sm:space-y-8; }
+  .gap-clean { @apply gap-3; }
+  .gap-clean-lg { @apply gap-4; }
+  .gap-clean-xl { @apply gap-6; }
   
-  .gap-clean { @apply gap-2 sm:gap-3; }
-  .gap-clean-lg { @apply gap-3 sm:gap-4; }
-  .gap-clean-xl { @apply gap-4 sm:gap-6; }
-  
-  /* Stable container */
+  /* Container usando variáveis semânticas */
   .container-clean {
-    @apply max-w-7xl mx-auto px-3 sm:px-4 md:px-6;
-    contain: layout;
+    @apply max-w-7xl mx-auto px-4 md:px-6;
   }
   
-  /* Icon containers without tremida */
+  /* Icon Container usando variáveis semânticas */
   .icon-container {
-    @apply p-1.5 sm:p-2 rounded-md;
-    contain: layout;
+    @apply p-2 rounded-md;
   }
   
   .icon-container-primary {
@@ -206,26 +153,6 @@
   .icon-container-danger {
     @apply bg-destructive/10 text-destructive;
   }
-
-  /* Optimized touch targets */
-  .touch-target {
-    @apply min-h-[44px] min-w-[44px];
-    touch-action: manipulation;
-    contain: layout;
-  }
-  
-  /* Stable text sizes */
-  .text-mobile-body {
-    @apply text-sm sm:text-base;
-  }
-  
-  .text-mobile-caption {
-    @apply text-xs sm:text-sm;
-  }
-  
-  .text-mobile-heading {
-    @apply text-base sm:text-lg;
-  }
 }
 
 @layer utilities {
@@ -233,152 +160,21 @@
     text-wrap: balance;
   }
   
-  /* Stable shadows */
+  /* Professional Shadows */
   .shadow-clean {
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   }
   
   .shadow-clean-lg {
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
-  /* Stable spacing */
-  .p-clean { @apply p-3 sm:p-4; }
-  .px-clean { @apply px-3 sm:px-4; }
-  .py-clean { @apply py-3 sm:py-4; }
+  /* Professional Spacing */
+  .p-clean { @apply p-4; }
+  .px-clean { @apply px-4; }
+  .py-clean { @apply py-4; }
   
-  .m-clean { @apply m-3 sm:m-4; }
-  .mx-clean { @apply mx-3 sm:mx-4; }
-  .my-clean { @apply my-3 sm:my-4; }
-
-  /* Optimized overflow handling */
-  .overflow-touch {
-    -webkit-overflow-scrolling: touch;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    /* Prevent tremida from scrolling */
-    scrollbar-width: thin;
-  }
-  
-  /* Safe area support */
-  .safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  
-  /* Stable viewport units */
-  .h-mobile-screen {
-    height: 100vh;
-    height: 100dvh;
-  }
-  
-  .min-h-mobile-screen {
-    min-height: 100vh;
-    min-height: 100dvh;
-  }
-  
-  /* Optimized text truncation */
-  .truncate-mobile {
-    @apply truncate;
-    contain: layout;
-  }
-  
-  /* Stable flex utilities */
-  .flex-shrink-0 {
-    flex-shrink: 0;
-    contain: layout;
-  }
-}
-
-/* Critical: Remove problematic mobile animations that cause tremida */
-@media (max-width: 640px) {
-  /* Only disable problematic animations, keep smooth ones */
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
-  /* Ensure focus is visible on mobile */
-  button:focus,
-  input:focus,
-  select:focus,
-  textarea:focus {
-    outline: 2px solid hsl(var(--ring));
-    outline-offset: 2px;
-  }
-  
-  /* Optimize mobile scrolling */
-  * {
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* Optimize for high DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .crisp-edges {
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-  }
-}
-
-/* Respect user preferences */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Stable image and video rendering */
-img, video {
-  height: auto;
-  max-width: 100%;
-  contain: layout;
-  /* Prevent layout shifts during loading */
-  font-size: 0;
-}
-
-/* Layout containment for stability */
-.contain-layout {
-  contain: layout;
-}
-
-.contain-style {
-  contain: style;
-}
-
-.contain-paint {
-  contain: paint;
-}
-
-/* Critical: Stable scrollbar styles */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
-}
-
-/* Ensure smooth navigation without tremida */
-.smooth-navigation {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+  .m-clean { @apply m-4; }
+  .mx-clean { @apply mx-4; }
+  .my-clean { @apply my-4; }
 }

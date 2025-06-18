@@ -9,41 +9,25 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 
 const AuthPage = () => {
-  const { user, session, loading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Pegar a rota de onde o usuário veio, ou dashboard como padrão
   const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
-    // ✅ TAREFA 3: Log de auditoria
-    console.debug("🚀 Auth: Verificando auth", {
-      hasUser: !!user,
-      hasSession: !!session,
-      sessionValid: session ? new Date(session.expires_at! * 1000) > new Date() : false,
-      loading,
-      from
-    });
-
-    // Só redireciona se tiver sessão válida E não estiver carregando
-    if (!loading && user && session) {
-      const sessionValid = new Date(session.expires_at! * 1000) > new Date();
-      if (sessionValid) {
-        console.debug("🚀 Auth: Redirecionando usuário autenticado para:", from);
-        navigate(from, { replace: true });
-      }
+    if (!loading && user) {
+      console.log("Auth: Redirecionando usuário autenticado para:", from);
+      navigate(from, { replace: true });
     }
-  }, [user, session, loading, navigate, from]);
+  }, [user, loading, navigate, from]);
 
-  // Mostra loading se ainda verificando ou se tem sessão válida
-  const hasValidSession = user && session && new Date(session.expires_at! * 1000) > new Date();
-  if (loading || hasValidSession) {
+  if (loading || (!loading && user)) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
-        <p className="text-muted-foreground">
-          {loading ? "Verificando autenticação..." : "Redirecionando..."}
-        </p>
+        <p className="text-muted-foreground">Redirecionando...</p>
       </div>
     );
   }

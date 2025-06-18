@@ -31,22 +31,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 🚀 Auditoria de sessão - Log detalhado
-  console.debug("AuthProvider: Estado atual", { 
+  console.log("AuthProvider: Estado atual", { 
     hasUser: !!user, 
-    hasSession: !!session,
-    hasProfile: !!profile,
-    sessionValid: session ? new Date(session.expires_at! * 1000) > new Date() : false,
+    hasProfile: !!profile, 
     loading, 
-    error
+    error,
+    profilePlan: profile?.plan,
+    trialEndsAt: profile?.trial_ends_at
   });
 
   /**
-   * ✅ TAREFA 1: Busca perfil com retry e tratamento robusto
+   * Busca o perfil do usuário com tratamento de erro robusto
    */
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
     try {
-      console.debug("🚀 Buscando perfil para userId:", userId);
+      console.log("AuthProvider: Buscando perfil para userId:", userId);
       
       const { data, error } = await supabase
         .from("profiles")
@@ -56,113 +55,111 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (error) {
         console.error("AuthProvider: Erro ao buscar perfil:", error);
+        setError(`Erro ao carregar perfil: ${error.message}`);
         return null;
       }
 
       if (!data) {
-        // Auto-criar perfil se não existir
-        const { data: newProfile, error: createError } = await supabase
-          .from("profiles")
-          .insert({
-            id: userId,
-            full_name: user?.user_metadata?.full_name || user?.email || 'Usuário',
-            plan: 'free',
-            trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-          })
-          .select()
-          .maybeSingle();
-
-        if (createError) {
-          console.error("AuthProvider: Erro ao criar perfil:", createError);
-          return null;
-        }
-
-        console.debug("🚀 Perfil criado automaticamente:", newProfile);
-        return newProfile;
+        console.warn("AuthProvider: Perfil não encontrado para userId:", userId);
+        return null;
       }
 
-      console.debug("🚀 Perfil carregado com sucesso:", data);
+      console.log("AuthProvider: Perfil carregado com sucesso:", data);
+      setError(null);
       return data;
     } catch (error) {
       console.error("AuthProvider: Erro inesperado ao buscar perfil:", error);
+      setError("Erro inesperado ao carregar perfil do usuário");
       return null;
     }
-  }, [user]);
+  }, []);
 
+  /**
+   * Função para atualizar o perfil manualmente
+   */
   const refreshProfile = useCallback(async () => {
     if (!user?.id) return;
+    
     const profileData = await fetchProfile(user.id);
     setProfile(profileData);
   }, [user?.id, fetchProfile]);
 
+  /**
+   * Limpar erro
+   */
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
+  /**
+   * Atualizar estado do usuário de forma segura
+   */
+  const updateAuthState = useCallback(async (newSession: Session | null) => {
+    try {
+      if (newSession?.user) {
+        console.log("AuthProvider: Atualizando estado para usuário logado:", newSession.user.id);
+        
+        setUser(newSession.user);
+        setSession(newSession);
+        
+        const profileData = await fetchProfile(newSession.user.id);
+        setProfile(profileData);
+      } else {
+        console.log("AuthProvider: Limpando estado do usuário");
+        setUser(null);
+        setProfile(null);
+        setSession(null);
+        setError(null);
+      }
+    } catch (error) {
+      console.error("AuthProvider: Erro ao atualizar estado:", error);
+      setError("Erro ao atualizar estado de autenticação");
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchProfile]);
+
   useEffect(() => {
     let mounted = true;
 
-    // ✅ TAREFA 2: Configurar listener de auth state primeiro
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.debug("🚀 Evento de auth:", event);
-        console.debug("🚀 Sessão após evento:", session);
-        
-        if (!mounted) return;
-
-        if (event === 'SIGNED_IN' && session) {
-          console.debug("🚀 SIGNED_IN - Sessão válida recebida");
-          setSession(session);
-          setUser(session.user);
-          
-          // Buscar perfil sem afetar o estado de loading
-          const profileData = await fetchProfile(session.user.id);
-          if (mounted) {
-            setProfile(profileData);
-          }
-        } else if (event === 'SIGNED_OUT' || !session) {
-          console.debug("🚀 SIGNED_OUT ou sessão inválida");
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-        } else if (event === 'TOKEN_REFRESHED' && session) {
-          console.debug("🚀 TOKEN_REFRESHED - Atualizando sessão");
-          setSession(session);
-          setUser(session.user);
-        }
-
-        // Definir loading como false após processar qualquer evento
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    );
-
-    // ✅ TAREFA 3: Verificar sessão inicial após configurar listener
     const initializeAuth = async () => {
       try {
+        console.log("AuthProvider: Inicializando autenticação");
+        
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log("AuthProvider: Evento de auth:", event, "Session:", !!session);
+            
+            if (!mounted) return;
+
+            setTimeout(() => {
+              if (mounted) {
+                updateAuthState(session);
+              }
+            }, 0);
+          }
+        );
+
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error("AuthProvider: Erro ao obter sessão inicial:", error);
+          console.error("AuthProvider: Erro ao obter sessão:", error);
           setError(`Erro de autenticação: ${error.message}`);
-        } else if (session && mounted) {
-          console.debug("🚀 Sessão inicial encontrada:", session);
-          setSession(session);
-          setUser(session.user);
-          
-          const profileData = await fetchProfile(session.user.id);
-          if (mounted) {
-            setProfile(profileData);
-          }
+          setLoading(false);
+          return;
         }
+
+        if (mounted) {
+          await updateAuthState(session);
+        }
+
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error("AuthProvider: Erro na inicialização:", error);
         if (mounted) {
           setError("Erro ao inicializar autenticação");
-        }
-      } finally {
-        if (mounted) {
           setLoading(false);
         }
       }
@@ -172,11 +169,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
     };
-  }, [fetchProfile]);
+  }, [updateAuthState]);
 
-  // Calcular trial status
+  // Calcular se está em período de trial e dias restantes
   const isTrialing = profile?.trial_ends_at 
     ? new Date(profile.trial_ends_at) > new Date() 
     : false;
@@ -184,6 +180,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const trialDaysLeft = profile?.trial_ends_at 
     ? Math.max(0, Math.ceil((new Date(profile.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
+
+  console.log("AuthProvider: Trial status calculado", {
+    isTrialing,
+    trialDaysLeft,
+    trialEndsAt: profile?.trial_ends_at,
+    now: new Date().toISOString()
+  });
 
   const contextValue: AuthContextType = {
     user,

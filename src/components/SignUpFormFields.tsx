@@ -32,6 +32,7 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
   
   const password = form.watch("password");
   const confirmPassword = form.watch("confirmPassword");
+  const terms = form.watch("terms");
   
   // Verificar se senhas coincidem
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
@@ -193,7 +194,7 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
         )}
       />
 
-      {/* Campo Termos e Condições (Opcional) */}
+      {/* Campo Termos e Condições */}
       <FormField
         control={form.control}
         name="terms"
@@ -201,7 +202,7 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
             <FormControl>
               <Checkbox
-                checked={field.value || false}
+                checked={field.value}
                 onCheckedChange={field.onChange}
                 disabled={isSubmitting}
                 className="mt-1"
@@ -209,7 +210,7 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
             </FormControl>
             <div className="space-y-1 leading-none">
               <FormLabel className="text-sm font-normal text-gray-600 leading-relaxed">
-                Li e aceito os{' '}
+                Eu li e aceito os{' '}
                 <Link 
                   to="/terms" 
                   target="_blank" 
@@ -225,6 +226,7 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
                 >
                   Política de Privacidade
                 </Link>
+                . *
               </FormLabel>
               <FormMessage />
             </div>
@@ -246,7 +248,7 @@ export function SignUpFormFields({ form, isSubmitting }: SignUpFormFieldsProps) 
       <Button 
         type="submit" 
         className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200" 
-        disabled={isSubmitting || !form.formState.isValid}
+        disabled={isSubmitting || !form.formState.isValid || !terms}
       >
         {isSubmitting ? (
           <div className="flex items-center gap-2">

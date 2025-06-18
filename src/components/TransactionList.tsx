@@ -138,12 +138,7 @@ const TransactionList = () => {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent 
-                          align="end" 
-                          className="w-48 z-50 bg-popover border shadow-md"
-                          sideOffset={5}
-                          avoidCollisions={true}
-                        >
+                        <DropdownMenuContent align="end" className="w-48 bg-white shadow-lg border">
                            <EditTransactionDialog transaction={transaction}>
                               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                 <Edit className="mr-2 h-4 w-4" />

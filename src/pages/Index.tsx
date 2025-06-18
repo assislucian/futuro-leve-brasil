@@ -11,31 +11,22 @@ import { Sparkles } from "lucide-react";
 import { Faq } from "@/components/Faq";
 
 const Index = () => {
-  const { user, session, loading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ TAREFA 3: Log de auditoria
-    console.debug("🚀 Index: Verificando auth", { 
-      hasUser: !!user, 
-      hasSession: !!session,
-      sessionValid: session ? new Date(session.expires_at! * 1000) > new Date() : false,
-      loading 
-    });
+    console.log("Index: Verificando estado de auth - usuário:", !!user, "carregando:", loading);
     
-    // Só redireciona se tiver sessão válida E não estiver carregando
-    if (!loading && user && session) {
-      const sessionValid = new Date(session.expires_at! * 1000) > new Date();
-      if (sessionValid) {
-        console.debug("🚀 Index: Redirecionando usuário autenticado para dashboard");
-        navigate('/dashboard', { replace: true });
-      }
+    // Só redireciona se não estiver carregando E tiver usuário autenticado
+    if (!loading && user) {
+      console.log("Index: Redirecionando usuário autenticado para dashboard");
+      navigate('/dashboard', { replace: true });
     }
-  }, [user, session, loading, navigate]);
+  }, [user, loading, navigate]);
 
   // Mostra loading apenas quando ainda está verificando autenticação
   if (loading) {
-    console.debug("🚀 Index: Mostrando tela de carregamento");
+    console.log("Index: Mostrando tela de carregamento");
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
@@ -44,10 +35,9 @@ const Index = () => {
     );
   }
 
-  // Se usuário está autenticado com sessão válida, mostra loading enquanto redireciona
-  const hasValidSession = user && session && new Date(session.expires_at! * 1000) > new Date();
-  if (hasValidSession) {
-    console.debug("🚀 Index: Usuário autenticado, redirecionando...");
+  // Se usuário está autenticado, mostra loading enquanto redireciona
+  if (user) {
+    console.log("Index: Usuário autenticado, redirecionando...");
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <Sparkles className="h-10 w-10 animate-pulse text-primary" />
@@ -57,7 +47,7 @@ const Index = () => {
   }
 
   // Usuário não autenticado - mostra landing page
-  console.debug("🚀 Index: Mostrando landing page para usuário não autenticado");
+  console.log("Index: Mostrando landing page para usuário não autenticado");
   return (
     <div className="flex min-h-screen flex-col bg-background font-sans text-foreground">
       <Header />
