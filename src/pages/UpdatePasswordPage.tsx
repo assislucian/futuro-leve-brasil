@@ -14,7 +14,13 @@ import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const formSchema = z.object({
-  password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres." }),
+  password: z.string()
+    .min(8, { message: "A senha deve ter pelo menos 8 caracteres." })
+    .max(128, { message: "A senha não pode exceder 128 caracteres." })
+    .regex(/[a-z]/, { message: "A senha deve conter pelo menos uma letra minúscula." })
+    .regex(/[A-Z]/, { message: "A senha deve conter pelo menos uma letra maiúscula." })
+    .regex(/\d/, { message: "A senha deve conter pelo menos um número." })
+    .regex(/[^a-zA-Z0-9]/, { message: "A senha deve conter pelo menos um caractere especial (ex: !@#$%^&*()_+-=)" }),
 });
 
 const UpdatePasswordPage = () => {
