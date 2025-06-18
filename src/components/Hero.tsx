@@ -1,91 +1,84 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Shield, TrendingUp, Heart, Star, Users, CheckCircle, Target } from "lucide-react";
+import { ArrowRight, Shield, TrendingUp, CheckCircle, Target, Users, Star } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden">
-      {/* Background mais sóbrio */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50"></div>
+    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-white">
+      {/* Subtle geometric background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       
-      <div className="container relative mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center min-h-[75vh] sm:min-h-[80vh]">
+      <div className="container relative mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[85vh]">
           
-          {/* Conteúdo Principal - Mais realista */}
-          <div className="order-2 lg:order-1 space-y-4 sm:space-y-6 text-center lg:text-left">
+          {/* Content - Premium hierarchy */}
+          <div className="order-2 lg:order-1 space-y-8 text-center lg:text-left">
             
-            {/* Badge mais sóbrio */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 border border-slate-200 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-slate-700">
-              <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0 text-slate-600" />
-              <span>Controle financeiro que funciona de verdade</span>
+            {/* Social proof badge */}
+            <div className="inline-flex items-center gap-3 rounded-full bg-white border border-slate-200/60 px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm">
+              <div className="flex -space-x-1">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="w-5 h-5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 border border-white"></div>
+                ))}
+              </div>
+              <span>Mais de 2.500 brasileiros organizando suas finanças</span>
             </div>
             
-            {/* Título Principal - Focado na realidade */}
-            <div className="space-y-3 sm:space-y-4">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-slate-900">
-                Organize suas finanças e{" "}
+            {/* Hero headline - Premium typography */}
+            <div className="space-y-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95] text-slate-900">
+                Transforme sua vida{" "}
                 <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
-                    realize seus sonhos
+                  <span className="bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 bg-clip-text text-transparent">
+                    financeira
                   </span>
-                  <div className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-1 sm:h-2 bg-emerald-200 rounded-full opacity-60 -z-10"></div>
+                  <div className="absolute -bottom-2 left-0 w-full h-3 bg-emerald-100 rounded-full -z-10"></div>
                 </span>
               </h1>
               
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-medium text-slate-700 leading-tight">
-                Transforme o <span className="text-slate-900 font-semibold">caos financeiro</span> em um{" "}
-                <span className="text-emerald-700 font-semibold">plano organizado</span>
-              </h2>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-medium text-slate-600 leading-tight max-w-2xl mx-auto lg:mx-0">
+                De caos financeiro para controle total em{" "}
+                <span className="text-slate-900 font-semibold">30 dias</span>
+              </p>
               
-              <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                <strong className="text-slate-800">Estudos mostram</strong> que pessoas que controlam suas finanças 
-                conseguem <strong className="text-emerald-700">economizar 15-20% da renda</strong> e alcançar objetivos 
-                <strong className="text-emerald-700"> 40% mais rápido</strong>.
+              <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                O método comprovado que já ajudou milhares de brasileiros a economizarem 
+                <strong className="text-emerald-700"> R$ 200-800 por mês</strong> sem cortar 
+                o que realmente importa.
               </p>
             </div>
             
-            {/* Prova Social mais realista */}
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-slate-200 shadow-sm">
-              <div className="flex items-center justify-center lg:justify-start gap-4 sm:gap-6 mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-1 sm:-space-x-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <img 
-                        key={i} 
-                        src={`https://images.pexels.com/photos/${i === 1 ? '1239291' : i === 2 ? '1222271' : i === 3 ? '1130626' : i === 4 ? '1043471' : '1559486'}/pexels-photo-${i === 1 ? '1239291' : i === 2 ? '1222271' : i === 3 ? '1130626' : i === 4 ? '1043471' : '1559486'}.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2`}
-                        alt={`Usuário brasileiro ${i}`}
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white object-cover"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm sm:text-base text-slate-700 font-medium">+1.200 usuários</span>
+            {/* Results preview */}
+            <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
+              <div className="grid grid-cols-3 gap-6 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-emerald-700">15-20%</div>
+                  <div className="text-sm text-slate-600 font-medium">Economia média</div>
                 </div>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-amber-400 text-amber-400" />
-                  ))}
-                  <span className="text-sm sm:text-base text-slate-700 font-medium ml-1">4.8/5</span>
+                <div>
+                  <div className="text-2xl font-bold text-blue-700">30 dias</div>
+                  <div className="text-sm text-slate-600 font-medium">Para ver resultados</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-purple-700">4.8★</div>
+                  <div className="text-sm text-slate-600 font-medium">Avaliação média</div>
                 </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-600 italic text-center lg:text-left">
-                "Em 3 meses consegui criar minha reserva de emergência. Simples e eficaz." 
-                <span className="font-medium text-slate-800">- Maria S., São Paulo</span>
-              </p>
             </div>
             
-            {/* CTAs mais sóbrios */}
-            <div className="space-y-4 sm:space-y-5">
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            {/* Premium CTAs */}
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
                   asChild 
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-300 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 h-auto group w-full sm:w-auto"
+                  className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8 py-6 h-auto group border-0"
                 >
                   <Link to="/auth" className="flex items-center justify-center">
-                    <Target className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
-                    Começar Gratuitamente
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                    <Target className="mr-3 h-6 w-6" />
+                    Começar Transformação Gratuita
+                    <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
                   </Link>
                 </Button>
                 
@@ -93,76 +86,100 @@ const Hero = () => {
                   size="lg" 
                   variant="outline" 
                   asChild 
-                  className="border-2 border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-700 hover:text-slate-800 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 h-auto transition-all duration-300 w-full sm:w-auto"
+                  className="border-2 border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-700 hover:text-slate-800 text-lg px-8 py-6 h-auto transition-all duration-300 bg-white"
                 >
-                  <a href="#resultados" className="flex items-center justify-center">
-                    <TrendingUp className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                    Ver Como Funciona
+                  <a href="#como-funciona" className="flex items-center justify-center">
+                    <TrendingUp className="mr-3 h-5 w-5" />
+                    Ver Demonstração
                   </a>
                 </Button>
               </div>
               
-              {/* Benefícios mais realistas */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 pt-3">
-                <div className="flex items-center justify-center lg:justify-start gap-2 text-sm text-slate-600 bg-white rounded-lg px-3 py-2 border border-slate-200">
-                  <CheckCircle className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                  <span className="font-medium">Gratuito para começar</span>
+              {/* Trust indicators */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-6 pt-4">
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <CheckCircle className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">100% gratuito para começar</span>
                 </div>
-                <div className="flex items-center justify-center lg:justify-start gap-2 text-sm text-slate-600 bg-white rounded-lg px-3 py-2 border border-slate-200">
-                  <Shield className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                  <span className="font-medium">Dados seguros</span>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Shield className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">Dados protegidos</span>
                 </div>
-                <div className="flex items-center justify-center lg:justify-start gap-2 text-sm text-slate-600 bg-white rounded-lg px-3 py-2 border border-slate-200">
-                  <Heart className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Users className="h-4 w-4 text-emerald-600" />
                   <span className="font-medium">Suporte brasileiro</span>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Visual Principal */}
+          {/* Premium visual */}
           <div className="order-1 lg:order-2 relative">
-            <div className="relative max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
+            <div className="relative max-w-lg mx-auto">
               
-              {/* Imagem Principal */}
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-xl border-4 border-white">
+              {/* Main image with premium treatment */}
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl">
                 <img 
-                  src="https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-                  alt="Família brasileira próspera e feliz"
+                  src="https://images.pexels.com/photos/5691616/pexels-photo-5691616.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+                  alt="Profissional brasileira confiante organizando suas finanças"
                   className="h-full w-full object-cover"
                   loading="eager"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-transparent"></div>
               </div>
               
-              {/* Cards de Resultado mais realistas */}
-              <div className="absolute -right-4 sm:-right-6 top-6 sm:top-8 bg-white text-slate-800 rounded-xl p-3 sm:p-4 shadow-lg border border-slate-200 w-40 sm:w-48 transform rotate-2">
+              {/* Floating success cards - Premium design */}
+              <div className="absolute -right-6 top-8 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-52 transform rotate-2 backdrop-blur-sm">
                 <div className="text-center">
-                  <div className="text-lg sm:text-xl font-bold text-emerald-700">20%</div>
-                  <div className="text-xs sm:text-sm text-slate-600">Economia mensal</div>
-                  <div className="flex items-center justify-center gap-1 mt-1">
-                    <TrendingUp className="h-3 w-3 text-emerald-600" />
-                    <span className="text-xs font-medium text-slate-700">Controle total</span>
+                  <div className="text-sm text-slate-500 font-medium mb-1">💰 Economia este mês</div>
+                  <div className="text-2xl font-bold text-emerald-700">+ R$ 847</div>
+                  <div className="flex items-center justify-center gap-1 mt-2">
+                    <TrendingUp className="h-4 w-4 text-emerald-600" />
+                    <span className="text-xs font-medium text-slate-700">Controle total alcançado</span>
                   </div>
                 </div>
               </div>
               
-              <div className="absolute -left-4 sm:-left-6 bottom-12 sm:bottom-16 bg-white rounded-xl p-3 sm:p-4 shadow-lg border border-slate-200 w-44 sm:w-52 transform -rotate-1">
+              <div className="absolute -left-6 bottom-16 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-56 transform -rotate-1 backdrop-blur-sm">
                 <div className="text-center">
-                  <div className="text-sm text-slate-500 font-medium">Meta: Reserva de Emergência</div>
-                  <div className="text-xl sm:text-2xl font-bold text-emerald-700">75% ✓</div>
-                  <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
-                    <div className="bg-emerald-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+                  <div className="text-sm text-slate-500 font-medium mb-2">🎯 Meta: Casa Própria</div>
+                  <div className="w-full bg-slate-200 rounded-full h-3 mb-2">
+                    <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full" style={{ width: '68%' }}></div>
                   </div>
-                  <div className="text-xs text-slate-600 mt-1">No caminho certo!</div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-600">R$ 68.400</span>
+                    <span className="text-blue-700 font-bold">68%</span>
+                  </div>
                 </div>
               </div>
               
-              <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-emerald-600 text-white rounded-lg p-2 sm:p-3 shadow-md transform rotate-3">
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Organizado!</span>
+              <div className="absolute top-4 left-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl p-3 shadow-lg transform rotate-3">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="text-sm font-medium">Organizado ✨</span>
                 </div>
+              </div>
+              
+              {/* Testimonial card */}
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-72 backdrop-blur-sm">
+                <div className="flex items-center gap-3 mb-2">
+                  <img 
+                    src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2"
+                    alt="Ana Carolina"
+                    className="w-10 h-10 rounded-full border-2 border-emerald-200"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-slate-800">Ana Carolina M.</div>
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 italic">
+                  "Em 3 meses economizei R$ 1.800 que nem sabia que estava gastando. Agora tenho minha reserva!"
+                </p>
               </div>
             </div>
           </div>
