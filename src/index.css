@@ -61,10 +61,6 @@
 @layer base {
   * {
     @apply border-border;
-    /* Otimização de hardware acceleration global */
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
   }
   
   body {
@@ -101,15 +97,11 @@
   .card-modern {
     @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md;
     transition: box-shadow 200ms ease-out;
-    will-change: box-shadow;
-    transform: translateZ(0);
   }
   
   .card-premium {
     @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg;
     transition: box-shadow 200ms ease-out;
-    will-change: box-shadow;
-    transform: translateZ(0);
   }
   
   /* Text Utilities */
@@ -134,15 +126,11 @@
   .btn-primary {
     @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow rounded-md;
     transition: all 200ms ease-out;
-    will-change: transform, box-shadow;
-    transform: translateZ(0);
   }
   
   .btn-secondary {
     @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow rounded-md;
     transition: all 200ms ease-out;
-    will-change: transform, box-shadow;
-    transform: translateZ(0);
   }
   
   /* Mobile-First Spacing System - Otimizado */
@@ -162,7 +150,6 @@
   /* Mobile-Responsive Icon Container - Performance */
   .icon-container {
     @apply p-1.5 sm:p-2 rounded-md;
-    transform: translateZ(0);
   }
   
   .icon-container-primary {
@@ -200,20 +187,6 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-  
-  /* Hardware Acceleration Utilities */
-  .transform-gpu {
-    transform: translateZ(0);
-    will-change: transform;
-  }
-  
-  .will-change-transform {
-    will-change: transform;
-  }
-  
-  .will-change-auto {
-    will-change: auto;
   }
   
   /* Professional Shadows - Mobile Responsive e Otimizada */
