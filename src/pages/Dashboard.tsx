@@ -1,4 +1,3 @@
-
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -27,12 +26,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CinemaTour } from "@/components/CinemaTour";
 import { CinemaTourTrigger } from "@/components/CinemaTourTrigger";
-import { useCinemaTour } from "@/hooks/useCinemaTour";
 
 const DashboardPage = () => {
   const { user, profile, loading: authLoading } = useAuth();
   const { data: hasTransactions, isLoading: isLoadingHasTransactions } = useHasTransactions();
-  const { isActive: isTourActive } = useCinemaTour();
   
   const firstName = user?.user_metadata.full_name?.split(' ')[0] || 'pessoa';
   const currentHour = new Date().getHours();
@@ -74,9 +71,7 @@ const DashboardPage = () => {
     );
   }
 
-  // Se não tem transações E o tour não está ativo, mostra WelcomeGuide
-  // Se não tem transações E o tour está ativo, mostra só o tour
-  if (!hasTransactions && !isTourActive) {
+  if (!hasTransactions) {
     return (
       <>
         <CinemaTour />
@@ -85,77 +80,6 @@ const DashboardPage = () => {
     );
   }
 
-  // Se não tem transações mas o tour está ativo, renderiza dashboard com tour
-  if (!hasTransactions && isTourActive) {
-    return (
-      <>
-        <CinemaTour />
-        {/* Dashboard simplificado para o tour */}
-        <div className="min-h-screen bg-background">
-          <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 max-w-7xl">
-            <header className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 sm:mb-8 bg-card rounded-lg border p-4 sm:p-6">
-              <div className="space-y-2 flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                  <h1 className="text-xl sm:text-2xl font-semibold text-foreground leading-tight">
-                    {getGreeting()}, {firstName}!
-                  </h1>
-                  <span className="text-xs font-medium px-2 py-1 rounded-full w-fit flex-shrink-0 bg-slate-100 text-slate-600">
-                    Gratuito
-                  </span>
-                </div>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Vamos começar sua jornada financeira
-                </p>
-              </div>
-            </header>
-
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
-              <div className="xl:col-span-2 space-y-4 sm:space-y-6">
-                <div className="bg-card rounded-lg border financial-summary">
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">Resumo Financeiro</h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-emerald-600">R$ 0,00</p>
-                        <p className="text-sm text-muted-foreground">Entradas</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-red-600">R$ 0,00</p>
-                        <p className="text-sm text-muted-foreground">Saídas</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-blue-600">R$ 0,00</p>
-                        <p className="text-sm text-muted-foreground">Saldo</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="xl:col-span-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6">
-                  <div className="smart-insights-card">
-                    <div className="bg-card rounded-lg border p-6">
-                      <h3 className="text-lg font-semibold mb-4">Insights Inteligentes</h3>
-                      <p className="text-muted-foreground">Adicione suas primeiras transações para receber insights personalizados.</p>
-                    </div>
-                  </div>
-                  <div className="goals-summary">
-                    <div className="bg-card rounded-lg border p-6">
-                      <h3 className="text-lg font-semibold mb-4">Suas Metas</h3>
-                      <p className="text-muted-foreground">Defina seus primeiros objetivos financeiros.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Dashboard completo para usuários com transações
   const planBadge = getPlanBadge();
 
   return (
@@ -185,6 +109,7 @@ const DashboardPage = () => {
             
             {/* Ações Mobile-First - Performance Otimizada */}
             <div className="flex flex-col gap-3 sm:min-w-0">
+              {/* Mobile: Botão Principal + Menu - Layout Fixo */}
               <div className="flex items-center gap-2 sm:hidden">
                 <AddTransactionDialog>
                   <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white flex-1 will-change-transform">
@@ -216,6 +141,7 @@ const DashboardPage = () => {
                 </DropdownMenu>
               </div>
 
+              {/* Desktop: Todas as ações visíveis - Layout Otimizado */}
               <div className="hidden sm:block">
                 <div className="text-xs font-medium text-muted-foreground uppercase mb-2">
                   Ações Rápidas
@@ -244,6 +170,7 @@ const DashboardPage = () => {
                 </div>
               </div>
               
+              {/* Ações Secundárias - Layout Consistente */}
               <div className="flex gap-2 justify-center sm:justify-start">
                 <AddRecurringTransactionDialog />
                 <AddInstallmentPlanDialog />
@@ -253,16 +180,20 @@ const DashboardPage = () => {
 
           {/* Layout Principal Responsivo - Otimizado */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+            {/* Coluna Principal - Performance Otimizada */}
             <div className="xl:col-span-2 space-y-4 sm:space-y-6">
+              {/* Resumo Financeiro */}
               <div className="bg-card rounded-lg border will-change-auto financial-summary">
                 <FinancialSummary />
               </div>
               
+              {/* Transações */}
               <div className="bg-card rounded-lg border will-change-auto">
                 <TransactionList />
               </div>
             </div>
             
+            {/* Sidebar - Grid Otimizado para Performance */}
             <div className="xl:col-span-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6" style={{
                 alignItems: 'start'

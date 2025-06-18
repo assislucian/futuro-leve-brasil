@@ -9,65 +9,83 @@ export interface CinemaTourStep {
   subtitle: string;
   description: string;
   duration: number;
-  target?: string;
-  position?: 'top' | 'bottom' | 'left' | 'right';
+  highlight?: string;
 }
 
 /**
- * Hook para gerenciar o Tour Guiado Avançado
- * Usa as melhores práticas modernas de onboarding
+ * Hook para gerenciar o Cinema Tour - experiência premium de onboarding
+ * Substitui o onboarding básico por uma jornada cinematográfica imersiva
  */
 export function useCinemaTour() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [tourCompleted, setTourCompleted] = useLocalStorage(
-    `advanced-tour-completed-${user?.id}`, 
+    `cinema-tour-completed-${user?.id}`, 
     false
   );
   
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  // Só ativa o tour se o usuário estiver autenticado, não estiver carregando e não tiver completado
-  const shouldShowTour = !loading && user && !tourCompleted;
+  const totalSteps = 7;
+  const stepDuration = 4000; // 4 segundos por step em média
 
-  // Inicia o tour com delay para garantir que a autenticação está estável
+  const isActive = !tourCompleted && user;
+
+  // Auto-progress do tour quando está playing
   useEffect(() => {
-    if (shouldShowTour && !isActive) {
-      const timer = setTimeout(() => {
-        setIsActive(true);
-      }, 1000); // Delay de 1 segundo para estabilizar a auth
-      
-      return () => clearTimeout(timer);
-    }
-  }, [shouldShowTour, isActive]);
+    if (!isActive || !isPlaying) return;
+
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          nextStep();
+          return 0;
+        }
+        return prev + (100 / (stepDuration / 100));
+      });
+    }, 100);
+
+    return () => clearInterval(timer);
+  }, [isActive, isPlaying, currentStepIndex]);
 
   const nextStep = useCallback(() => {
-    if (currentStepIndex < 4) { // Reduzido para 5 steps
+    setProgress(0);
+    if (currentStepIndex < totalSteps - 1) {
       setCurrentStepIndex(prev => prev + 1);
     } else {
       completeTour();
     }
-  }, [currentStepIndex]);
+  }, [currentStepIndex, totalSteps]);
 
   const previousStep = useCallback(() => {
+    setProgress(0);
     if (currentStepIndex > 0) {
       setCurrentStepIndex(prev => prev - 1);
     }
   }, [currentStepIndex]);
 
+  const playPause = useCallback(() => {
+    setIsPlaying(prev => !prev);
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    setIsMuted(prev => !prev);
+  }, []);
+
   const skipTour = useCallback(() => {
     setTourCompleted(true);
-    setIsActive(false);
     setCurrentStepIndex(0);
+    setProgress(0);
   }, [setTourCompleted]);
 
   const completeTour = useCallback(() => {
     setTourCompleted(true);
-    setIsActive(false);
     setCurrentStepIndex(0);
+    setProgress(0);
     
-    // Celebration effect
+    // Trigger celebration animation
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('tourCompleted'));
     }
@@ -76,22 +94,20 @@ export function useCinemaTour() {
   const restartTour = useCallback(() => {
     setTourCompleted(false);
     setCurrentStepIndex(0);
-    setIsActive(true);
-    setIsPaused(false);
+    setProgress(0);
+    setIsPlaying(true);
   }, [setTourCompleted]);
-
-  const pauseResume = useCallback(() => {
-    setIsPaused(prev => !prev);
-  }, []);
 
   return {
     isActive,
     currentStepIndex,
-    isPaused,
-    totalSteps: 5,
+    isPlaying,
+    isMuted,
+    progress,
     nextStep,
     previousStep,
-    pauseResume,
+    playPause,
+    toggleMute,
     skipTour,
     completeTour,
     restartTour,
