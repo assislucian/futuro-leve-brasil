@@ -61,6 +61,10 @@
 @layer base {
   * {
     @apply border-border;
+    /* Otimização de hardware acceleration global */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
   }
   
   body {
@@ -71,11 +75,17 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
     line-height: 1.5;
     letter-spacing: -0.01em;
+    /* Otimizações para performance mobile */
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+    overflow-x: hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight text-foreground;
     line-height: 1.25;
+    /* Evitar layout shifts */
+    contain: layout;
   }
   
   h1 { @apply text-2xl sm:text-3xl md:text-4xl font-semibold; }
@@ -87,16 +97,22 @@
 }
 
 @layer components {
-  /* Card Styles usando variáveis semânticas */
+  /* Card Styles - Performance Otimizada */
   .card-modern {
-    @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md transition-shadow duration-200;
+    @apply bg-card border border-border shadow-sm rounded-lg hover:shadow-md;
+    transition: box-shadow 200ms ease-out;
+    will-change: box-shadow;
+    transform: translateZ(0);
   }
   
   .card-premium {
-    @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200;
+    @apply bg-card border border-border shadow-md rounded-lg hover:shadow-lg;
+    transition: box-shadow 200ms ease-out;
+    will-change: box-shadow;
+    transform: translateZ(0);
   }
   
-  /* Text Utilities usando variáveis semânticas */
+  /* Text Utilities */
   .text-success {
     @apply text-success;
   }
@@ -105,7 +121,7 @@
     @apply text-destructive;
   }
   
-  /* Background Utilities usando variáveis semânticas */
+  /* Background Utilities */
   .bg-success {
     @apply bg-success/10 text-success border-success/20;
   }
@@ -114,16 +130,22 @@
     @apply bg-destructive/10 text-destructive border-destructive/20;
   }
 
-  /* Button Styles usando variáveis semânticas */
+  /* Button Styles - Performance Otimizada */
   .btn-primary {
-    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow transition-all duration-200 rounded-md;
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow rounded-md;
+    transition: all 200ms ease-out;
+    will-change: transform, box-shadow;
+    transform: translateZ(0);
   }
   
   .btn-secondary {
-    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow transition-all duration-200 rounded-md;
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border shadow-sm hover:shadow rounded-md;
+    transition: all 200ms ease-out;
+    will-change: transform, box-shadow;
+    transform: translateZ(0);
   }
   
-  /* Mobile-First Spacing System */
+  /* Mobile-First Spacing System - Otimizado */
   .space-clean { @apply space-y-3 sm:space-y-4; }
   .space-clean-lg { @apply space-y-4 sm:space-y-6; }
   .space-clean-xl { @apply space-y-6 sm:space-y-8; }
@@ -137,9 +159,10 @@
     @apply max-w-7xl mx-auto px-3 sm:px-4 md:px-6;
   }
   
-  /* Mobile-Responsive Icon Container */
+  /* Mobile-Responsive Icon Container - Performance */
   .icon-container {
     @apply p-1.5 sm:p-2 rounded-md;
+    transform: translateZ(0);
   }
   
   .icon-container-primary {
@@ -154,9 +177,10 @@
     @apply bg-destructive/10 text-destructive;
   }
 
-  /* Mobile Touch Targets */
+  /* Mobile Touch Targets - Aprimorado */
   .touch-target {
     @apply min-h-[44px] min-w-[44px];
+    touch-action: manipulation;
   }
   
   /* Mobile-Optimized Text Sizes */
@@ -178,7 +202,21 @@
     text-wrap: balance;
   }
   
-  /* Professional Shadows - Mobile Responsive */
+  /* Hardware Acceleration Utilities */
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  .will-change-auto {
+    will-change: auto;
+  }
+  
+  /* Professional Shadows - Mobile Responsive e Otimizada */
   .shadow-clean {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   }
@@ -196,10 +234,11 @@
   .mx-clean { @apply mx-3 sm:mx-4; }
   .my-clean { @apply my-3 sm:my-4; }
 
-  /* Mobile Overflow Handling */
+  /* Mobile Overflow Handling - Aprimorado */
   .overflow-touch {
     -webkit-overflow-scrolling: touch;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
   }
   
   /* Safe Area Support */
@@ -221,18 +260,33 @@
     min-height: 100vh;
     min-height: 100dvh;
   }
+  
+  /* Truncate Text Otimizado */
+  .truncate-mobile {
+    @apply truncate;
+    contain: layout;
+  }
+  
+  /* Flex Utilities Otimizados */
+  .flex-shrink-0 {
+    flex-shrink: 0;
+    contain: layout;
+  }
 }
 
-/* Mobile-Specific Media Queries */
+/* Mobile-Specific Otimizações */
 @media (max-width: 640px) {
-  /* Reduce motion for better mobile performance */
-  .reduce-motion * {
+  /* Redução de animações para melhor performance mobile */
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
   
-  /* Mobile focus styles */
+  /* Otimizações de focus para mobile */
   button:focus,
   input:focus,
   select:focus,
@@ -240,13 +294,50 @@
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
+  
+  /* Otimizar scrolling */
+  * {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
-/* High DPI displays */
+/* High DPI displays - Otimizado */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  /* Optimize for high DPI displays */
   .crisp-edges {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
   }
+}
+
+/* Performance Otimizations para Animações */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Otimizações específicas para evitar tremulação */
+img, video {
+  height: auto;
+  max-width: 100%;
+  contain: layout;
+}
+
+/* Contenção de layout para evitar reflows */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-style {
+  contain: style;
+}
+
+.contain-paint {
+  contain: paint;
 }

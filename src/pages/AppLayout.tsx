@@ -66,16 +66,16 @@ const AppLayout = () => {
   console.log("AppLayout: Renderizando layout da aplicação");
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full will-change-transform">
         <AppSidebar />
         <SidebarInset className="flex-1">
-          {/* Header Mobile-First */}
-          <header className="flex h-14 sm:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          {/* Header Mobile-First - Otimizado para Performance */}
+          <header className="flex h-14 sm:h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 will-change-auto">
             <div className="flex items-center gap-2 px-3 sm:px-4 flex-1 min-w-0">
-              <SidebarTrigger className="-ml-1" />
+              <SidebarTrigger className="-ml-1 will-change-transform" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               
-              {/* Breadcrumb Responsivo */}
+              {/* Breadcrumb Responsivo - Layout Fixo */}
               <Breadcrumb className="flex-1 min-w-0">
                 <BreadcrumbList>
                   {!isMobile && (
@@ -89,7 +89,7 @@ const AppLayout = () => {
                     </>
                   )}
                   <BreadcrumbItem>
-                    <BreadcrumbPage className="text-sm sm:text-base font-medium">
+                    <BreadcrumbPage className="text-sm sm:text-base font-medium truncate">
                       {getPageTitle()}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
@@ -98,15 +98,17 @@ const AppLayout = () => {
             </div>
             
             {/* User Navigation - Mobile Otimizado */}
-            <div className="px-3 sm:px-4">
+            <div className="px-3 sm:px-4 flex-shrink-0">
               <UserNav />
             </div>
           </header>
           
-          {/* Content Area - Mobile Spacing */}
-          <div className="flex flex-1 flex-col gap-3 sm:gap-4 p-3 sm:p-4 pt-0">
+          {/* Content Area - Mobile Spacing Otimizado */}
+          <div className="flex flex-1 flex-col gap-3 sm:gap-4 p-3 sm:p-4 pt-0 will-change-auto">
             <TrialBanner />
-            <Outlet />
+            <div className="will-change-auto">
+              <Outlet />
+            </div>
           </div>
         </SidebarInset>
       </div>
