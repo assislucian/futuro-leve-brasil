@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,7 +50,7 @@ export function SignUpForm() {
   const handleSubmitWithFeedback = async (values: any) => {
     setSignUpState('checking');
     setIntelligentFeedback("Verificando disponibilidade do email...");
-    setSuggestionMessage("Isso pode levar alguns segundos.");
+    setSuggestionMessage("Use pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e um caractere especial (ex: !@#$%^&*()_+-=)");
     clearError();
 
     try {
@@ -228,15 +227,12 @@ export function SignUpForm() {
         )}
       </div>
 
-      {/* Termos e Condições */}
+      {/* Termos e Condições (Opcional) */}
       <div className="flex items-start space-x-3">
         <Checkbox
           id="terms"
           {...form.register("terms")}
           disabled={isSubmitting}
-          className={cn(
-            form.formState.errors.terms && "border-red-500"
-          )}
         />
         <div className="grid gap-1.5 leading-none">
           <Label
@@ -260,11 +256,6 @@ export function SignUpForm() {
               política de privacidade
             </Link>
           </Label>
-          {form.formState.errors.terms && (
-            <p className="text-sm text-red-600">
-              {form.formState.errors.terms.message}
-            </p>
-          )}
         </div>
       </div>
 

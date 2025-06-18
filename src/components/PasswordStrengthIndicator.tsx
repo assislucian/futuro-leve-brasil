@@ -1,4 +1,3 @@
-
 import { CheckCircle, XCircle } from "lucide-react";
 
 interface PasswordStrengthIndicatorProps {
@@ -11,7 +10,7 @@ export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicato
     { test: /[a-z]/.test(password), label: "Uma letra minúscula" },
     { test: /[A-Z]/.test(password), label: "Uma letra maiúscula" },
     { test: /\d/.test(password), label: "Um número" },
-    { test: /[@$!%*?&]/.test(password), label: "Um caractere especial (@$!%*?&)" },
+    { test: /[^a-zA-Z0-9]/.test(password), label: "Um caractere especial (ex: !@#$%^&*()_+-=)" },
   ];
   
   const passedChecks = checks.filter(check => check.test).length;
