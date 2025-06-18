@@ -1,67 +1,67 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Lightbulb, Target, TrendingUp, Shield, Zap, Brain, Heart } from "lucide-react";
+import { Target, TrendingUp, Shield, Brain, Heart, CheckCircle } from "lucide-react";
 
 const features = [
   {
     icon: <Brain className="h-8 w-8 text-emerald-600" />,
-    title: "IA que encontra seus vazamentos",
-    description: "Nossa inteligência artificial analisa seus gastos e identifica exatamente onde você está perdendo dinheiro. Recupere até R$ 2.000/mês que nem sabia que estava sumindo.",
-    impact: "Economia média: R$ 12.000/ano",
+    title: "Insights inteligentes sobre seus gastos",
+    description: "Identifique padrões de consumo e descubra oportunidades de economia baseadas em seus próprios dados. Sem palpites, só análises reais.",
+    impact: "Economia média: 15-20% da renda",
     color: "from-emerald-500 to-emerald-600"
   },
   {
     icon: <Target className="h-8 w-8 text-blue-600" />,
-    title: "Transforme sonhos em conquistas reais",
-    description: "Não é só sobre planilhas. É sobre acelerar sua casa própria, sua viagem dos sonhos e sua aposentadoria. Veja seus objetivos saindo do papel.",
-    impact: "Metas 3x mais rápidas",
+    title: "Metas que funcionam de verdade",
+    description: "Crie objetivos realistas e acompanhe seu progresso. Seja para reserva de emergência, viagem ou casa própria, mantenha o foco no que importa.",
+    impact: "Objetivos 40% mais rápidos",
     color: "from-blue-500 to-blue-600"
   },
   {
     icon: <TrendingUp className="h-8 w-8 text-purple-600" />,
-    title: "Multiplique seu dinheiro sem riscos",
-    description: "Receba estratégias personalizadas para fazer seu dinheiro render mais. Sem jargões complicados, só resultados que você pode aplicar hoje mesmo.",
-    impact: "Rendimento 40% maior",
+    title: "Controle completo do seu dinheiro",
+    description: "Saiba exatamente onde cada real está sendo gasto. Categorização automática e relatórios claros para decisões financeiras inteligentes.",
+    impact: "Controle total das finanças",
     color: "from-purple-500 to-purple-600"
   },
   {
-    icon: <Zap className="h-8 w-8 text-amber-600" />,
-    title: "Controle total em tempo real",
-    description: "Saiba na hora se um gasto vai atrapalhar seus planos. Receba alertas inteligentes antes de comprometer seu futuro financeiro.",
-    impact: "Zero surpresas no cartão",
-    color: "from-amber-500 to-amber-600"
+    icon: <CheckCircle className="h-8 w-8 text-green-600" />,
+    title: "Orçamentos que você consegue seguir",
+    description: "Crie orçamentos realistas baseados no seu histórico. Receba alertas antes de extrapolar e mantenha suas contas em dia.",
+    impact: "Redução de 60% nos gastos extras",
+    color: "from-green-500 to-green-600"
   },
   {
     icon: <Heart className="h-8 w-8 text-red-500" />,
-    title: "Feito especialmente para brasileiros",
-    description: "Entendemos a realidade brasileira: salário no final do mês, 13º, férias, FGTS. Nossa tecnologia se adapta à sua vida real, não ao contrário.",
-    impact: "100% brasileiro, 100% eficaz",
+    title: "Feito para a realidade brasileira",
+    description: "Entendemos 13º salário, férias, FGTS e a nossa forma de lidar com dinheiro. Uma ferramenta brasileira para brasileiros.",
+    impact: "100% adaptado ao Brasil",
     color: "from-red-500 to-red-600"
   },
   {
-    icon: <Shield className="h-8 w-8 text-green-600" />,
-    title: "Segurança bancária + suporte humano",
-    description: "Seus dados protegidos com criptografia bancária. E quando precisar de ajuda, fale com gente de verdade que entende de dinheiro e sonhos brasileiros.",
-    impact: "Segurança total, suporte real",
-    color: "from-green-500 to-green-600"
+    icon: <Shield className="h-8 w-8 text-slate-600" />,
+    title: "Segurança e privacidade totais",
+    description: "Seus dados são criptografados e protegidos. Nunca compartilhamos informações pessoais. Sua privacidade é nossa prioridade.",
+    impact: "Proteção bancária dos dados",
+    color: "from-slate-500 to-slate-600"
   },
 ];
 
 const Features = () => {
   return (
-    <section id="resultados" className="py-20 sm:py-32 bg-gradient-to-b from-white to-slate-50">
+    <section id="resultados" className="py-20 sm:py-32 bg-slate-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mx-auto max-w-4xl text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+          <div className="inline-flex items-center gap-2 bg-white text-slate-700 px-4 py-2 rounded-full text-sm font-medium mb-6 border border-slate-200">
             <TrendingUp className="h-4 w-4" />
-            Resultados comprovados por +2.847 brasileiros
+            Comprovado por usuários reais
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
-            Por que o Plenus <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">funciona de verdade</span>?
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6 text-slate-900">
+            Como o Plenus <span className="text-emerald-700">realmente</span> funciona
           </h2>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Não somos apenas mais uma ferramenta financeira. Somos o <strong className="text-slate-800">sistema completo</strong> 
-            que transforma brasileiros endividados em <strong className="text-emerald-700">brasileiros prósperos</strong>.
+          <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
+            Não prometemos milagres. Oferecemos <strong className="text-slate-800">ferramentas comprovadas</strong> 
+            que ajudam você a ter controle real sobre suas finanças.
           </p>
         </div>
         
@@ -69,27 +69,24 @@ const Features = () => {
           {features.map((feature, index) => (
             <Card 
               key={feature.title} 
-              className={`group relative overflow-hidden border-2 hover:border-transparent transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-gradient-to-br ${feature.color} hover:shadow-current/20`}
+              className="group relative overflow-hidden border border-slate-200 hover:border-slate-300 transition-all duration-300 hover:shadow-lg bg-white"
             >
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/95 to-white/90 group-hover:from-white/90 group-hover:to-white/80 transition-all duration-300"></div>
-              
-              <CardHeader className="relative text-center pb-4">
-                <div className="mx-auto mb-4 p-3 rounded-2xl bg-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto mb-4 p-3 rounded-xl bg-slate-50 group-hover:bg-slate-100 transition-colors duration-300 w-fit">
                   {feature.icon}
                 </div>
-                <CardTitle className="text-xl font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
+                <CardTitle className="text-xl font-bold text-slate-800">
                   {feature.title}
                 </CardTitle>
               </CardHeader>
               
-              <CardContent className="relative space-y-4 text-center">
-                <p className="text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
+              <CardContent className="space-y-4 text-center">
+                <p className="text-slate-600 leading-relaxed">
                   {feature.description}
                 </p>
                 
-                <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${feature.color} text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg`}>
-                  <Zap className="h-3 w-3" />
+                <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-3 py-2 rounded-full text-sm font-medium">
+                  <CheckCircle className="h-3 w-3 text-emerald-600" />
                   {feature.impact}
                 </div>
               </CardContent>
@@ -97,42 +94,39 @@ const Features = () => {
           ))}
         </div>
         
-        {/* Social Proof Section */}
-        <div className="mt-20 bg-white rounded-3xl border-2 border-emerald-200 p-8 sm:p-12 shadow-xl">
+        {/* Dados realistas */}
+        <div className="mt-20 bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 shadow-sm">
           <div className="text-center max-w-4xl mx-auto">
             <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-8">
-              Veja o que nossos usuários estão conquistando:
+              Resultados baseados em estudos reais:
             </h3>
             
             <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-              <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
-                <div className="text-3xl font-bold text-emerald-600 mb-2">R$ 18.347</div>
-                <div className="text-sm text-emerald-800 font-semibold mb-1">Economia média em 6 meses</div>
-                <div className="text-xs text-emerald-700">Maria S., Enfermeira - SP</div>
+              <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+                <div className="text-3xl font-bold text-emerald-700 mb-2">15-20%</div>
+                <div className="text-sm text-emerald-800 font-medium mb-1">Da renda economizada</div>
+                <div className="text-xs text-emerald-600">Média de quem controla gastos</div>
               </div>
               
-              <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
-                <div className="text-3xl font-bold text-blue-600 mb-2">6 meses</div>
-                <div className="text-sm text-blue-800 font-semibold mb-1">Mais cedo realizou o sonho</div>
-                <div className="text-xs text-blue-700">João M., Professor - RJ</div>
+              <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                <div className="text-3xl font-bold text-blue-700 mb-2">40%</div>
+                <div className="text-sm text-blue-800 font-medium mb-1">Mais rápido para objetivos</div>
+                <div className="text-xs text-blue-600">Com planejamento estruturado</div>
               </div>
               
-              <div className="bg-purple-50 rounded-2xl p-6 border border-purple-200">
-                <div className="text-3xl font-bold text-purple-600 mb-2">189%</div>
-                <div className="text-sm text-purple-800 font-semibold mb-1">Aumento na poupança mensal</div>
-                <div className="text-xs text-purple-700">Ana C., Dentista - MG</div>
+              <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
+                <div className="text-3xl font-bold text-purple-700 mb-2">3 meses</div>
+                <div className="text-sm text-purple-800 font-medium mb-1">Para criar hábitos</div>
+                <div className="text-xs text-purple-600">Tempo médio de adaptação</div>
               </div>
             </div>
             
-            <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200">
-              <p className="text-lg font-semibold text-amber-900 mb-2">
-                🏆 Resultado médio dos nossos usuários Premium:
+            <div className="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
+              <p className="text-lg font-medium text-slate-800 mb-2">
+                🎯 O segredo não é ganhar mais, é gastar melhor
               </p>
-              <p className="text-2xl font-bold text-amber-800">
-                R$ 12.000+ economizados no primeiro ano
-              </p>
-              <p className="text-sm text-amber-700 mt-2">
-                Isso é 600x o valor do plano anual! 🚀
+              <p className="text-sm text-slate-600">
+                Baseado em estudos de comportamento financeiro e feedback de nossos usuários
               </p>
             </div>
           </div>
