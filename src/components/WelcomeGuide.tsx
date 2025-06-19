@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AddTransactionDialog } from "./AddTransactionDialog";
 import { AddGoalDialog } from "./AddGoalDialog";
 import { DemoDataPopulator } from "./DemoDataPopulator";
 import { useWealthJourneyTour } from "@/hooks/useWealthJourneyTour";
@@ -111,12 +110,10 @@ export function WelcomeGuide() {
               </div>
             </CardHeader>
             <CardContent>
-              <AddTransactionDialog>
-                <Button variant="outline" className="w-full border-blue-200 hover:bg-blue-50">
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  Adicionar Primeira Transação
-                </Button>
-              </AddTransactionDialog>
+              <Button variant="outline" className="w-full border-blue-200 hover:bg-blue-50">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Adicionar Primeira Transação
+              </Button>
             </CardContent>
           </Card>
 
