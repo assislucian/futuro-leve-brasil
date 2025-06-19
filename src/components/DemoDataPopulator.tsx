@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -17,7 +18,7 @@ interface DemoDataPopulatorProps {
  */
 export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulatorProps) {
   const { user } = useAuth();
-  const { data: hasTransactions } = useHasTransactions();
+  const { data: hasTransactions, refetch: refetchHasTransactions } = useHasTransactions();
   const [isLoading, setIsLoading] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -59,8 +60,13 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
       setIsClearDialogOpen(false);
       
+      // Refetch para atualizar o estado
+      await refetchHasTransactions();
+      
       // Recarregar a página para mostrar o estado limpo
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
 
     } catch (error) {
       console.error('Erro ao limpar dados:', error);
@@ -146,7 +152,7 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
       if (transactionsError) throw transactionsError;
 
-      // 2. Criar metas financeiras (apenas uma vez cada)
+      // 2. Criar metas financeiras
       const goals = [
         { name: 'Reserva de Emergência', target_amount: 20000.00, target_date: '2025-12-31' },
         { name: 'Viagem para Europa', target_amount: 15000.00, target_date: '2025-11-30' },
@@ -168,7 +174,7 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
       if (goalsError) throw goalsError;
 
-      // 3. Criar contribuições para as metas (valores que não completam imediatamente)
+      // 3. Criar contribuições para as metas
       if (goalsData && goalsData.length > 0) {
         const contributions = [];
         
@@ -217,6 +223,17 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
           );
 
         if (contributionsError) throw contributionsError;
+
+        // Atualizar current_amount das metas
+        for (const goal of goalsData) {
+          const goalContributions = contributions.filter(c => c.goal_id === goal.id);
+          const totalContributed = goalContributions.reduce((sum, contrib) => sum + contrib.amount, 0);
+          
+          await supabase
+            .from('goals')
+            .update({ current_amount: totalContributed })
+            .eq('id', goal.id);
+        }
       }
 
       // 4. Criar orçamentos
@@ -329,8 +346,13 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
       setIsOpen(false);
       
+      // Refetch para atualizar o estado
+      await refetchHasTransactions();
+      
       // Recarregar a página para mostrar os novos dados
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
 
     } catch (error) {
       console.error('Erro ao popular dados:', error);
