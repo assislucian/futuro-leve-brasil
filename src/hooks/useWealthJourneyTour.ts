@@ -20,7 +20,7 @@ export interface WealthJourneyStep {
 export function useWealthJourneyTour() {
   const { user } = useAuth();
   const [tourCompleted, setTourCompleted] = useLocalStorage(
-    `wealth-journey-completed-${user?.id}`, 
+    `wealth-journey-completed-${user?.id || 'anonymous'}`, 
     false
   );
   
@@ -28,9 +28,13 @@ export function useWealthJourneyTour() {
   const [isManuallyActive, setIsManuallyActive] = useState(false);
 
   const totalSteps = 8;
-  const isActive = (!tourCompleted && user) || isManuallyActive;
+  
+  // Tour está ativo se: usuário logado E (não completou OU foi iniciado manualmente)
+  const isActive = user && (!tourCompleted || isManuallyActive);
 
   const nextStep = useCallback(() => {
+    console.log('🔄 Próximo passo do tour:', currentStepIndex + 1);
+    
     if (currentStepIndex < totalSteps - 1) {
       setCurrentStepIndex(prev => prev + 1);
     } else {
@@ -39,18 +43,24 @@ export function useWealthJourneyTour() {
   }, [currentStepIndex, totalSteps]);
 
   const previousStep = useCallback(() => {
+    console.log('⬅️ Passo anterior do tour:', currentStepIndex - 1);
+    
     if (currentStepIndex > 0) {
       setCurrentStepIndex(prev => prev - 1);
     }
   }, [currentStepIndex]);
 
   const skipTour = useCallback(() => {
+    console.log('⏭️ Pulando tour');
+    
     setTourCompleted(true);
     setCurrentStepIndex(0);
     setIsManuallyActive(false);
   }, [setTourCompleted]);
 
   const completeTour = useCallback(() => {
+    console.log('✅ Tour completado!');
+    
     setTourCompleted(true);
     setCurrentStepIndex(0);
     setIsManuallyActive(false);
@@ -62,20 +72,26 @@ export function useWealthJourneyTour() {
   }, [setTourCompleted]);
 
   const restartTour = useCallback(() => {
-    console.log('🚀 Iniciando Jornada Plenus');
+    console.log('🚀 Reiniciando Jornada Plenus');
+    
+    // Reseta todos os estados
     setTourCompleted(false);
     setCurrentStepIndex(0);
     setIsManuallyActive(true);
+    
+    console.log('✨ Jornada Plenus iniciada com sucesso');
   }, [setTourCompleted]);
 
   const goToStep = useCallback((stepIndex: number) => {
+    console.log('🎯 Indo para passo:', stepIndex);
+    
     if (stepIndex >= 0 && stepIndex < totalSteps) {
       setCurrentStepIndex(stepIndex);
     }
   }, [totalSteps]);
 
   return {
-    isActive,
+    isActive: Boolean(isActive),
     currentStepIndex,
     totalSteps,
     nextStep,

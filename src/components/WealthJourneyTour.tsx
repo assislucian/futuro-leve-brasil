@@ -114,22 +114,25 @@ export function WealthJourneyTour() {
   const [modalPosition, setModalPosition] = useState<{top: number, left: number} | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const highlightStylesRef = useRef<HTMLStyleElement | null>(null);
+  const [isPositioned, setIsPositioned] = useState(false);
 
-  // Memoized position calculation to prevent loops
+  // Função otimizada para calcular posição do modal
   const calculatePosition = useCallback(() => {
-    if (!currentStep?.highlight) {
+    if (!currentStep?.highlight || !isActive) {
       setModalPosition(null);
+      setIsPositioned(false);
       return;
     }
 
     const el = document.querySelector(currentStep.highlight);
     if (!el) {
       setModalPosition(null);
+      setIsPositioned(false);
       return;
     }
 
     const rect = el.getBoundingClientRect();
-    const modalWidth = 600;
+    const modalWidth = Math.min(600, window.innerWidth - 32);
     const modalHeight = 400;
     const padding = 24;
 
@@ -137,65 +140,76 @@ export function WealthJourneyTour() {
     let left = rect.left + (rect.width / 2) - (modalWidth / 2);
 
     // Ajustes para não sair da tela
-    if (top + modalHeight > window.innerHeight) {
+    if (top + modalHeight > window.innerHeight - 16) {
       top = Math.max(16, rect.top - modalHeight - padding);
     }
     if (left < 16) left = 16;
-    if (left + modalWidth > window.innerWidth) {
+    if (left + modalWidth > window.innerWidth - 16) {
       left = window.innerWidth - modalWidth - 16;
     }
     if (top < 16) top = window.innerHeight / 2 - modalHeight / 2;
 
     setModalPosition({ top, left });
-  }, [currentStep?.highlight]);
+    setIsPositioned(true);
+  }, [currentStep?.highlight, isActive]);
 
-  // Effect for highlighting elements
+  // Effect para destacar elementos e posicionar modal
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive) {
+      // Cleanup quando não ativo
+      if (highlightStylesRef.current) {
+        document.head.removeChild(highlightStylesRef.current);
+        highlightStylesRef.current = null;
+      }
+      setModalPosition(null);
+      setIsPositioned(false);
+      return;
+    }
 
-    // Remove previous styles
+    // Remove estilos anteriores
     if (highlightStylesRef.current) {
       document.head.removeChild(highlightStylesRef.current);
       highlightStylesRef.current = null;
     }
 
     if (currentStep?.highlight) {
-      // Create new styles
-      const style = document.createElement('style');
-      style.textContent = `
-        ${currentStep.highlight} {
-          position: relative !important;
-          z-index: 101 !important;
-          box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4) !important;
-          border-radius: 12px !important;
-          animation: gentlePulse 3s ease-in-out infinite !important;
-        }
-        
-        @keyframes gentlePulse {
-          0%, 100% { 
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
+      // Aguarda um pouco para garantir que o DOM está pronto
+      const timer = setTimeout(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+          ${currentStep.highlight} {
+            position: relative !important;
+            z-index: 101 !important;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4) !important;
+            border-radius: 12px !important;
+            animation: gentlePulse 3s ease-in-out infinite !important;
           }
-          50% { 
-            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
+          
+          @keyframes gentlePulse {
+            0%, 100% { 
+              box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
+            }
+            50% { 
+              box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
+            }
           }
-        }
-      `;
-      document.head.appendChild(style);
-      highlightStylesRef.current = style;
+        `;
+        document.head.appendChild(style);
+        highlightStylesRef.current = style;
 
-      // Calculate position with a small delay to ensure element is highlighted
-      setTimeout(calculatePosition, 100);
+        // Calcula posição após aplicar destaque
+        setTimeout(calculatePosition, 100);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Se não há highlight, posiciona no centro
+      setModalPosition(null);
+      setIsPositioned(true);
     }
+  }, [isActive, currentStepIndex, currentStep?.highlight, calculatePosition]);
 
-    return () => {
-      if (highlightStylesRef.current) {
-        document.head.removeChild(highlightStylesRef.current);
-        highlightStylesRef.current = null;
-      }
-    };
-  }, [isActive, currentStepIndex, calculatePosition]);
-
-  // Cleanup on unmount
+  // Cleanup no unmount
   useEffect(() => {
     return () => {
       if (highlightStylesRef.current) {
@@ -205,7 +219,8 @@ export function WealthJourneyTour() {
     };
   }, []);
 
-  if (!isActive || !currentStep) {
+  // Não renderiza se não estiver ativo ou se não estiver posicionado ainda
+  if (!isActive || !currentStep || !isPositioned) {
     return null;
   }
 
