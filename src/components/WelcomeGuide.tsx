@@ -141,15 +141,7 @@ export function WelcomeGuide() {
               </div>
             </CardHeader>
             <CardContent>
-              <AddGoalDialog>
-                <Button 
-                  variant="outline" 
-                  className="w-full border-purple-200 hover:bg-purple-50"
-                >
-                  <Target className="h-4 w-4 mr-2" />
-                  Criar Primeira Meta
-                </Button>
-              </AddGoalDialog>
+              <AddGoalDialog />
             </CardContent>
           </Card>
         </div>
