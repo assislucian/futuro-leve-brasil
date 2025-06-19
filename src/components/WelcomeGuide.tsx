@@ -169,7 +169,7 @@ export function WelcomeGuide() {
           <CardContent className="space-y-4">
             <p className="text-sm text-amber-800 bg-amber-100 p-3 rounded-lg">
               💡 <strong>Dica:</strong> Os dados de exemplo ajudam você a entender todas as funcionalidades 
-              antes de adicionar suas informações reais. Você pode removê-los a qualquer momento.
+              antes de adicionar suas informações reais. Você pode removê-los a qualquer momento com o botão "Limpar Demo".
             </p>
             
             {!showDemo ? (
@@ -179,11 +179,13 @@ export function WelcomeGuide() {
                 className="w-full border-amber-300 hover:bg-amber-50"
               >
                 <TrendingUp className="h-4 w-4 mr-2" />
-                Ver Opções de Demonstração
+                Ver opções de demonstração
               </Button>
             ) : (
               <div className="space-y-3">
-                <DemoDataPopulator />
+                <div className="flex justify-center">
+                  <DemoDataPopulator />
+                </div>
                 <Button 
                   onClick={handleToggleDemo}
                   variant="ghost" 

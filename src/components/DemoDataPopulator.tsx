@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Database, Sparkles } from "lucide-react";
+import { Loader2, Database, Sparkles, Trash2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 /**
@@ -14,7 +13,58 @@ import { toast } from "sonner";
 export function DemoDataPopulator() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
+
+  const clearAllDemoData = async () => {
+    if (!user) return;
+
+    setIsClearing(true);
+    try {
+      console.log("Limpando todos os dados de demonstração...");
+      
+      // Deletar em ordem para respeitar foreign keys
+      await supabase.from('goal_contributions').delete().eq('user_id', user.id);
+      await supabase.from('goals').delete().eq('user_id', user.id);
+      
+      // Buscar IDs dos planos de parcelamento para deletar pagamentos
+      const { data: existingInstallmentPlans } = await supabase
+        .from('installment_plans')
+        .select('id')
+        .eq('user_id', user.id);
+      
+      if (existingInstallmentPlans && existingInstallmentPlans.length > 0) {
+        const planIds = existingInstallmentPlans.map(p => p.id);
+        for (const planId of planIds) {
+          await supabase.from('installment_payments').delete().eq('installment_plan_id', planId);
+        }
+      }
+      
+      await supabase.from('installment_plans').delete().eq('user_id', user.id);
+      await supabase.from('recurring_transactions').delete().eq('user_id', user.id);
+      await supabase.from('budgets').delete().eq('user_id', user.id);
+      await supabase.from('classification_patterns').delete().eq('user_id', user.id);
+      await supabase.from('transactions').delete().eq('user_id', user.id);
+
+      toast.success("✨ Dados limpos com sucesso!", {
+        description: "Agora você pode começar fresh com seus próprios dados."
+      });
+
+      setIsClearDialogOpen(false);
+      
+      // Recarregar a página para mostrar o estado limpo
+      window.location.reload();
+
+    } catch (error) {
+      console.error('Erro ao limpar dados:', error);
+      toast.error("Erro ao limpar dados", {
+        description: "Tente novamente ou entre em contato com o suporte."
+      });
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   const populateDemoData = async () => {
     if (!user) return;
@@ -289,70 +339,142 @@ export function DemoDataPopulator() {
   if (!user) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
-          <Database className="h-4 w-4" />
-          Dados Demo
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-emerald-600" />
-            Popular Dados de Demonstração
-          </DialogTitle>
-          <DialogDescription>
-            Crie dados de exemplo para explorar todas as funcionalidades do Plenus
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <Alert>
+    <div className="flex gap-2">
+      {/* Botão para criar dados demo */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="gap-2">
             <Database className="h-4 w-4" />
-            <AlertDescription>
-              Isso criará dados realistas incluindo:
-              <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                <li>Transações variadas (receitas e despesas)</li>
-                <li>Metas financeiras com progresso</li>
-                <li>Orçamentos mensais</li>
-                <li>Transações recorrentes</li>
-                <li>Planos de parcelamento</li>
-                <li>Padrões de classificação inteligente</li>
-              </ul>
-            </AlertDescription>
-          </Alert>
+            Dados Demo
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-emerald-600" />
+              Popular Dados de Demonstração
+            </DialogTitle>
+            <DialogDescription>
+              Crie dados de exemplo para explorar todas as funcionalidades do Plenus
+            </DialogDescription>
+          </DialogHeader>
 
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setIsOpen(false)}
-              className="flex-1"
-              disabled={isLoading}
-            >
-              Cancelar
-            </Button>
-            
-            <Button
-              onClick={populateDemoData}
-              disabled={isLoading}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Criando...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Criar Dados
-                </>
-              )}
-            </Button>
+          <div className="space-y-4">
+            <Alert>
+              <Database className="h-4 w-4" />
+              <AlertDescription>
+                Isso criará dados realistas incluindo:
+                <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                  <li>Transações variadas (receitas e despesas)</li>
+                  <li>Metas financeiras com progresso</li>
+                  <li>Orçamentos mensais</li>
+                  <li>Transações recorrentes</li>
+                  <li>Planos de parcelamento</li>
+                  <li>Padrões de classificação inteligente</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                className="flex-1"
+                disabled={isLoading}
+              >
+                Cancelar
+              </Button>
+              
+              <Button
+                onClick={populateDemoData}
+                disabled={isLoading}
+                className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Criando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Criar Dados
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {/* Botão para limpar dados demo */}
+      <Dialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="gap-2 text-amber-700 border-amber-300 hover:bg-amber-50">
+            <RefreshCw className="h-4 w-4" />
+            Limpar Demo
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-700">
+              <Trash2 className="h-5 w-5" />
+              Limpar Dados de Demonstração
+            </DialogTitle>
+            <DialogDescription>
+              Remove todos os dados de exemplo para você começar fresh
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <Alert className="border-amber-200 bg-amber-50">
+              <RefreshCw className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800">
+                <strong>⚠️ Atenção:</strong> Esta ação removerá permanentemente:
+                <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                  <li>Todas as transações</li>
+                  <li>Todas as metas e contribuições</li>
+                  <li>Todos os orçamentos</li>
+                  <li>Transações recorrentes</li>
+                  <li>Planos de parcelamento</li>
+                  <li>Padrões de classificação</li>
+                </ul>
+                <p className="mt-2 font-medium">Você poderá começar do zero com seus próprios dados!</p>
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setIsClearDialogOpen(false)}
+                className="flex-1"
+                disabled={isClearing}
+              >
+                Cancelar
+              </Button>
+              
+              <Button
+                onClick={clearAllDemoData}
+                disabled={isClearing}
+                variant="destructive"
+                className="flex-1"
+              >
+                {isClearing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Limpando...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Sim, Limpar Tudo
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
