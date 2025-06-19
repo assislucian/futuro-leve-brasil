@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -471,6 +470,18 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
                   disabled={isClearing}
                   variant="destructive"
                   className="flex-1"
+                >
+                  {isClearing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Limpando...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Limpar Dados
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
