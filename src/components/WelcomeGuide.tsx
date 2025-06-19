@@ -17,11 +17,19 @@ import {
   ArrowRight,
   Lightbulb
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function WelcomeGuide() {
   const [showDemo, setShowDemo] = useState(false);
   const { restartTour } = useWealthJourneyTour();
+
+  const handleStartJourney = () => {
+    console.log('🚀 Iniciando Jornada Plenus do WelcomeGuide');
+    restartTour();
+  };
+
+  const handleToggleDemo = () => {
+    setShowDemo(!showDemo);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-white">
@@ -71,7 +79,7 @@ export function WelcomeGuide() {
             </div>
             
             <Button 
-              onClick={restartTour}
+              onClick={handleStartJourney}
               size="lg"
               className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8"
             >
@@ -165,7 +173,7 @@ export function WelcomeGuide() {
             
             {!showDemo ? (
               <Button 
-                onClick={() => setShowDemo(true)}
+                onClick={handleToggleDemo}
                 variant="outline" 
                 className="w-full border-amber-300 hover:bg-amber-50"
               >
@@ -176,7 +184,7 @@ export function WelcomeGuide() {
               <div className="space-y-3">
                 <DemoDataPopulator />
                 <Button 
-                  onClick={() => setShowDemo(false)}
+                  onClick={handleToggleDemo}
                   variant="ghost" 
                   size="sm"
                   className="w-full text-amber-700 hover:bg-amber-50"

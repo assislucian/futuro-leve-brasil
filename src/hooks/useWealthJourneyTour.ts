@@ -25,9 +25,10 @@ export function useWealthJourneyTour() {
   );
   
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isManuallyActive, setIsManuallyActive] = useState(false);
 
   const totalSteps = 8;
-  const isActive = !tourCompleted && user;
+  const isActive = (!tourCompleted && user) || isManuallyActive;
 
   const nextStep = useCallback(() => {
     if (currentStepIndex < totalSteps - 1) {
@@ -46,11 +47,13 @@ export function useWealthJourneyTour() {
   const skipTour = useCallback(() => {
     setTourCompleted(true);
     setCurrentStepIndex(0);
+    setIsManuallyActive(false);
   }, [setTourCompleted]);
 
   const completeTour = useCallback(() => {
     setTourCompleted(true);
     setCurrentStepIndex(0);
+    setIsManuallyActive(false);
     
     // Trigger celebration
     if (typeof window !== 'undefined') {
@@ -59,8 +62,10 @@ export function useWealthJourneyTour() {
   }, [setTourCompleted]);
 
   const restartTour = useCallback(() => {
+    console.log('🚀 Iniciando Jornada Plenus');
     setTourCompleted(false);
     setCurrentStepIndex(0);
+    setIsManuallyActive(true);
   }, [setTourCompleted]);
 
   const goToStep = useCallback((stepIndex: number) => {

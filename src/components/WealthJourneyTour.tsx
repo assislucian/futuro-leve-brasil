@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -112,34 +113,97 @@ export function WealthJourneyTour() {
   const currentStep = tourSteps[currentStepIndex];
   const [modalPosition, setModalPosition] = useState<{top: number, left: number} | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const highlightStylesRef = useRef<HTMLStyleElement | null>(null);
 
-  useEffect(() => {
-    if (currentStep.highlight) {
-      const el = document.querySelector(currentStep.highlight);
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const modalWidth = 600; // Aproximado, pode ajustar
-        const modalHeight = 400; // Aproximado, pode ajustar
-        const padding = 24;
-        let top = rect.bottom + padding;
-        let left = rect.left + (rect.width / 2) - (modalWidth / 2);
-        // Se não couber abaixo, tenta acima
-        if (top + modalHeight > window.innerHeight) {
-          top = rect.top - modalHeight - padding;
-        }
-        // Ajusta para não sair da tela
-        if (left < 16) left = 16;
-        if (left + modalWidth > window.innerWidth) left = window.innerWidth - modalWidth - 16;
-        // Se ainda não couber, centraliza
-        if (top < 16) top = window.innerHeight / 2 - modalHeight / 2;
-        setModalPosition({ top, left });
-      } else {
-        setModalPosition(null);
-      }
-    } else {
+  // Memoized position calculation to prevent loops
+  const calculatePosition = useCallback(() => {
+    if (!currentStep?.highlight) {
       setModalPosition(null);
+      return;
     }
-  }, [currentStepIndex, currentStep?.highlight]);
+
+    const el = document.querySelector(currentStep.highlight);
+    if (!el) {
+      setModalPosition(null);
+      return;
+    }
+
+    const rect = el.getBoundingClientRect();
+    const modalWidth = 600;
+    const modalHeight = 400;
+    const padding = 24;
+
+    let top = rect.bottom + padding;
+    let left = rect.left + (rect.width / 2) - (modalWidth / 2);
+
+    // Ajustes para não sair da tela
+    if (top + modalHeight > window.innerHeight) {
+      top = Math.max(16, rect.top - modalHeight - padding);
+    }
+    if (left < 16) left = 16;
+    if (left + modalWidth > window.innerWidth) {
+      left = window.innerWidth - modalWidth - 16;
+    }
+    if (top < 16) top = window.innerHeight / 2 - modalHeight / 2;
+
+    setModalPosition({ top, left });
+  }, [currentStep?.highlight]);
+
+  // Effect for highlighting elements
+  useEffect(() => {
+    if (!isActive) return;
+
+    // Remove previous styles
+    if (highlightStylesRef.current) {
+      document.head.removeChild(highlightStylesRef.current);
+      highlightStylesRef.current = null;
+    }
+
+    if (currentStep?.highlight) {
+      // Create new styles
+      const style = document.createElement('style');
+      style.textContent = `
+        ${currentStep.highlight} {
+          position: relative !important;
+          z-index: 101 !important;
+          box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4) !important;
+          border-radius: 12px !important;
+          animation: gentlePulse 3s ease-in-out infinite !important;
+        }
+        
+        @keyframes gentlePulse {
+          0%, 100% { 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
+          }
+          50% { 
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      highlightStylesRef.current = style;
+
+      // Calculate position with a small delay to ensure element is highlighted
+      setTimeout(calculatePosition, 100);
+    }
+
+    return () => {
+      if (highlightStylesRef.current) {
+        document.head.removeChild(highlightStylesRef.current);
+        highlightStylesRef.current = null;
+      }
+    };
+  }, [isActive, currentStepIndex, calculatePosition]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (highlightStylesRef.current) {
+        document.head.removeChild(highlightStylesRef.current);
+        highlightStylesRef.current = null;
+      }
+    };
+  }, []);
 
   if (!isActive || !currentStep) {
     return null;
@@ -154,30 +218,6 @@ export function WealthJourneyTour() {
     <>
       {/* Overlay suave */}
       <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" />
-      
-      {/* Destaque do elemento atual */}
-      {currentStep.highlight && (
-        <style>
-          {`
-            ${currentStep.highlight} {
-              position: relative !important;
-              z-index: 101 !important;
-              box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4) !important;
-              border-radius: 12px !important;
-              animation: gentlePulse 3s ease-in-out infinite !important;
-            }
-            
-            @keyframes gentlePulse {
-              0%, 100% { 
-                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
-              }
-              50% { 
-                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
-              }
-            }
-          `}
-        </style>
-      )}
 
       {/* Modal principal */}
       <Dialog open={true} onOpenChange={() => {}}>
@@ -187,7 +227,7 @@ export function WealthJourneyTour() {
             position: 'fixed',
             top: modalPosition.top,
             left: modalPosition.left,
-            width: 600,
+            width: Math.min(600, window.innerWidth - 32),
             maxWidth: '95vw',
             zIndex: 102,
             margin: 0,

@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useWealthJourneyTour } from "@/hooks/useWealthJourneyTour";
-import { Target, Sparkles, BookOpen } from "lucide-react";
+import { BookOpen, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 /**
@@ -18,12 +18,17 @@ export function WealthJourneyTrigger() {
     return null;
   }
 
+  const handleClick = () => {
+    console.log('🎯 Clique no botão Jornada Plenus detectado');
+    restartTour();
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            onClick={restartTour}
+            onClick={handleClick}
             variant="outline"
             size="sm"
             className="group relative overflow-hidden border-emerald-200 hover:border-emerald-300 hover:bg-emerald-50 transition-all duration-300"
