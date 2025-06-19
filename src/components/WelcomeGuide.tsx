@@ -19,7 +19,6 @@ import {
 
 export function WelcomeGuide() {
   const [showDemo, setShowDemo] = useState(false);
-  const [showAddGoal, setShowAddGoal] = useState(false);
   const { restartTour } = useWealthJourneyTour();
 
   const handleStartJourney = () => {
@@ -34,10 +33,6 @@ export function WelcomeGuide() {
   const handleAddTransaction = () => {
     // Implementar navegação para adicionar transação
     console.log('Adicionar primeira transação');
-  };
-
-  const handleAddGoal = () => {
-    setShowAddGoal(true);
   };
 
   return (
@@ -146,14 +141,15 @@ export function WelcomeGuide() {
               </div>
             </CardHeader>
             <CardContent>
-              <Button 
-                onClick={handleAddGoal}
-                variant="outline" 
-                className="w-full border-purple-200 hover:bg-purple-50"
-              >
-                <Target className="h-4 w-4 mr-2" />
-                Criar Primeira Meta
-              </Button>
+              <AddGoalDialog>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-purple-200 hover:bg-purple-50"
+                >
+                  <Target className="h-4 w-4 mr-2" />
+                  Criar Primeira Meta
+                </Button>
+              </AddGoalDialog>
             </CardContent>
           </Card>
         </div>
@@ -217,11 +213,6 @@ export function WelcomeGuide() {
           </p>
         </div>
       </div>
-
-      {/* Dialog para adicionar meta */}
-      {showAddGoal && (
-        <AddGoalDialog onClose={() => setShowAddGoal(false)} />
-      )}
     </div>
   );
 }
