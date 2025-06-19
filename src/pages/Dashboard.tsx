@@ -1,3 +1,4 @@
+
 import React from "react";
 import FinancialSummary from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
@@ -12,6 +13,7 @@ import { GoalCompletionCelebration } from "@/components/GoalCompletionCelebratio
 import { useHasTransactions } from "@/hooks/useHasTransactions";
 import { WelcomeGuide } from "@/components/WelcomeGuide";
 import { SmartInsightsCard } from "@/components/SmartInsightsCard";
+import { DemoDataPopulator } from "@/components/DemoDataPopulator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Target, TrendingUp, MoreVertical } from "lucide-react";
@@ -174,6 +176,8 @@ const DashboardPage = () => {
               <div className="flex gap-2 justify-center sm:justify-start">
                 <AddRecurringTransactionDialog />
                 <AddInstallmentPlanDialog />
+                {/* Botão sempre acessível para limpar dados demo */}
+                <DemoDataPopulator />
               </div>
             </div>
           </header>

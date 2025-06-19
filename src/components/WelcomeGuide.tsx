@@ -184,7 +184,7 @@ export function WelcomeGuide() {
             ) : (
               <div className="space-y-3">
                 <div className="flex justify-center">
-                  <DemoDataPopulator />
+                  <DemoDataPopulator showCreateButton={true} />
                 </div>
                 <Button 
                   onClick={handleToggleDemo}

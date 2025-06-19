@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -6,12 +7,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Database, Sparkles, Trash2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { useHasTransactions } from "@/hooks/useHasTransactions";
+
+interface DemoDataPopulatorProps {
+  showCreateButton?: boolean;
+}
 
 /**
  * Componente para popular dados de demonstração para o usuário atual
  */
-export function DemoDataPopulator() {
+export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulatorProps) {
   const { user } = useAuth();
+  const { data: hasTransactions } = useHasTransactions();
   const [isLoading, setIsLoading] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -338,143 +345,138 @@ export function DemoDataPopulator() {
 
   if (!user) return null;
 
+  // Se não deve mostrar o botão de criar E não há transações, não renderiza nada
+  if (!showCreateButton && !hasTransactions) return null;
+
   return (
     <div className="flex gap-2">
-      {/* Botão para criar dados demo */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="gap-2">
-            <Database className="h-4 w-4" />
-            Dados Demo
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-emerald-600" />
-              Popular Dados de Demonstração
-            </DialogTitle>
-            <DialogDescription>
-              Crie dados de exemplo para explorar todas as funcionalidades do Plenus
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <Alert>
+      {/* Botão para criar dados demo - só aparece quando showCreateButton=true */}
+      {showCreateButton && (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="gap-2">
               <Database className="h-4 w-4" />
-              <AlertDescription>
-                Isso criará dados realistas incluindo:
-                <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                  <li>Transações variadas (receitas e despesas)</li>
-                  <li>Metas financeiras com progresso</li>
-                  <li>Orçamentos mensais</li>
-                  <li>Transações recorrentes</li>
-                  <li>Planos de parcelamento</li>
-                  <li>Padrões de classificação inteligente</li>
-                </ul>
-              </AlertDescription>
-            </Alert>
+              Dados Demo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-emerald-600" />
+                Popular Dados de Demonstração
+              </DialogTitle>
+              <DialogDescription>
+                Crie dados de exemplo para explorar todas as funcionalidades do Plenus
+              </DialogDescription>
+            </DialogHeader>
 
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setIsOpen(false)}
-                className="flex-1"
-                disabled={isLoading}
-              >
-                Cancelar
-              </Button>
-              
-              <Button
-                onClick={populateDemoData}
-                disabled={isLoading}
-                className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Criando...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Criar Dados
-                  </>
-                )}
-              </Button>
+            <div className="space-y-4">
+              <Alert>
+                <Database className="h-4 w-4" />
+                <AlertDescription>
+                  Isso criará dados realistas incluindo:
+                  <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li>Transações variadas (receitas e despesas)</li>
+                    <li>Metas financeiras com progresso</li>
+                    <li>Orçamentos mensais</li>
+                    <li>Transações recorrentes</li>
+                    <li>Planos de parcelamento</li>
+                    <li>Padrões de classificação inteligente</li>
+                  </ul>
+                </AlertDescription>
+              </Alert>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsOpen(false)}
+                  className="flex-1"
+                  disabled={isLoading}
+                >
+                  Cancelar
+                </Button>
+                
+                <Button
+                  onClick={populateDemoData}
+                  disabled={isLoading}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Criando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Criar Dados
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
 
-      {/* Botão para limpar dados demo */}
-      <Dialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="gap-2 text-amber-700 border-amber-300 hover:bg-amber-50">
-            <RefreshCw className="h-4 w-4" />
-            Limpar Demo
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-700">
-              <Trash2 className="h-5 w-5" />
-              Limpar Dados de Demonstração
-            </DialogTitle>
-            <DialogDescription>
-              Remove todos os dados de exemplo para você começar fresh
-            </DialogDescription>
-          </DialogHeader>
+      {/* Botão para limpar dados demo - sempre disponível quando há transações */}
+      {hasTransactions && (
+        <Dialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-2 text-amber-700 border-amber-300 hover:bg-amber-50">
+              <RefreshCw className="h-4 w-4" />
+              Limpar Demo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-amber-700">
+                <Trash2 className="h-5 w-5" />
+                Limpar Dados de Demonstração
+              </DialogTitle>
+              <DialogDescription>
+                Remove todos os dados de exemplo para você começar fresh
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="space-y-4">
-            <Alert className="border-amber-200 bg-amber-50">
-              <RefreshCw className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-amber-800">
-                <strong>⚠️ Atenção:</strong> Esta ação removerá permanentemente:
-                <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                  <li>Todas as transações</li>
-                  <li>Todas as metas e contribuições</li>
-                  <li>Todos os orçamentos</li>
-                  <li>Transações recorrentes</li>
-                  <li>Planos de parcelamento</li>
-                  <li>Padrões de classificação</li>
-                </ul>
-                <p className="mt-2 font-medium">Você poderá começar do zero com seus próprios dados!</p>
-              </AlertDescription>
-            </Alert>
+            <div className="space-y-4">
+              <Alert className="border-amber-200 bg-amber-50">
+                <RefreshCw className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  <strong>⚠️ Atenção:</strong> Esta ação removerá permanentemente:
+                  <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li>Todas as transações</li>
+                    <li>Todas as metas e contribuições</li>
+                    <li>Todos os orçamentos</li>
+                    <li>Transações recorrentes</li>
+                    <li>Planos de parcelamento</li>
+                    <li>Padrões de classificação</li>
+                  </ul>
+                  <p className="mt-2 font-medium">Você poderá começar do zero com seus próprios dados!</p>
+                </AlertDescription>
+              </Alert>
 
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setIsClearDialogOpen(false)}
-                className="flex-1"
-                disabled={isClearing}
-              >
-                Cancelar
-              </Button>
-              
-              <Button
-                onClick={clearAllDemoData}
-                disabled={isClearing}
-                variant="destructive"
-                className="flex-1"
-              >
-                {isClearing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Limpando...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Sim, Limpar Tudo
-                  </>
-                )}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsClearDialogOpen(false)}
+                  className="flex-1"
+                  disabled={isClearing}
+                >
+                  Cancelar
+                </Button>
+                
+                <Button
+                  onClick={clearAllDemoData}
+                  disabled={isClearing}
+                  variant="destructive"
+                  className="flex-1"
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
