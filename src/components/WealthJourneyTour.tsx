@@ -115,45 +115,78 @@ export function WealthJourneyTour() {
   const modalRef = useRef<HTMLDivElement>(null);
   const highlightStylesRef = useRef<HTMLStyleElement | null>(null);
   const [isPositioned, setIsPositioned] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Função otimizada para calcular posição do modal
-  const calculatePosition = useCallback(() => {
+  // Função inteligente para calcular posição do modal com base no elemento destacado
+  const calculateOptimalPosition = useCallback(() => {
     if (!currentStep?.highlight || !isActive) {
       setModalPosition(null);
-      setIsPositioned(false);
+      setIsPositioned(true);
       return;
     }
 
-    const el = document.querySelector(currentStep.highlight);
-    if (!el) {
+    const highlightedElement = document.querySelector(currentStep.highlight);
+    if (!highlightedElement) {
       setModalPosition(null);
-      setIsPositioned(false);
+      setIsPositioned(true);
       return;
     }
 
-    const rect = el.getBoundingClientRect();
+    const rect = highlightedElement.getBoundingClientRect();
     const modalWidth = Math.min(600, window.innerWidth - 32);
-    const modalHeight = 400;
+    const modalHeight = 500; // Altura estimada do modal
     const padding = 24;
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
 
-    let top = rect.bottom + padding;
-    let left = rect.left + (rect.width / 2) - (modalWidth / 2);
+    let top: number;
+    let left: number;
 
-    // Ajustes para não sair da tela
-    if (top + modalHeight > window.innerHeight - 16) {
-      top = Math.max(16, rect.top - modalHeight - padding);
+    // Lógica inteligente de posicionamento para evitar sobreposição
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const spaceRight = viewportWidth - rect.right;
+    const spaceLeft = rect.left;
+
+    // Prioridade: abaixo -> direita -> acima -> esquerda
+    if (spaceBelow >= modalHeight + padding) {
+      // Posicionar abaixo do elemento
+      top = rect.bottom + padding;
+      left = Math.max(16, Math.min(rect.left + (rect.width / 2) - (modalWidth / 2), viewportWidth - modalWidth - 16));
+    } else if (spaceRight >= modalWidth + padding && rect.top + modalHeight <= viewportHeight) {
+      // Posicionar à direita do elemento
+      left = rect.right + padding;
+      top = Math.max(16, Math.min(rect.top, viewportHeight - modalHeight - 16));
+    } else if (spaceAbove >= modalHeight + padding) {
+      // Posicionar acima do elemento
+      top = rect.top - modalHeight - padding;
+      left = Math.max(16, Math.min(rect.left + (rect.width / 2) - (modalWidth / 2), viewportWidth - modalWidth - 16));
+    } else if (spaceLeft >= modalWidth + padding && rect.top + modalHeight <= viewportHeight) {
+      // Posicionar à esquerda do elemento
+      left = rect.left - modalWidth - padding;
+      top = Math.max(16, Math.min(rect.top, viewportHeight - modalHeight - 16));
+    } else {
+      // Fallback: centro da tela
+      top = Math.max(16, (viewportHeight - modalHeight) / 2);
+      left = Math.max(16, (viewportWidth - modalWidth) / 2);
     }
-    if (left < 16) left = 16;
-    if (left + modalWidth > window.innerWidth - 16) {
-      left = window.innerWidth - modalWidth - 16;
-    }
-    if (top < 16) top = window.innerHeight / 2 - modalHeight / 2;
 
     setModalPosition({ top, left });
     setIsPositioned(true);
   }, [currentStep?.highlight, isActive]);
 
-  // Effect para destacar elementos e posicionar modal
+  // Listener para scroll que reposiciona o modal
+  const handleScroll = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      calculateOptimalPosition();
+    }, 100); // Debounce para performance
+  }, [calculateOptimalPosition]);
+
+  // Effect para aplicar destaque e calcular posição
   useEffect(() => {
     if (!isActive) {
       // Cleanup quando não ativo
@@ -161,6 +194,8 @@ export function WealthJourneyTour() {
         document.head.removeChild(highlightStylesRef.current);
         highlightStylesRef.current = null;
       }
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', calculateOptimalPosition);
       setModalPosition(null);
       setIsPositioned(false);
       return;
@@ -173,24 +208,27 @@ export function WealthJourneyTour() {
     }
 
     if (currentStep?.highlight) {
-      // Aguarda um pouco para garantir que o DOM está pronto
+      // Aguarda o DOM estar pronto
       const timer = setTimeout(() => {
         const style = document.createElement('style');
         style.textContent = `
           ${currentStep.highlight} {
             position: relative !important;
             z-index: 101 !important;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4) !important;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.7), 0 0 40px rgba(16, 185, 129, 0.5) !important;
             border-radius: 12px !important;
-            animation: gentlePulse 3s ease-in-out infinite !important;
+            animation: smoothPulse 3s ease-in-out infinite !important;
+            transition: all 0.3s ease !important;
           }
           
-          @keyframes gentlePulse {
+          @keyframes smoothPulse {
             0%, 100% { 
-              box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
+              box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.7), 0 0 40px rgba(16, 185, 129, 0.5);
+              transform: scale(1);
             }
             50% { 
-              box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
+              box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.9), 0 0 60px rgba(16, 185, 129, 0.7);
+              transform: scale(1.01);
             }
           }
         `;
@@ -198,7 +236,7 @@ export function WealthJourneyTour() {
         highlightStylesRef.current = style;
 
         // Calcula posição após aplicar destaque
-        setTimeout(calculatePosition, 100);
+        setTimeout(calculateOptimalPosition, 150);
       }, 100);
 
       return () => clearTimeout(timer);
@@ -207,7 +245,19 @@ export function WealthJourneyTour() {
       setModalPosition(null);
       setIsPositioned(true);
     }
-  }, [isActive, currentStepIndex, currentStep?.highlight, calculatePosition]);
+
+    // Adiciona listeners para scroll e resize
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', calculateOptimalPosition, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', calculateOptimalPosition);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [isActive, currentStepIndex, currentStep?.highlight, calculateOptimalPosition, handleScroll]);
 
   // Cleanup no unmount
   useEffect(() => {
@@ -216,10 +266,13 @@ export function WealthJourneyTour() {
         document.head.removeChild(highlightStylesRef.current);
         highlightStylesRef.current = null;
       }
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
   }, []);
 
-  // Não renderiza se não estiver ativo ou se não estiver posicionado ainda
+  // Não renderiza se não estiver ativo ou posicionado
   if (!isActive || !currentStep || !isPositioned) {
     return null;
   }
@@ -231,10 +284,10 @@ export function WealthJourneyTour() {
 
   return (
     <>
-      {/* Overlay suave */}
-      <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" />
+      {/* Overlay suave que não interfere com elementos destacados */}
+      <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-[2px]" />
 
-      {/* Modal principal */}
+      {/* Modal principal com posicionamento inteligente */}
       <Dialog open={true} onOpenChange={() => {}}>
         <DialogContent
           ref={modalRef}
@@ -248,14 +301,14 @@ export function WealthJourneyTour() {
             margin: 0,
             borderRadius: 16,
             padding: 0,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
             overflow: 'hidden',
             background: 'white',
-            border: 0
+            border: 0,
+            transform: 'none'
           } : {}}
-          className={modalPosition ? "shadow-2xl p-0 overflow-hidden" : "fixed z-[102] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl border-0 shadow-2xl p-0 overflow-hidden"}
+          className={modalPosition ? "" : "fixed z-[102] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl border-0 shadow-2xl p-0 overflow-hidden"}
         >
-          {/* Header com progresso visual */}
           <div className="relative bg-gradient-to-br from-emerald-50 to-blue-50 p-6 border-b">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -282,7 +335,6 @@ export function WealthJourneyTour() {
               </Button>
             </div>
 
-            {/* Barra de progresso visual */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-gray-600">
                 <span>Progresso da Jornada</span>
@@ -291,7 +343,6 @@ export function WealthJourneyTour() {
               <Progress value={progressPercentage} className="h-2 bg-white/50" />
             </div>
 
-            {/* Navegação por pontos */}
             <div className="flex items-center justify-center gap-2 mt-4">
               {tourSteps.map((_, index) => (
                 <button
@@ -310,7 +361,6 @@ export function WealthJourneyTour() {
             </div>
           </div>
 
-          {/* Conteúdo principal */}
           <div className="p-8 space-y-6">
             <div className="text-center space-y-4">
               <div className="space-y-2">
@@ -327,7 +377,6 @@ export function WealthJourneyTour() {
               </p>
             </div>
 
-            {/* Dica especial */}
             {currentStep.tip && (
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
                 <div className="flex items-start gap-3">
@@ -339,7 +388,6 @@ export function WealthJourneyTour() {
               </div>
             )}
 
-            {/* Controles de navegação */}
             <div className="flex items-center justify-between pt-6">
               <div className="flex items-center gap-2">
                 {!isFirstStep && (
@@ -375,7 +423,6 @@ export function WealthJourneyTour() {
               </Button>
             </div>
 
-            {/* Mensagem especial no último passo */}
             {isLastStep && (
               <div className="mt-6 p-6 bg-gradient-to-br from-emerald-50 to-blue-50 rounded-xl border border-emerald-200">
                 <div className="text-center space-y-3">
