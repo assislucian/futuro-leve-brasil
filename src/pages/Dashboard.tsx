@@ -176,7 +176,7 @@ const DashboardPage = () => {
               <div className="flex gap-2 justify-center sm:justify-start">
                 <AddRecurringTransactionDialog />
                 <AddInstallmentPlanDialog />
-                {/* Botão sempre acessível para limpar dados demo */}
+                {/* Botão inteligente para dados demo - só aparece quando há dados demo */}
                 <DemoDataPopulator />
               </div>
             </div>

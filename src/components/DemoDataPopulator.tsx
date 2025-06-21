@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Database, Sparkles, Trash2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { useHasTransactions } from "@/hooks/useHasTransactions";
+import { useHasDemoData } from "@/hooks/useHasDemoData";
 
 interface DemoDataPopulatorProps {
   showCreateButton?: boolean;
@@ -18,7 +18,7 @@ interface DemoDataPopulatorProps {
  */
 export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulatorProps) {
   const { user } = useAuth();
-  const { data: hasTransactions, refetch: refetchHasTransactions } = useHasTransactions();
+  const { data: hasDemoData, refetch: refetchHasDemoData } = useHasDemoData();
   const [isLoading, setIsLoading] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -29,48 +29,49 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
     setIsClearing(true);
     try {
-      console.log("Limpando todos os dados de demonstração...");
+      console.log("Limpando apenas dados de demonstração...");
       
-      // Deletar em ordem para respeitar foreign keys
-      await supabase.from('goal_contributions').delete().eq('user_id', user.id);
-      await supabase.from('goals').delete().eq('user_id', user.id);
+      // Deletar apenas dados marcados como demo em ordem para respeitar foreign keys
+      await supabase.from('goal_contributions').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('goals').delete().eq('user_id', user.id).eq('is_demo_data', true);
       
-      // Buscar IDs dos planos de parcelamento para deletar pagamentos
-      const { data: existingInstallmentPlans } = await supabase
+      // Buscar IDs dos planos de parcelamento demo para deletar pagamentos
+      const { data: demoInstallmentPlans } = await supabase
         .from('installment_plans')
         .select('id')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('is_demo_data', true);
       
-      if (existingInstallmentPlans && existingInstallmentPlans.length > 0) {
-        const planIds = existingInstallmentPlans.map(p => p.id);
+      if (demoInstallmentPlans && demoInstallmentPlans.length > 0) {
+        const planIds = demoInstallmentPlans.map(p => p.id);
         for (const planId of planIds) {
           await supabase.from('installment_payments').delete().eq('installment_plan_id', planId);
         }
       }
       
-      await supabase.from('installment_plans').delete().eq('user_id', user.id);
-      await supabase.from('recurring_transactions').delete().eq('user_id', user.id);
-      await supabase.from('budgets').delete().eq('user_id', user.id);
-      await supabase.from('classification_patterns').delete().eq('user_id', user.id);
-      await supabase.from('transactions').delete().eq('user_id', user.id);
+      await supabase.from('installment_plans').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('recurring_transactions').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('budgets').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('classification_patterns').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('transactions').delete().eq('user_id', user.id).eq('is_demo_data', true);
 
-      toast.success("✨ Dados limpos com sucesso!", {
-        description: "Agora você pode começar fresh com seus próprios dados."
+      toast.success("✨ Dados de demonstração removidos!", {
+        description: "Seus dados reais foram preservados. Agora você pode trabalhar apenas com suas informações."
       });
 
       setIsClearDialogOpen(false);
       
       // Refetch para atualizar o estado
-      await refetchHasTransactions();
+      await refetchHasDemoData();
       
-      // Recarregar a página para mostrar o estado limpo
+      // Recarregar a página para mostrar o estado atualizado
       setTimeout(() => {
         window.location.reload();
       }, 1000);
 
     } catch (error) {
-      console.error('Erro ao limpar dados:', error);
-      toast.error("Erro ao limpar dados", {
+      console.error('Erro ao limpar dados demo:', error);
+      toast.error("Erro ao limpar dados de demonstração", {
         description: "Tente novamente ou entre em contato com o suporte."
       });
     } finally {
@@ -83,35 +84,36 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
     setIsLoading(true);
     try {
-      // Limpar todos os dados existentes primeiro para evitar duplicações
-      console.log("Limpando dados existentes...");
+      // Limpar apenas dados demo existentes antes de criar novos
+      console.log("Limpando dados demo existentes...");
       
       // Deletar em ordem para respeitar foreign keys
-      await supabase.from('goal_contributions').delete().eq('user_id', user.id);
-      await supabase.from('goals').delete().eq('user_id', user.id);
+      await supabase.from('goal_contributions').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('goals').delete().eq('user_id', user.id).eq('is_demo_data', true);
       
-      // Buscar IDs dos planos de parcelamento para deletar pagamentos
-      const { data: existingInstallmentPlans } = await supabase
+      // Buscar IDs dos planos de parcelamento demo para deletar pagamentos
+      const { data: existingDemoPlans } = await supabase
         .from('installment_plans')
         .select('id')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('is_demo_data', true);
       
-      if (existingInstallmentPlans && existingInstallmentPlans.length > 0) {
-        const planIds = existingInstallmentPlans.map(p => p.id);
+      if (existingDemoPlans && existingDemoPlans.length > 0) {
+        const planIds = existingDemoPlans.map(p => p.id);
         for (const planId of planIds) {
           await supabase.from('installment_payments').delete().eq('installment_plan_id', planId);
         }
       }
       
-      await supabase.from('installment_plans').delete().eq('user_id', user.id);
-      await supabase.from('recurring_transactions').delete().eq('user_id', user.id);
-      await supabase.from('budgets').delete().eq('user_id', user.id);
-      await supabase.from('classification_patterns').delete().eq('user_id', user.id);
-      await supabase.from('transactions').delete().eq('user_id', user.id);
+      await supabase.from('installment_plans').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('recurring_transactions').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('budgets').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('classification_patterns').delete().eq('user_id', user.id).eq('is_demo_data', true);
+      await supabase.from('transactions').delete().eq('user_id', user.id).eq('is_demo_data', true);
 
-      console.log("Dados existentes limpos. Criando novos dados...");
+      console.log("Dados demo existentes limpos. Criando novos dados demo...");
 
-      // 1. Criar transações de exemplo
+      // 1. Criar transações de exemplo - MARCADAS COMO DEMO
       const transactions = [
         // Receitas
         { amount: 5500.00, type: 'income' as const, category: 'Salário', description: 'Salário mensal', date: '2025-06-01', classification: null, planning_status: null },
@@ -146,13 +148,14 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
             transaction_date: t.date,
             classification: t.classification,
             planning_status: t.planning_status,
-            is_auto_classified: true
+            is_auto_classified: true,
+            is_demo_data: true // MARCADO COMO DEMO
           }))
         );
 
       if (transactionsError) throw transactionsError;
 
-      // 2. Criar metas financeiras
+      // 2. Criar metas financeiras - MARCADAS COMO DEMO
       const goals = [
         { name: 'Reserva de Emergência', target_amount: 20000.00, target_date: '2025-12-31' },
         { name: 'Viagem para Europa', target_amount: 15000.00, target_date: '2025-11-30' },
@@ -167,7 +170,8 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
             name: g.name,
             target_amount: g.target_amount,
             current_amount: 0,
-            target_date: g.target_date
+            target_date: g.target_date,
+            is_demo_data: true // MARCADO COMO DEMO
           }))
         )
         .select();
@@ -347,7 +351,7 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
       setIsOpen(false);
       
       // Refetch para atualizar o estado
-      await refetchHasTransactions();
+      await refetchHasDemoData();
       
       // Recarregar a página para mostrar os novos dados
       setTimeout(() => {
@@ -366,8 +370,8 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
 
   if (!user) return null;
 
-  // Se não deve mostrar o botão de criar E não há transações, não renderiza nada
-  if (!showCreateButton && !hasTransactions) return null;
+  // Se não deve mostrar o botão de criar E não há dados demo, não renderiza nada
+  if (!showCreateButton && !hasDemoData) return null;
 
   return (
     <div className="flex gap-2">
@@ -440,8 +444,8 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
         </Dialog>
       )}
 
-      {/* Botão para limpar dados demo - sempre disponível quando há transações */}
-      {hasTransactions && (
+      {/* Botão para limpar dados demo - só aparece quando HÁ DADOS DEMO */}
+      {hasDemoData && (
         <Dialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2 text-amber-700 border-amber-300 hover:bg-amber-50">
@@ -456,7 +460,7 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
                 Limpar Dados de Demonstração
               </DialogTitle>
               <DialogDescription>
-                Remove todos os dados de exemplo para você começar fresh
+                Remove apenas os dados de exemplo, preservando suas informações reais
               </DialogDescription>
             </DialogHeader>
 
@@ -464,16 +468,14 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
               <Alert className="border-amber-200 bg-amber-50">
                 <RefreshCw className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
-                  <strong>⚠️ Atenção:</strong> Esta ação removerá permanentemente:
+                  <strong>✨ Tranquilo!</strong> Esta ação removerá apenas:
                   <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                    <li>Todas as transações</li>
-                    <li>Todas as metas e contribuições</li>
-                    <li>Todos os orçamentos</li>
-                    <li>Transações recorrentes</li>
-                    <li>Planos de parcelamento</li>
-                    <li>Padrões de classificação</li>
+                    <li>Transações de demonstração</li>
+                    <li>Metas de exemplo</li>
+                    <li>Orçamentos de demonstração</li>
+                    <li>Dados fictícios em geral</li>
                   </ul>
-                  <p className="mt-2 font-medium">Você poderá começar do zero com seus próprios dados!</p>
+                  <p className="mt-2 font-medium text-emerald-700">Seus dados reais serão 100% preservados!</p>
                 </AlertDescription>
               </Alert>
 
@@ -501,7 +503,7 @@ export function DemoDataPopulator({ showCreateButton = false }: DemoDataPopulato
                   ) : (
                     <>
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Limpar Dados
+                      Limpar Demo
                     </>
                   )}
                 </Button>
