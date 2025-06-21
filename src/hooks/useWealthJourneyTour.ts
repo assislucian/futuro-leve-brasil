@@ -74,16 +74,13 @@ export function useWealthJourneyTour() {
   const restartTour = useCallback(() => {
     console.log('🚀 Reiniciando Jornada Plenus');
     
-    // Garante que outros tours sejam desativados
-    localStorage.setItem(`cinema-tour-completed-${user?.id}`, 'true');
-    
     // Reseta todos os estados
     setTourCompleted(false);
     setCurrentStepIndex(0);
     setIsManuallyActive(true);
     
     console.log('✨ Jornada Plenus iniciada com sucesso');
-  }, [setTourCompleted, user?.id]);
+  }, [setTourCompleted]);
 
   const goToStep = useCallback((stepIndex: number) => {
     console.log('🎯 Indo para passo:', stepIndex);

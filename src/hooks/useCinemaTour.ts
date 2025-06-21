@@ -27,13 +27,11 @@ export function useCinemaTour() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [isManuallyActive, setIsManuallyActive] = useState(false);
 
   const totalSteps = 7;
   const stepDuration = 4000; // 4 segundos por step em média
 
-  // Tour está ativo se: usuário logado E (não completou OU foi iniciado manualmente) E nenhum outro tour ativo
-  const isActive = user && (!tourCompleted || isManuallyActive);
+  const isActive = !tourCompleted && user;
 
   // Auto-progress do tour quando está playing
   useEffect(() => {
@@ -80,14 +78,12 @@ export function useCinemaTour() {
     setTourCompleted(true);
     setCurrentStepIndex(0);
     setProgress(0);
-    setIsManuallyActive(false);
   }, [setTourCompleted]);
 
   const completeTour = useCallback(() => {
     setTourCompleted(true);
     setCurrentStepIndex(0);
     setProgress(0);
-    setIsManuallyActive(false);
     
     // Trigger celebration animation
     if (typeof window !== 'undefined') {
@@ -96,22 +92,14 @@ export function useCinemaTour() {
   }, [setTourCompleted]);
 
   const restartTour = useCallback(() => {
-    console.log('🎬 Reiniciando Cinema Tour');
-    
-    // Garante que outros tours sejam desativados
-    localStorage.setItem(`wealth-journey-completed-${user?.id || 'anonymous'}`, 'true');
-    
     setTourCompleted(false);
     setCurrentStepIndex(0);
     setProgress(0);
     setIsPlaying(true);
-    setIsManuallyActive(true);
-    
-    console.log('🎭 Cinema Tour iniciado com sucesso');
-  }, [setTourCompleted, user?.id]);
+  }, [setTourCompleted]);
 
   return {
-    isActive: Boolean(isActive),
+    isActive,
     currentStepIndex,
     isPlaying,
     isMuted,
