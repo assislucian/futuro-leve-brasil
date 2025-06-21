@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AddGoalDialog } from "./AddGoalDialog";
+import { AddTransactionDialog } from "./AddTransactionDialog";
 import { DemoDataPopulator } from "./DemoDataPopulator";
 import { useWealthJourneyTour } from "@/hooks/useWealthJourneyTour";
 import { 
@@ -28,11 +28,6 @@ export function WelcomeGuide() {
 
   const handleToggleDemo = () => {
     setShowDemo(!showDemo);
-  };
-
-  const handleAddTransaction = () => {
-    // Implementar navegação para adicionar transação
-    console.log('Adicionar primeira transação');
   };
 
   return (
@@ -115,14 +110,15 @@ export function WelcomeGuide() {
               </div>
             </CardHeader>
             <CardContent>
-              <Button 
-                onClick={handleAddTransaction}
-                variant="outline" 
-                className="w-full border-blue-200 hover:bg-blue-50"
-              >
-                <DollarSign className="h-4 w-4 mr-2" />
-                Adicionar Primeira Transação
-              </Button>
+              <AddTransactionDialog>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-blue-200 hover:bg-blue-50"
+                >
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Adicionar Primeira Transação
+                </Button>
+              </AddTransactionDialog>
             </CardContent>
           </Card>
 
