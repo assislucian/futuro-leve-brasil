@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGoals } from "@/hooks/useGoals";
@@ -6,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AddGoalDialog } from "./AddGoalDialog";
 
 export function GoalsSummary() {
-  const { goals, isLoading } = useGoals();
+  const { data: goals, isLoading } = useGoals();
 
   if (isLoading) {
     return (
@@ -36,7 +37,7 @@ export function GoalsSummary() {
         <CardDescription>Acompanhe seus objetivos financeiros</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {goals.length > 0 ? (
+        {goals && goals.length > 0 ? (
           <div className="space-y-4">
             {goals.map((goal) => (
               <GoalItem key={goal.id} goal={goal} />

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -64,23 +65,25 @@ function FinancialSummaryLoading() {
 }
 
 export function FinancialSummary() {
-  const { 
-    totalBalance, 
-    totalIncome, 
-    totalExpenses, 
-    netSavings, 
-    isLoading 
-  } = useDashboardData();
+  const { data, isLoading } = useDashboardData();
 
   if (isLoading) {
     return <FinancialSummaryLoading />;
   }
 
+  const {
+    balance = 0,
+    totalIncome = 0,
+    totalExpense = 0,
+  } = data || {};
+
+  const netSavings = totalIncome - totalExpense;
+
   return (
     <div data-tour="financial-summary" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <SummaryCard
         title="Saldo Total"
-        amount={totalBalance}
+        amount={balance}
         icon={Wallet}
         color="text-blue-500"
         loading={isLoading}
@@ -94,7 +97,7 @@ export function FinancialSummary() {
       />
       <SummaryCard
         title="Despesa Total"
-        amount={totalExpenses}
+        amount={totalExpense}
         icon={LineChart}
         color="text-red-500"
         loading={isLoading}

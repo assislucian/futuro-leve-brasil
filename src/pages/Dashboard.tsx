@@ -1,12 +1,11 @@
-
 import React from "react";
-import FinancialSummary from "@/components/FinancialSummary";
+import { FinancialSummary } from "@/components/FinancialSummary";
 import TransactionList from "@/components/TransactionList";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { AddRecurringTransactionDialog } from "@/components/AddRecurringTransactionDialog";
 import { AddInstallmentPlanDialog } from "@/components/AddInstallmentPlanDialog";
 import { useAuth } from "@/hooks/useAuth";
-import GoalsSummary from "@/components/GoalsSummary";
+import { GoalsSummary } from "@/components/GoalsSummary";
 import BudgetsSummary from "@/components/BudgetsSummary";
 import { NextActionCard } from "@/components/NextActionCard";
 import { GoalCompletionCelebration } from "@/components/GoalCompletionCelebration";
