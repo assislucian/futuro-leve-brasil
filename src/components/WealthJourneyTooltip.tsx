@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 interface TooltipPosition {
   top: number;
   left: number;
-  placement: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  placement: 'top' | 'bottom' | 'left' | 'right';
 }
 
 interface WealthJourneyTooltipProps {
@@ -49,111 +49,134 @@ export function WealthJourneyTooltip({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<TooltipPosition | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const scrollIntoViewTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Função para calcular posição inteligente
-  const calculatePosition = useCallback(() => {
-    if (!tooltipRef.current) return;
+  // Função para rolar suavemente até o elemento destacado
+  const scrollToHighlightedElement = useCallback(() => {
+    if (!step.highlight) return;
 
-    const viewportWidth = window.innerWidth;
+    const element = document.querySelector(step.highlight);
+    if (!element) return;
+
+    const elementRect = element.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const tooltipWidth = 360;
-    const tooltipHeight = isExpanded ? 300 : 200;
-
-    // Para o primeiro step (welcome), centralizar na tela
-    if (currentIndex === 0 || !step.highlight) {
-      setPosition({
-        top: (viewportHeight - tooltipHeight) / 2,
-        left: (viewportWidth - tooltipWidth) / 2,
-        placement: 'center'
+    
+    // Se o elemento não está visível ou está muito próximo das bordas
+    if (elementRect.top < 100 || elementRect.bottom > viewportHeight - 100) {
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center',
+        inline: 'nearest'
       });
+    }
+  }, [step.highlight]);
+
+  // Calcula posição inteligente do tooltip
+  const calculatePosition = useCallback(() => {
+    if (!step.highlight || !tooltipRef.current) {
+      setPosition(null);
       return;
     }
 
-    // Para outros steps, posicionar próximo ao elemento destacado
     const highlightedElement = document.querySelector(step.highlight);
     if (!highlightedElement) {
-      // Fallback para centro se elemento não encontrado
-      setPosition({
-        top: (viewportHeight - tooltipHeight) / 2,
-        left: (viewportWidth - tooltipWidth) / 2,
-        placement: 'center'
-      });
+      setPosition(null);
       return;
     }
 
     const rect = highlightedElement.getBoundingClientRect();
-    const padding = 20;
+    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const padding = 16;
 
     let top: number;
     let left: number;
     let placement: TooltipPosition['placement'] = 'bottom';
 
-    // Lógica de posicionamento inteligente
-    const spaceBelow = viewportHeight - rect.bottom;
+    // Lógica inteligente: sempre posicionar onde há mais espaço
     const spaceAbove = rect.top;
-    const spaceRight = viewportWidth - rect.right;
+    const spaceBelow = viewportHeight - rect.bottom;
     const spaceLeft = rect.left;
+    const spaceRight = viewportWidth - rect.right;
 
-    if (spaceBelow >= tooltipHeight + padding) {
+    // Prioridade: lado com mais espaço que não sobreponha
+    if (spaceBelow >= 200 && spaceBelow >= spaceAbove) {
       // Posicionar abaixo
       placement = 'bottom';
       top = rect.bottom + padding;
       left = Math.max(padding, Math.min(
-        rect.left + (rect.width - tooltipWidth) / 2,
-        viewportWidth - tooltipWidth - padding
+        rect.left + (rect.width - 320) / 2,
+        viewportWidth - 320 - padding
       ));
-    } else if (spaceAbove >= tooltipHeight + padding) {
+    } else if (spaceAbove >= 200) {
       // Posicionar acima
       placement = 'top';
-      top = rect.top - tooltipHeight - padding;
+      top = rect.top - 200 - padding;
       left = Math.max(padding, Math.min(
-        rect.left + (rect.width - tooltipWidth) / 2,
-        viewportWidth - tooltipWidth - padding
+        rect.left + (rect.width - 320) / 2,
+        viewportWidth - 320 - padding
       ));
-    } else if (spaceRight >= tooltipWidth + padding) {
+    } else if (spaceRight >= 350) {
       // Posicionar à direita
       placement = 'right';
       left = rect.right + padding;
       top = Math.max(padding, Math.min(
-        rect.top + (rect.height - tooltipHeight) / 2,
-        viewportHeight - tooltipHeight - padding
+        rect.top + (rect.height - 200) / 2,
+        viewportHeight - 200 - padding
       ));
-    } else if (spaceLeft >= tooltipWidth + padding) {
+    } else if (spaceLeft >= 350) {
       // Posicionar à esquerda
       placement = 'left';
-      left = rect.left - tooltipWidth - padding;
+      left = rect.left - 320 - padding;
       top = Math.max(padding, Math.min(
-        rect.top + (rect.height - tooltipHeight) / 2,
-        viewportHeight - tooltipHeight - padding
+        rect.top + (rect.height - 200) / 2,
+        viewportHeight - 200 - padding
       ));
     } else {
-      // Fallback: posição fixa no canto superior direito
+      // Fallback: canto superior direito sem sobrepor
       placement = 'top';
-      top = padding;
-      left = viewportWidth - tooltipWidth - padding;
+      top = Math.max(padding, rect.top - 220);
+      left = Math.min(viewportWidth - 320 - padding, rect.right - 320);
     }
 
     setPosition({ top, left, placement });
-  }, [step.highlight, currentIndex, isExpanded]);
+  }, [step.highlight]);
 
-  // Recalcular posição quando necessário
+  // Scroll automático e cálculo de posição
   useEffect(() => {
-    const timer = setTimeout(calculatePosition, 100);
-    
-    const handleResize = () => {
-      clearTimeout(timer);
-      setTimeout(calculatePosition, 100);
+    if (!step.highlight) return;
+
+    // Limpa timeout anterior
+    if (scrollIntoViewTimeoutRef.current) {
+      clearTimeout(scrollIntoViewTimeoutRef.current);
+    }
+
+    // Primeiro rola para o elemento
+    scrollToHighlightedElement();
+
+    // Depois calcula posição com delay para scroll completar
+    scrollIntoViewTimeoutRef.current = setTimeout(() => {
+      calculatePosition();
+    }, 600); // Tempo para scroll suave completar
+
+    // Recalcula posição no scroll e resize
+    const handleReposition = () => {
+      clearTimeout(scrollIntoViewTimeoutRef.current!);
+      scrollIntoViewTimeoutRef.current = setTimeout(calculatePosition, 100);
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', handleResize);
+    window.addEventListener('scroll', handleReposition, { passive: true });
+    window.addEventListener('resize', handleReposition, { passive: true });
 
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleResize);
+      window.removeEventListener('scroll', handleReposition);
+      window.removeEventListener('resize', handleReposition);
+      if (scrollIntoViewTimeoutRef.current) {
+        clearTimeout(scrollIntoViewTimeoutRef.current);
+      }
     };
-  }, [calculatePosition]);
+  }, [step.highlight, calculatePosition, scrollToHighlightedElement]);
 
   if (!position) return null;
 
@@ -166,16 +189,15 @@ export function WealthJourneyTooltip({
     <div
       ref={tooltipRef}
       className={cn(
-        "fixed z-[1002] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300",
-        isExpanded ? "w-96 max-h-80" : "w-80 max-h-52",
-        position.placement === 'center' && "border-emerald-200 shadow-emerald-500/20"
+        "fixed z-[102] w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300",
+        isExpanded ? "max-h-96" : "max-h-48"
       )}
       style={{
         top: position.top,
         left: position.left,
       }}
     >
-      {/* Header */}
+      {/* Header Compacto */}
       <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-4 border-b">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -233,34 +255,34 @@ export function WealthJourneyTooltip({
           </p>
         </div>
 
-        <p className="text-xs text-gray-600 leading-relaxed mb-3">
+        {/* Descrição sempre visível mas compacta */}
+        <p className="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-2">
           {step.description}
         </p>
 
-        {/* Dica expandível */}
+        {/* Botão para expandir detalhes */}
         {step.tip && (
-          <>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-full h-6 text-xs text-amber-600 hover:text-amber-700 p-0 justify-center mb-2"
-            >
-              <Lightbulb className="h-3 w-3 mr-1" />
-              {isExpanded ? 'Ocultar dica' : 'Ver dica útil'}
-              <ChevronDown className={cn("h-3 w-3 ml-1 transition-transform", isExpanded && "rotate-180")} />
-            </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full h-6 text-xs text-amber-600 hover:text-amber-700 p-0 justify-center"
+          >
+            <Lightbulb className="h-3 w-3 mr-1" />
+            {isExpanded ? 'Ocultar dica' : 'Ver dica útil'}
+            <ChevronDown className={cn("h-3 w-3 ml-1 transition-transform", isExpanded && "rotate-180")} />
+          </Button>
+        )}
 
-            {isExpanded && (
-              <div className="mb-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3">
-                <p className="text-xs text-amber-800">{step.tip}</p>
-              </div>
-            )}
-          </>
+        {/* Dica expandível */}
+        {step.tip && isExpanded && (
+          <div className="mt-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3">
+            <p className="text-xs text-amber-800">{step.tip}</p>
+          </div>
         )}
 
         {/* Ações */}
-        <div className="flex items-center justify-between pt-3 border-t">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t">
           <div className="flex items-center gap-1">
             {!isFirstStep && (
               <Button

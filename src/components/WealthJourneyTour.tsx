@@ -24,13 +24,13 @@ const tourSteps = [
     tip: "💡 Este tour é no seu ritmo. Pause quando quiser, volte se precisar. O importante é você entender cada funcionalidade."
   },
   {
-    id: "financial-summary",
+    id: "dashboard-overview",
     title: "Seu painel de controle financeiro",
     subtitle: "Visão completa da sua vida financeira",
     description: "Aqui você vê um resumo completo: quanto tem, quanto gasta, e como está progredindo. É o seu centro de comando financeiro, sempre atualizado em tempo real.",
     actionText: "Entendi, vamos continuar",
     icon: TrendingUp,
-    highlight: "[data-tour='financial-summary']",
+    highlight: ".financial-summary",
     tip: "📊 Todos os números aqui se atualizam automaticamente conforme você adiciona transações e metas."
   },
   {
@@ -40,7 +40,7 @@ const tourSteps = [
     description: "Nossa inteligência artificial analisa seus padrões financeiros e oferece sugestões personalizadas. Ela identifica oportunidades de economia e te ajuda a otimizar seus gastos.",
     actionText: "Adorei essa funcionalidade",
     icon: Lightbulb,
-    highlight: "[data-tour='smart-insights']",
+    highlight: ".smart-insights-card",
     tip: "🤖 Quanto mais você usa o Plenus, mais inteligentes ficam as sugestões!"
   },
   {
@@ -50,7 +50,6 @@ const tourSteps = [
     description: "Adicione suas receitas e despesas facilmente. O sistema categoriza automaticamente e conecta cada gasto aos seus objetivos. Assim você sempre sabe para onde seu dinheiro está indo.",
     actionText: "Quero aprender a adicionar",
     icon: DollarSign,
-    highlight: "[data-tour='transactions']",
     tip: "💳 Dica: Comece adicionando suas transações dos últimos 30 dias para ter uma visão mais precisa."
   },
   {
@@ -60,7 +59,7 @@ const tourSteps = [
     description: "Casa própria, viagem dos sonhos, aposentadoria... Crie metas específicas e veja exatamente quanto economizar por mês. O Plenus calcula tudo automaticamente e mostra seu progresso visual.",
     actionText: "Vou criar minha primeira meta",
     icon: Target,
-    highlight: "[data-tour='goals']",
+    highlight: ".goals-summary",
     tip: "🎯 Metas específicas têm 10x mais chance de serem alcançadas que objetivos vagos!"
   },
   {
@@ -70,7 +69,6 @@ const tourSteps = [
     description: "Crie orçamentos realistas por categoria. O sistema te avisa quando você está próximo do limite e sugere ajustes inteligentes. Sem stress, com foco no que realmente importa.",
     actionText: "Quero organizar meu orçamento",
     icon: PieChart,
-    highlight: "[data-tour='budgets']",
     tip: "📋 Comece com categorias básicas: alimentação, transporte e lazer. Você pode refinar depois."
   },
   {
@@ -80,7 +78,6 @@ const tourSteps = [
     description: "Uma das bases da saúde financeira é ter uma reserva para imprevistos. O Plenus te ajuda a calcular o valor ideal e criar um plano para formar sua reserva gradualmente.",
     actionText: "Vou criar minha reserva",
     icon: Shield,
-    highlight: "[data-tour='emergency-fund']",
     tip: "🛡️ Meta inicial: 3 meses de gastos essenciais. Depois amplie para 6 meses quando possível."
   },
   {
@@ -106,9 +103,8 @@ export function WealthJourneyTour() {
   } = useWealthJourneyTour();
 
   const highlightStylesRef = useRef<HTMLStyleElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
 
-  // Effect para aplicar destaque visual e overlay inteligente
+  // Effect para aplicar destaque visual
   useEffect(() => {
     if (!isActive) {
       // Cleanup quando não ativo
@@ -129,50 +125,30 @@ export function WealthJourneyTour() {
 
     if (currentStep?.highlight) {
       const timer = setTimeout(() => {
-        const targetElement = document.querySelector(currentStep.highlight);
-        
-        if (targetElement) {
-          // Scroll suave para o elemento
-          targetElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',
-            inline: 'nearest'
-          });
-
-          // Aplicar destaque após scroll
-          setTimeout(() => {
-            const style = document.createElement('style');
-            style.textContent = `
-              ${currentStep.highlight} {
-                position: relative !important;
-                z-index: 1001 !important;
-                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.8), 
-                           0 0 40px rgba(16, 185, 129, 0.6),
-                           0 0 0 2000px rgba(0, 0, 0, 0.4) !important;
-                border-radius: 12px !important;
-                animation: tourHighlight 3s ease-in-out infinite !important;
-                transition: all 0.3s ease !important;
-              }
-              
-              @keyframes tourHighlight {
-                0%, 100% { 
-                  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.8), 
-                             0 0 40px rgba(16, 185, 129, 0.6),
-                             0 0 0 2000px rgba(0, 0, 0, 0.4);
-                  transform: scale(1);
-                }
-                50% { 
-                  box-shadow: 0 0 0 8px rgba(16, 185, 129, 1), 
-                             0 0 60px rgba(16, 185, 129, 0.8),
-                             0 0 0 2000px rgba(0, 0, 0, 0.5);
-                  transform: scale(1.02);
-                }
-              }
-            `;
-            document.head.appendChild(style);
-            highlightStylesRef.current = style;
-          }, 600);
-        }
+        const style = document.createElement('style');
+        style.textContent = `
+          ${currentStep.highlight} {
+            position: relative !important;
+            z-index: 101 !important;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6) !important;
+            border-radius: 12px !important;
+            animation: gentlePulse 3s ease-in-out infinite !important;
+            transition: all 0.3s ease !important;
+          }
+          
+          @keyframes gentlePulse {
+            0%, 100% { 
+              box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
+              transform: scale(1);
+            }
+            50% { 
+              box-shadow: 0 0 0 8px rgba(16, 185, 129, 1), 0 0 60px rgba(16, 185, 129, 0.8);
+              transform: scale(1.005);
+            }
+          }
+        `;
+        document.head.appendChild(style);
+        highlightStylesRef.current = style;
       }, 150);
 
       return () => clearTimeout(timer);
@@ -196,13 +172,8 @@ export function WealthJourneyTour() {
 
   return (
     <>
-      {/* Overlay personalizado apenas para o primeiro step */}
-      {currentStepIndex === 0 && (
-        <div 
-          ref={overlayRef}
-          className="fixed inset-0 z-[1000] bg-black/50 backdrop-blur-sm" 
-        />
-      )}
+      {/* Overlay suave */}
+      <div className="fixed inset-0 z-[100] bg-black/30 backdrop-blur-[1px]" />
 
       {/* Tooltip inteligente */}
       <WealthJourneyTooltip
