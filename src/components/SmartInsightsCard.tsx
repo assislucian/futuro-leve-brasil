@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +8,7 @@ import { ArrowRight, Brain, Sparkles } from "lucide-react";
 // Componente simplificado que agora redireciona para o Analytics com insights avançados
 export function SmartInsightsCard() {
   return (
-    <Card className="border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
+    <Card data-tour="smart-insights" className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
       <CardHeader className="bg-gradient-to-r from-purple-50 dark:from-purple-950/50 to-blue-50 dark:to-blue-950/50 pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <div className="p-1.5 bg-purple-100 dark:bg-purple-900 rounded-full">

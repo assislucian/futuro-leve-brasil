@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -14,7 +13,7 @@ import { TransactionBadge } from "./ui/transaction-badge";
 import { TransactionGoalConnector } from "./TransactionGoalConnector";
 import { AddTransactionDialog } from "./AddTransactionDialog";
 
-const TransactionList = () => {
+export function TransactionList() {
   const { data: transactions, isLoading, error } = useRecentTransactions();
 
   const formatCurrency = (value: number) => {
@@ -23,7 +22,7 @@ const TransactionList = () => {
   
   if (isLoading) {
     return (
-      <Card>
+      <Card data-tour="transactions">
         <CardHeader>
           <CardTitle>Transações Recentes</CardTitle>
           <CardDescription>
@@ -60,7 +59,7 @@ const TransactionList = () => {
   }
 
   return (
-    <Card>
+    <Card data-tour="transactions">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>

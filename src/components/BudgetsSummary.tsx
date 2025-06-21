@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,7 @@ const formatCurrency = (amount: number) => {
  * Componente de resumo dos orçamentos
  * Exibe o progresso geral dos orçamentos do usuário
  */
-const BudgetsSummary = () => {
+export function BudgetsSummary() {
   const { data, isLoading, error, refetch } = useBudgetsSummary();
 
   const { totalBudgeted = 0, totalSpent = 0 } = data || {};
@@ -65,7 +64,7 @@ const BudgetsSummary = () => {
   }
 
   return (
-    <Card className="h-full flex flex-col border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
+    <Card data-tour="budgets" className="h-full flex flex-col border border-border shadow-sm hover:shadow-md transition-shadow duration-200 bg-card">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
@@ -118,6 +117,6 @@ const BudgetsSummary = () => {
       </CardFooter>
     </Card>
   );
-};
+}
 
 export default BudgetsSummary;
