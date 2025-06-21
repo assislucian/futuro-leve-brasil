@@ -30,7 +30,7 @@ export function useWealthJourneyTour() {
   const totalSteps = 8;
   
   // Tour está ativo se: usuário logado E (não completou OU foi iniciado manualmente)
-  const isActive = user && (!tourCompleted || isManuallyActive);
+  const isActive = Boolean(user && (!tourCompleted || isManuallyActive));
 
   const nextStep = useCallback(() => {
     console.log('🔄 Próximo passo do tour:', currentStepIndex + 1);
@@ -67,7 +67,12 @@ export function useWealthJourneyTour() {
     
     // Trigger celebration
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('wealthJourneyCompleted'));
+      window.dispatchEvent(new CustomEvent('wealthJourneyCompleted', {
+        detail: { 
+          message: '🎉 Parabéns! Você completou a Jornada Plenus!',
+          type: 'success'
+        }
+      }));
     }
   }, [setTourCompleted]);
 
@@ -75,7 +80,9 @@ export function useWealthJourneyTour() {
     console.log('🚀 Reiniciando Jornada Plenus');
     
     // Garante que outros tours sejam desativados
-    localStorage.setItem(`cinema-tour-completed-${user?.id}`, 'true');
+    if (user?.id) {
+      localStorage.setItem(`cinema-tour-completed-${user.id}`, 'true');
+    }
     
     // Reseta todos os estados
     setTourCompleted(false);
@@ -83,6 +90,11 @@ export function useWealthJourneyTour() {
     setIsManuallyActive(true);
     
     console.log('✨ Jornada Plenus iniciada com sucesso');
+    
+    // Pequeno delay para garantir que o estado seja atualizado
+    setTimeout(() => {
+      console.log('🎯 Tour ativado:', { isActive: true, currentStep: 0 });
+    }, 100);
   }, [setTourCompleted, user?.id]);
 
   const goToStep = useCallback((stepIndex: number) => {
@@ -94,7 +106,7 @@ export function useWealthJourneyTour() {
   }, [totalSteps]);
 
   return {
-    isActive: Boolean(isActive),
+    isActive,
     currentStepIndex,
     totalSteps,
     nextStep,

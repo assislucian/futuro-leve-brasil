@@ -16,7 +16,7 @@ import { SmartInsightsCard } from "@/components/SmartInsightsCard";
 import { DemoDataPopulator } from "@/components/DemoDataPopulator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Target, TrendingUp, MoreVertical } from "lucide-react";
+import { PlusCircle, Target, TrendingUp, MoreVertical, BookOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
